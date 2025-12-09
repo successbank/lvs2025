@@ -1,0 +1,275 @@
+// LVS Prisma Schema
+// Database: PostgreSQL 15
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ========================================
+// 사용자 및 인증
+// ========================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+// ========================================
+// 제품 카테고리
+// ========================================
+
+model Category {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  parentId    String?
+  parent      Category?  @relation("SubCategories", fields: [parentId], references: [id], onDelete: Cascade)
+  children    Category[] @relation("SubCategories")
+  products    Product[]
+  order       Int        @default(0)
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("categories")
+}
+
+// ========================================
+// 제품
+// ========================================
+
+model Product {
+  id              String         @id @default(cuid())
+  modelName       String         @unique
+  name            String
+  slug            String         @unique
+  description     String?
+  summary         String?
+  categoryId      String
+  category        Category       @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  manufacturer    String         @default("LVS")
+  origin          String         @default("대한민국")
+  images          ProductImage[]
+  specs           ProductSpec[]
+  files           ProductFile[]
+  colorOptions    String[]       @default([])
+  voltageOptions  String[]       @default([])
+  isNew           Boolean        @default(false)
+  isFeatured      Boolean        @default(false)
+  isActive        Boolean        @default(true)
+  order           Int            @default(0)
+  viewCount       Int            @default(0)
+  relatedProducts String[]       @default([])
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@map("products")
+}
+
+// ========================================
+// 제품 이미지
+// ========================================
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  isMain    Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("product_images")
+}
+
+// ========================================
+// 제품 스펙
+// ========================================
+
+model ProductSpec {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  label     String
+  value     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("product_specs")
+}
+
+// ========================================
+// 제품 파일 (PDF, DWG)
+// ========================================
+
+model ProductFile {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  type      FileType
+  url       String
+  size      Int
+  createdAt DateTime @default(now())
+
+  @@map("product_files")
+}
+
+enum FileType {
+  PDF
+  DWG
+  IMAGE
+  OTHER
+}
+
+// ========================================
+// 홈페이지 슬라이더
+// ========================================
+
+model Slider {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String
+  link        String?
+  isActive    Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("sliders")
+}
+
+// ========================================
+// 공지사항
+// ========================================
+
+model Notice {
+  id        String       @id @default(cuid())
+  title     String
+  content   String
+  category  NoticeType   @default(NOTICE)
+  isActive  Boolean      @default(true)
+  isPinned  Boolean      @default(false)
+  viewCount Int          @default(0)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@map("notices")
+}
+
+enum NoticeType {
+  NOTICE
+  TECH_GUIDE
+  DOWNLOAD
+}
+
+// ========================================
+// 온라인 상담실 (문의사항)
+// ========================================
+
+model Inquiry {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  title     String
+  content   String
+  reply     String?
+  status    InquiryStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("inquiries")
+}
+
+enum InquiryStatus {
+  PENDING
+  ANSWERED
+  CLOSED
+}
+
+// ========================================
+// 카탈로그 신청
+// ========================================
+
+model CatalogRequest {
+  id        String        @id @default(cuid())
+  name      String
+  email     String
+  phone     String
+  company   String?
+  address   String
+  message   String?
+  status    RequestStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("catalog_requests")
+}
+
+enum RequestStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+// ========================================
+// 파트너사
+// ========================================
+
+model Partner {
+  id        String   @id @default(cuid())
+  name      String
+  logoUrl   String
+  website   String?
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("partners")
+}
+
+// ========================================
+// 회사 정보
+// ========================================
+
+model CompanyInfo {
+  id             String   @id @default(cuid())
+  name           String   @default("(주)엘브이에스")
+  ceo            String   @default("김태화")
+  businessNumber String   @default("131-86-14914")
+  phone          String   @default("032-461-1800")
+  fax            String   @default("032-461-1001")
+  email          String?
+  address        String   @default("인천광역시 연수구 송도미래로 30 (송도동 214번지) 스마트밸리 B동 801~803호")
+  workingHours   String   @default("평일 09:00~18:00")
+  lunchTime      String   @default("12:00~13:00")
+  closedDays     String   @default("일요일, 공휴일")
+  updatedAt      DateTime @updatedAt
+
+  @@map("company_info")
+}

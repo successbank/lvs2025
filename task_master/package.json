@@ -1,0 +1,58 @@
+{
+  "name": "@successbank/taskmaster-kit",
+  "version": "1.0.0",
+  "description": "Task Master AI 빠른 설정 도구 - 단일 명령어로 전체 환경 구성",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "taskmaster-kit": "./bin/cli.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node --esm src/index.ts",
+    "start": "node bin/cli.js",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
+    "test:coverage": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "task-master",
+    "claude",
+    "ai",
+    "cli",
+    "mcp",
+    "automation",
+    "developer-tools"
+  ],
+  "author": "successbank",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
+    "inquirer": "^9.2.23"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.11.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/successbank/taskmaster-kit.git"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "models": {
+    "main": {
+      "provider": "google",
+      "model": "gemini-3-pro-preview",
+      "maxTokens": 65536,
+      "temperature": 0.2
+    },
+    "research": {
+      "provider": "perplexity",
+      "model": "sonar-pro",
+      "maxTokens": 8700,
+      "temperature": 0.1
+    },
+    "fallback": {
+      "provider": "openai",
+      "model": "gpt-4o",
+      "maxTokens": 16384,
+      "temperature": 0.2
+    }
+  },
+  "global": {
+    "projectName": "lvs",
+    "responseLanguage": "Korean",
+    "logLevel": "info",
+    "debug": false,
+    "defaultNumTasks": 10,
+    "defaultSubtasks": 5,
+    "defaultPriority": "medium",
+    "enableCodebaseAnalysis": true,
+    "enableProxy": false,
+    "anonymousTelemetry": true,
+    "defaultTag": "master"
+  }
+}
