@@ -64,9 +64,15 @@ export async function GET(request) {
       prisma.product.count({ where }),
     ]);
 
+    // Add mainImage field to each product
+    const productsWithMainImage = products.map(product => ({
+      ...product,
+      mainImage: product.images && product.images.length > 0 ? product.images[0].url : null
+    }));
+
     // 서브카테고리 정보도 함께 반환
     return NextResponse.json({
-      products,
+      products: productsWithMainImage,
       subcategories,
       pagination: {
         page,

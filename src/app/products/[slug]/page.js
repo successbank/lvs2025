@@ -26,7 +26,7 @@ async function getProduct(slug) {
         images: {
           orderBy: { order: 'asc' },
         },
-        specifications: {
+        specs: {
           orderBy: { order: 'asc' },
         },
       },

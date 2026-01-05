@@ -6,6 +6,9 @@
 
 LVS (Lighting for Vision System)는 조명 시스템 회사의 기업 웹사이트입니다. PostgreSQL과 Redis를 사용하는 Docker 기반 개발 환경에서 실행되는 Next.js 14 애플리케이션입니다.
 
+## 개발팀 페르소나
+- ./persona.md
+
 ## 아키텍처
 
 ## ai와의 소통언어

@@ -121,34 +121,40 @@ export default function SubcategoryPage({ categorySlug, subcategorySlug }) {
 
       {/* Breadcrumb */}
       <div className="breadcrumb">
-        <a href="/">Home</a>
-        <span>&gt;</span>
-        <a href="/products">제품소개</a>
-        <span>&gt;</span>
-        <a href={`/products/${categorySlug}`}>{category?.name}</a>
-        <span>&gt;</span>
-        <span>{subcategory?.name}</span>
+        <div className="breadcrumb-container">
+          <a href="/">Home</a>
+          <span>&gt;</span>
+          <a href="/products">제품소개</a>
+          <span>&gt;</span>
+          <a href={`/products/${categorySlug}`}>{category?.name}</a>
+          <span>&gt;</span>
+          <span>{subcategory?.name}</span>
+        </div>
       </div>
 
-      {/* Page Title */}
-      <div className="page-title">
-        <h1>{subcategory?.name || '제품'}</h1>
-        <p>{subcategory?.description || '엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.'}</p>
-      </div>
+      {/* Page Header */}
+      <section className="page-header">
+        <div className="page-header-content">
+          <h1>{subcategory?.name || '제품'}</h1>
+          <p>{subcategory?.description || '엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.'}</p>
+        </div>
+      </section>
 
       {/* Sub Navigation */}
       {siblingCategories.length > 0 && (
-        <div className="sub-nav-container">
-          <a href={`/products/${categorySlug}`}>전체보기</a>
-          {siblingCategories.map((cat) => (
-            <a
-              key={cat.id}
-              href={`/products/${categorySlug}/${cat.slug}`}
-              className={cat.slug === subcategorySlug ? 'active' : ''}
-            >
-              {cat.name}
-            </a>
-          ))}
+        <div className="sub-nav">
+          <div className="sub-nav-container">
+            <a href={`/products/${categorySlug}`}>전체보기</a>
+            {siblingCategories.map((cat) => (
+              <a
+                key={cat.id}
+                href={`/products/${categorySlug}/${cat.slug}`}
+                className={cat.slug === subcategorySlug ? 'active' : ''}
+              >
+                {cat.name}
+              </a>
+            ))}
+          </div>
         </div>
       )}
 

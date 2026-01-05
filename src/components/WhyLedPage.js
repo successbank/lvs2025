@@ -86,63 +86,79 @@ export default function WhyLedPage() {
               <ul className="dropdown-menu">
                 <li><a href="/about/us">회사소개</a></li>
                 <li><a href="/about/organization">개요 및 조직도</a></li>
-                <li><a href="/about/why-led">Why LED</a></li>
+                <li><a href="/about/why-led" className="active">Why LED</a></li>
                 <li><a href="/about/certifications">인증현황</a></li>
                 <li><a href="/about/dealers">대리점 안내</a></li>
               </ul>
             </li>
-            <li>
-              <a href="/support">고객지원</a>
-            </li>
+            <li><a href="/support">고객지원</a></li>
           </ul>
-          <button className="mobile-menu-button" onClick={toggleMobileMenu}>
-            ☰
-          </button>
+          <div className="nav-actions">
+            <div className="search-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+              </svg>
+            </div>
+            <div className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+              <svg viewBox="0 0 24 24">
+                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+              </svg>
+            </div>
+          </div>
         </div>
       </nav>
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
-          <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
-            <button className="mobile-menu-close" onClick={closeMobileMenu}>×</button>
-            <ul>
-              <li><a href="/products" onClick={closeMobileMenu}>제품소개</a></li>
-              <li><a href="/about" onClick={closeMobileMenu}>회사소개</a></li>
-              <li><a href="/support" onClick={closeMobileMenu}>고객지원</a></li>
-            </ul>
+        <>
+          <div className="mobile-menu-overlay" onClick={closeMobileMenu}></div>
+          <div className="mobile-menu active">
+            <div className="mobile-menu-header">
+              <div className="logo-text">LVS</div>
+              <div className="mobile-menu-close" onClick={closeMobileMenu}>×</div>
+            </div>
+            <div className="mobile-menu-items">
+              <ul>
+                <li><a href="/products" onClick={closeMobileMenu}>제품소개</a></li>
+                <li><a href="/about" onClick={closeMobileMenu}>회사소개</a></li>
+                <li><a href="/support" onClick={closeMobileMenu}>고객지원</a></li>
+              </ul>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Breadcrumb */}
       <div className="breadcrumb">
-        <a href="/">Home</a>
-        <span>&gt;</span>
-        <a href="/about">회사소개</a>
-        <span>&gt;</span>
-        <span>Why LED</span>
+        <div className="breadcrumb-container">
+          <a href="/">Home</a>
+          <span>&gt;</span>
+          <a href="/about">회사소개</a>
+          <span>&gt;</span>
+          <span>Why LED</span>
+        </div>
       </div>
 
-      {/* Page Title */}
-      <div className="page-title">
-        <h1>Why LED</h1>
-        <p>엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.</p>
-      </div>
+      {/* Page Header */}
+      <section className="page-header">
+        <div className="page-header-content">
+          <h1>Why LED</h1>
+          <p>엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.</p>
+        </div>
+      </section>
 
       {/* Sub Navigation */}
-      <div className="sub-nav-container">
-        <a href="/about/us">회사소개</a>
-        <a href="/about/organization">개요 및 조직도</a>
-        <a href="/about/why-led" className="active">Why LED</a>
-        <a href="/about/certifications">인증현황</a>
-        <a href="/about/dealers">대리점 안내</a>
+      <div className="sub-nav">
+        <div className="sub-nav-container">
+          <a href="/about/us">회사소개</a>
+          <a href="/about/organization">개요 및 조직도</a>
+          <a href="/about/why-led" className="active">Why LED</a>
+          <a href="/about/certifications">인증현황</a>
+          <a href="/about/dealers">대리점 안내</a>
+        </div>
       </div>
 
-      {/* Hero Image */}
-      <div className="why-led-hero">
-        <img src="/images/why-led-hero.jpg" alt="LED Technology" />
-      </div>
+
 
       {/* Features Section */}
       <div className="why-led-content">
@@ -198,20 +214,28 @@ export default function WhyLedPage() {
       {/* Footer */}
       <footer className="footer">
         <div className="footer-content">
-          <div className="footer-section">
+          <div className="company-info">
             <h4>COMPANY INFO</h4>
-            <p>(주)엘브이에스 대표이사: 김태화<br />사업자번호: 131-86-14914<br />
-            인천광역시 연수구 송도미래로 30 (송도동 214번지) 스마트밸리 B동 801~803호</p>
+            <p>
+              (주)엘브이에스 대표이사: 김태화 사업자번호: 131-86-14914<br />
+              인천광역시 연수구 송도미래로 30 (송도동 214번지) 스마트밸리 B동 801~803호
+            </p>
           </div>
-          <div className="footer-section">
+          <div className="contact-section">
             <h4>CONTACT US</h4>
-            <div className="footer-contact">
-              <div>📞 032-461-1800</div>
-              <div>📠 032-461-1001</div>
+            <div className="contact-numbers">
+              <div className="contact-item">
+                <span>📞 032-461-1800</span>
+              </div>
+              <div className="contact-item">
+                <span>📠 032-461-1001</span>
+              </div>
             </div>
           </div>
         </div>
-        <p className="copyright">COPYRIGHT(C) (주)엘브이에스. ALL RIGHT RESERVED.</p>
+        <div className="footer-bottom">
+          <p>COPYRIGHT(C) (주)엘브이에스. ALL RIGHT RESERVED.</p>
+        </div>
       </footer>
     </>
   );

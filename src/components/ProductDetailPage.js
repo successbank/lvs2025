@@ -99,6 +99,14 @@ export default function ProductDetailPage({ product }) {
         <span>{product.name}</span>
       </div>
 
+      {/* Page Header */}
+      <section className="page-header">
+        <div className="page-header-content">
+          <h1>{product.name}</h1>
+          <p>{product.summary || '엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.'}</p>
+        </div>
+      </section>
+
       {/* Product Detail */}
       <div className="product-detail-container">
         <div className="product-detail-wrapper">
@@ -180,21 +188,20 @@ export default function ProductDetailPage({ product }) {
         {product.description && product.description !== '-' && (
           <div className="product-description-section">
             <h2>제품 설명</h2>
-            <div className="description-content">
-              {product.description}
+            <div className="description-content" dangerouslySetInnerHTML={{ __html: product.description }}>
             </div>
           </div>
         )}
 
         {/* Specifications */}
-        {product.specifications && product.specifications.length > 0 && (
+        {product.specs && product.specs.length > 0 && (
           <div className="product-specs-section">
             <h2>제품 사양</h2>
             <table className="specs-table">
               <tbody>
-                {product.specifications.map((spec) => (
+                {product.specs.map((spec) => (
                   <tr key={spec.id}>
-                    <th>{spec.name}</th>
+                    <th>{spec.label}</th>
                     <td>{spec.value}</td>
                   </tr>
                 ))}
