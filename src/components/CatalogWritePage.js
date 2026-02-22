@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import '../app/styles/globals.css';
 
-export default function ConsultationWritePage() {
+export default function CatalogWritePage() {
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -33,8 +33,7 @@ export default function ConsultationWritePage() {
 
     setSubmitting(true);
     try {
-      // 먼저 consultation 게시판 ID 조회
-      const boardRes = await fetch('/api/boards?slug=consultation');
+      const boardRes = await fetch('/api/boards?slug=catalog');
       const boardData = await boardRes.json();
 
       if (!boardData.board) {
@@ -61,8 +60,8 @@ export default function ConsultationWritePage() {
         throw new Error(err.error || '등록에 실패했습니다.');
       }
 
-      alert('상담이 등록되었습니다.');
-      router.push('/support/consultation');
+      alert('카탈로그 신청이 등록되었습니다.');
+      router.push('/support/catalog');
     } catch (error) {
       alert(error.message);
     } finally {
@@ -78,16 +77,16 @@ export default function ConsultationWritePage() {
           <span>&gt;</span>
           <a href="/support">고객지원</a>
           <span>&gt;</span>
-          <a href="/support/consultation">온라인 상담실</a>
+          <a href="/support/catalog">카탈로그 신청</a>
           <span>&gt;</span>
-          <span>상담 작성</span>
+          <span>신청 작성</span>
         </div>
       </div>
 
       <section className="page-header">
         <div className="page-header-content">
-          <h1>온라인 상담실</h1>
-          <p>제품 문의 및 기술 상담을 등록해 주세요.</p>
+          <h1>카탈로그 신청</h1>
+          <p>카탈로그 신청서를 작성해 주세요.</p>
         </div>
       </section>
 
@@ -95,16 +94,16 @@ export default function ConsultationWritePage() {
         <div className="sub-nav-container">
           <a href="/support/tech-guide">테크니컬 가이드</a>
           <a href="/support/downloads">자료 다운로드</a>
-          <a href="/support/consultation" className="active">온라인 상담실</a>
+          <a href="/support/consultation">온라인 상담실</a>
           <a href="/support/notices">공지사항</a>
           <a href="/support/contact">찾아오시는 길</a>
-          <a href="/support/catalog">카탈로그 신청</a>
+          <a href="/support/catalog" className="active">카탈로그 신청</a>
         </div>
       </div>
 
       <div className="form-container">
         <div className="form-intro">
-          <p>상담 내용을 작성해 주세요. 빠른 시일 내에 답변 드리겠습니다.</p>
+          <p>제품 카탈로그 신청을 위해 아래 양식을 작성해 주세요. 빠른 시일 내에 발송해 드리겠습니다.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="catalog-form">
@@ -146,7 +145,7 @@ export default function ConsultationWritePage() {
                     onChange={handleInputChange}
                     required
                     className="form-input-full"
-                    placeholder="상담 제목을 입력해주세요"
+                    placeholder="카탈로그 신청 제목을 입력해주세요"
                   />
                 </td>
               </tr>
@@ -160,7 +159,7 @@ export default function ConsultationWritePage() {
                     required
                     rows="10"
                     className="form-textarea"
-                    placeholder="상담 내용을 입력해주세요"
+                    placeholder="수령 주소, 연락처 등 카탈로그 수령에 필요한 정보를 입력해주세요"
                   ></textarea>
                 </td>
               </tr>
@@ -171,7 +170,7 @@ export default function ConsultationWritePage() {
             <button type="submit" className="btn-submit" disabled={submitting}>
               {submitting ? '등록 중...' : '등록'}
             </button>
-            <button type="button" onClick={() => router.push('/support/consultation')} className="btn-cancel">
+            <button type="button" onClick={() => router.push('/support/catalog')} className="btn-cancel">
               취소
             </button>
           </div>

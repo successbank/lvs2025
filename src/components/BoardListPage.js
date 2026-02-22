@@ -102,8 +102,8 @@ export default function BoardListPage({ boardSlug }) {
   const handlePostClick = async (e, post) => {
     e.preventDefault();
 
-    // 상담 게시판 비밀글 처리
-    if (boardSlug === 'consultation' && post.is_secret && !isAdmin) {
+    // 상담/카탈로그 게시판 비밀글 처리
+    if ((boardSlug === 'consultation' || boardSlug === 'catalog') && post.is_secret && !isAdmin) {
       setPasswordTarget(post);
       setPasswordInput('');
       setPasswordError('');
@@ -241,7 +241,7 @@ export default function BoardListPage({ boardSlug }) {
 
   // 게시물 제목 렌더링 (비밀글 처리)
   const renderPostTitle = (post) => {
-    if (boardSlug === 'consultation' && post.is_secret && !isAdmin) {
+    if ((boardSlug === 'consultation' || boardSlug === 'catalog') && post.is_secret && !isAdmin) {
       return (
         <>
           <span className="secret-icon">🔒</span>
@@ -251,7 +251,7 @@ export default function BoardListPage({ boardSlug }) {
     }
     return (
       <>
-        {boardSlug === 'consultation' && post.is_secret && (
+        {(boardSlug === 'consultation' || boardSlug === 'catalog') && post.is_secret && (
           <span className="secret-icon">🔒</span>
         )}
         {post.title}
@@ -373,15 +373,15 @@ export default function BoardListPage({ boardSlug }) {
             </table>
 
             {/* Write Button + Search Form */}
-            {boardSlug === 'consultation' && (
+            {(boardSlug === 'consultation' || boardSlug === 'catalog') && (
               <div style={{ textAlign: 'right', marginBottom: '0.5rem' }}>
-                <a href="/support/consultation/write"
+                <a href={`/support/${boardSlug}/write`}
                   style={{
                     display: 'inline-block', padding: '0.5rem 1.25rem',
                     background: '#2c5f8a', color: 'white', borderRadius: '4px',
                     textDecoration: 'none', fontSize: '0.9rem',
                   }}>
-                  상담 작성
+                  {boardSlug === 'catalog' ? '카탈로그 신청' : '상담 작성'}
                 </a>
               </div>
             )}

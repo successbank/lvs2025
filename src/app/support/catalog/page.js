@@ -1,10 +1,10 @@
-import CatalogPage from '@/components/CatalogPage';
+import BoardListPage from '@/components/BoardListPage';
 
-export default function Page() {
-  return <CatalogPage />;
+export default function CatalogListPage() {
+  return <BoardListPage boardSlug="catalog" />;
 }
 
 export const metadata = {
   title: '카탈로그 신청 | LVS',
-  description: '엘브이에스 제품 카탈로그 신청',
+  description: '제품 카탈로그 신청 목록',
 };
