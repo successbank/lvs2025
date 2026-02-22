@@ -1,6 +1,21 @@
 
 # Task Master AI
 .env
+.env.backup
 .mcp.json
 node_modules/
 .DS_Store
+
+# Claude Code
+.claude/
+
+# Playwright MCP (debug logs & screenshots)
+.playwright-mcp/
+
+# Temp files (dev screenshots, scripts)
+*.png
+*.txt
+!src/**/*.png
+!src/**/*.txt
+!database/**/*.txt
+generate-all-files.sh
