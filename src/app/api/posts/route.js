@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { Pool } from 'pg';
 
 // GET /api/posts - 게시물 목록 조회
@@ -113,6 +115,62 @@ export async function GET(request) {
     console.error('Posts API Error:', error);
     return NextResponse.json(
       { error: '게시물 목록을 불러오는데 실패했습니다.' },
+      { status: 500 }
+    );
+  } finally {
+    await pool.end();
+  }
+}
+
+// POST /api/posts - 게시물 등록
+export async function POST(request) {
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+  try {
+    const data = await request.json();
+
+    if (!data.boardId || !data.title || !data.content) {
+      return NextResponse.json(
+        { error: '게시판, 제목, 내용은 필수 항목입니다.' },
+        { status: 400 }
+      );
+    }
+
+    // 비밀번호 형식 검증 (4자리 숫자)
+    if (data.password && !/^\d{4}$/.test(data.password)) {
+      return NextResponse.json(
+        { error: '비밀번호는 4자리 숫자여야 합니다.' },
+        { status: 400 }
+      );
+    }
+
+    // 관리자 글 작성 시 세션 확인
+    const session = await getServerSession(authOptions);
+    const isAdmin = session && session.user.role === 'ADMIN';
+
+    const id = `post_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const result = await pool.query(
+      `INSERT INTO posts (id, board_id, title, content, author, author_email, is_notice, is_secret, password, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+       RETURNING *`,
+      [
+        id,
+        data.boardId,
+        data.title,
+        data.content,
+        data.author || (isAdmin ? '관리자' : '익명'),
+        data.authorEmail || (session?.user?.email || null),
+        data.isNotice || false,
+        data.isSecret || false,
+        data.password || null,
+      ]
+    );
+
+    return NextResponse.json({ post: result.rows[0] }, { status: 201 });
+  } catch (error) {
+    console.error('Post Create Error:', error);
+    return NextResponse.json(
+      { error: '게시물 등록에 실패했습니다.' },
       { status: 500 }
     );
   } finally {

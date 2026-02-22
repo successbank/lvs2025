@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import '../app/styles/globals.css';
 
 export default function BoardListPage({ boardSlug }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === 'ADMIN';
+
   const [board, setBoard] = useState(null);
   const [notices, setNotices] = useState([]);
   const [posts, setPosts] = useState([]);
@@ -14,6 +17,15 @@ export default function BoardListPage({ boardSlug }) {
   const [searchField, setSearchField] = useState('all');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [postAttachments, setPostAttachments] = useState([]);
+
+  // 비밀번호 모달 상태
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [passwordTarget, setPasswordTarget] = useState(null);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -60,16 +72,6 @@ export default function BoardListPage({ boardSlug }) {
     fetchData();
   }, [boardSlug, currentPage, searchQuery, searchField]);
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-    document.body.style.overflow = !mobileMenuOpen ? 'hidden' : '';
-  };
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-    document.body.style.overflow = '';
-  };
-
   const handleSearch = (e) => {
     e.preventDefault();
     setSearchQuery(searchKeyword);
@@ -87,6 +89,88 @@ export default function BoardListPage({ boardSlug }) {
 
   const formatNumber = (num) => {
     return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') || '0';
+  };
+
+  const formatFileSize = (bytes) => {
+    if (!bytes) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round(bytes / Math.pow(k, i) * 10) / 10 + ' ' + sizes[i];
+  };
+
+  const handlePostClick = async (e, post) => {
+    e.preventDefault();
+
+    // 상담 게시판 비밀글 처리
+    if (boardSlug === 'consultation' && post.is_secret && !isAdmin) {
+      setPasswordTarget(post);
+      setPasswordInput('');
+      setPasswordError('');
+      setPasswordModalOpen(true);
+      return;
+    }
+
+    // 다운로드 게시판은 모달로 표시
+    if (boardSlug === 'downloads') {
+      try {
+        const response = await fetch(`/api/posts/${post.id}?incrementView=true`);
+        const data = await response.json();
+
+        if (data.post) {
+          setSelectedPost(data.post);
+          setPostAttachments(data.attachments || []);
+          setModalOpen(true);
+          document.body.style.overflow = 'hidden';
+        }
+      } catch (error) {
+        console.error('Failed to fetch post:', error);
+      }
+      return;
+    }
+
+    // 기본: 상세 페이지 이동
+    window.location.href = `/support/${boardSlug}/${post.id}`;
+  };
+
+  const handlePasswordSubmit = async () => {
+    if (!passwordInput) {
+      setPasswordError('비밀번호를 입력해주세요.');
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/posts/${passwordTarget.id}/verify-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: passwordInput }),
+      });
+      const data = await res.json();
+
+      if (data.verified) {
+        sessionStorage.setItem(`post_pw_${passwordTarget.id}`, passwordInput);
+        setPasswordModalOpen(false);
+        window.location.href = `/support/${boardSlug}/${passwordTarget.id}`;
+      } else {
+        setPasswordError(data.error || '비밀번호가 일치하지 않습니다.');
+      }
+    } catch {
+      setPasswordError('비밀번호 확인에 실패했습니다.');
+    }
+  };
+
+  const closePasswordModal = () => {
+    setPasswordModalOpen(false);
+    setPasswordTarget(null);
+    setPasswordInput('');
+    setPasswordError('');
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedPost(null);
+    setPostAttachments([]);
+    document.body.style.overflow = '';
   };
 
   const PageButton = ({ page, isCurrent }) => (
@@ -155,68 +239,31 @@ export default function BoardListPage({ boardSlug }) {
     return <div className="pagination">{pages}</div>;
   };
 
+  // 게시물 제목 렌더링 (비밀글 처리)
+  const renderPostTitle = (post) => {
+    if (boardSlug === 'consultation' && post.is_secret && !isAdmin) {
+      return (
+        <>
+          <span className="secret-icon">🔒</span>
+          <span className="secret-title">비밀글입니다.</span>
+        </>
+      );
+    }
+    return (
+      <>
+        {boardSlug === 'consultation' && post.is_secret && (
+          <span className="secret-icon">🔒</span>
+        )}
+        {post.title}
+        {post.attachment_count > 0 && (
+          <span className="attachment-icon">📎</span>
+        )}
+      </>
+    );
+  };
+
   return (
     <>
-      {/* Header */}
-      <div className="header-top">
-        <div className="header-top-content">
-          <a href="/about/dealers">대리점 안내</a>
-          <a href="/support/tech-guide">기술지원</a>
-          <a href="/support/downloads">다운로드 센터</a>
-          <a href="/about/careers">인재채용</a>
-          <a href="/en">ENGLISH</a>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="main-nav">
-        <div className="nav-container">
-          <a href="/" className="logo">
-            <div className="logo-text">LVS</div>
-          </a>
-          <ul className="nav-menu">
-            <li>
-              <a href="/products">제품소개</a>
-              <ul className="dropdown-menu">
-                <li><a href="/products/general-lighting">일반조명</a></li>
-                <li><a href="/products/power-supply">파워서플라이</a></li>
-                <li><a href="/products/led-lightsource">LED LIGHTSOURCE</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="/about">회사소개</a>
-              <ul className="dropdown-menu">
-                <li><a href="/about/us">회사소개</a></li>
-                <li><a href="/about/organization">개요 및 조직도</a></li>
-                <li><a href="/about/why-led">Why LED</a></li>
-                <li><a href="/about/certifications">인증현황</a></li>
-                <li><a href="/about/dealers">대리점 안내</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="/support" className="active">고객지원</a>
-            </li>
-          </ul>
-          <button className="mobile-menu-button" onClick={toggleMobileMenu}>
-            ☰
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
-          <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
-            <button className="mobile-menu-close" onClick={closeMobileMenu}>×</button>
-            <ul>
-              <li><a href="/products" onClick={closeMobileMenu}>제품소개</a></li>
-              <li><a href="/about" onClick={closeMobileMenu}>회사소개</a></li>
-              <li><a href="/support" onClick={closeMobileMenu}>고객지원</a></li>
-            </ul>
-          </div>
-        </div>
-      )}
-
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <div className="breadcrumb-container">
@@ -273,7 +320,11 @@ export default function BoardListPage({ boardSlug }) {
                       <span className="notice-badge">공지</span>
                     </td>
                     <td className="board-col-title">
-                      <a href={`/support/${boardSlug}/${notice.id}`} className="board-title-link">
+                      <a
+                        href={`/support/${boardSlug}/${notice.id}`}
+                        className="board-title-link"
+                        onClick={(e) => handlePostClick(e, notice)}
+                      >
                         {notice.title}
                         {notice.attachment_count > 0 && (
                           <span className="attachment-icon">📎</span>
@@ -303,11 +354,12 @@ export default function BoardListPage({ boardSlug }) {
                       <tr key={post.id}>
                         <td className="board-col-number">{postNumber}</td>
                         <td className="board-col-title">
-                          <a href={`/support/${boardSlug}/${post.id}`} className="board-title-link">
-                            {post.title}
-                            {post.attachment_count > 0 && (
-                              <span className="attachment-icon">📎</span>
-                            )}
+                          <a
+                            href={`/support/${boardSlug}/${post.id}`}
+                            className="board-title-link"
+                            onClick={(e) => handlePostClick(e, post)}
+                          >
+                            {renderPostTitle(post)}
                           </a>
                         </td>
                         <td className="board-col-author">{post.author}</td>
@@ -320,7 +372,19 @@ export default function BoardListPage({ boardSlug }) {
               </tbody>
             </table>
 
-            {/* Search Form */}
+            {/* Write Button + Search Form */}
+            {boardSlug === 'consultation' && (
+              <div style={{ textAlign: 'right', marginBottom: '0.5rem' }}>
+                <a href="/support/consultation/write"
+                  style={{
+                    display: 'inline-block', padding: '0.5rem 1.25rem',
+                    background: '#2c5f8a', color: 'white', borderRadius: '4px',
+                    textDecoration: 'none', fontSize: '0.9rem',
+                  }}>
+                  상담 작성
+                </a>
+              </div>
+            )}
             <div className="board-search">
               <form onSubmit={handleSearch}>
                 <select
@@ -352,24 +416,84 @@ export default function BoardListPage({ boardSlug }) {
         )}
       </div>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h4>COMPANY INFO</h4>
-            <p>(주)엘브이에스 대표이사: 김태화<br />사업자번호: 131-86-14914<br />
-            인천광역시 연수구 송도미래로 30 (송도동 214번지) 스마트밸리 B동 801~803호</p>
+      {/* 다운로드 모달 */}
+      {modalOpen && selectedPost && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeModal}>×</button>
+
+            <div className="modal-header">
+              <h2 className="modal-title">{selectedPost.title}</h2>
+              <div className="modal-meta">
+                <span className="modal-meta-item">
+                  <strong>작성자:</strong> {selectedPost.author}
+                </span>
+                <span className="modal-meta-item">
+                  <strong>작성일:</strong> {formatDate(selectedPost.created_at)}
+                </span>
+                <span className="modal-meta-item">
+                  <strong>조회수:</strong> {formatNumber(selectedPost.view_count)}
+                </span>
+              </div>
+            </div>
+
+            {postAttachments.length > 0 && (
+              <div className="modal-attachments">
+                <strong>첨부파일:</strong>
+                <ul className="modal-attachment-list">
+                  {postAttachments.map((file) => (
+                    <li key={file.id}>
+                      <a
+                        href={`/api/attachments/${file.id}/download`}
+                        className="modal-attachment-link"
+                      >
+                        📎 {file.original_filename}
+                        <span className="modal-file-size">({formatFileSize(file.file_size)})</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div
+              className="modal-body"
+              dangerouslySetInnerHTML={{ __html: selectedPost.content }}
+            />
           </div>
-          <div className="footer-section">
-            <h4>CONTACT US</h4>
-            <div className="footer-contact">
-              <div>📞 032-461-1800</div>
-              <div>📠 032-461-1001</div>
+        </div>
+      )}
+
+      {/* 비밀번호 확인 모달 */}
+      {passwordModalOpen && (
+        <div className="modal-overlay" onClick={closePasswordModal}>
+          <div className="password-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closePasswordModal}>×</button>
+            <h3>🔒 비밀글입니다</h3>
+            <p>비밀번호를 입력해주세요.</p>
+            <input
+              type="password"
+              className="password-input"
+              value={passwordInput}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                setPasswordInput(val);
+                setPasswordError('');
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && handlePasswordSubmit()}
+              inputMode="numeric"
+              maxLength={4}
+              placeholder="····"
+              autoFocus
+            />
+            <div className="password-error">{passwordError}</div>
+            <div className="password-buttons">
+              <button className="btn-password-cancel" onClick={closePasswordModal}>취소</button>
+              <button className="btn-password-confirm" onClick={handlePasswordSubmit}>확인</button>
             </div>
           </div>
         </div>
-        <p className="copyright">COPYRIGHT(C) (주)엘브이에스. ALL RIGHT RESERVED.</p>
-      </footer>
+      )}
     </>
   );
 }

@@ -1,0 +1,2260 @@
+[
+  {
+    "slug": "drt-drf-series",
+    "category": "general",
+    "data": {
+      "series": [
+        {
+          "name": "DRF Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-DRF-42R",
+              "SW / RD / GR / BL\n1.8 / 1.1 / 1.8 / 1.8",
+              "outerΦ42, innerΦ11, height20mm",
+              "12V / 24V",
+              "30EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRF-42R.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-DRF-54R",
+              "SW / RD / GR / BL\n3.6 / 2.2 / 3.6 / 3.6",
+              "outerΦ54, innerΦ15, height20mm",
+              "12V / 24V",
+              "60EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRF-54R.pdf"
+            ],
+            [
+              "3",
+              "LV-DRF-68R-V3",
+              "SW / RD / GR / BL\n5.4 / 3.3 / 5.4 / 5.4",
+              "outerΦ68, innerΦ29, height20mm",
+              "12V / 24V",
+              "90EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRF-68R.pdf"
+            ],
+            [
+              "4",
+              "LV-DRF-82R",
+              "SW / RD / GR / BL\n7.2 / 4.4 / 7.2 / 7.2",
+              "outerΦ54, innerΦ15, height20mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRF-82R.pdf"
+            ],
+            [
+              "5",
+              "LV-DRF-96R",
+              "SW / RD / GR / BL\n10.8 / 6.5 / 10.8 / 10.8",
+              "outerΦ96, innerΦ49, height20mm",
+              "12V / 24V",
+              "180EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRF-96R.pdf"
+            ],
+            [
+              "6",
+              "LV-DRF-117R",
+              "SW / RD / GR / BL\n14.4 / 8.7 / 14.4 / 14.4",
+              "outerΦ117, innerΦ70, height20mm",
+              "12V / 24V",
+              "240EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRF-117R.pdf"
+            ],
+            [
+              "7",
+              "LV-DRF-138R",
+              "SW / RD / GR / BL\n10.8 / 6.5 / 10.8 / 10.8",
+              "outerΦ138, innerΦ91, height20mm",
+              "12V / 24V",
+              "300EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRF-138R.pdf"
+            ],
+            [
+              "8",
+              "LV-DRF-175R",
+              "SW / RD / GR / BL\n14.4 / 8.7 / 14.4 / 14.4",
+              "outerΦ175, innerΦ109, height23mm",
+              "12V / 24V",
+              "240EA",
+              "Φ5 DIP TYPE",
+              "http://lvs.webmaker21.kr/pdf/LV-DRF-175R.pdf"
+            ],
+            [
+              "9",
+              "LV-DRF-205R",
+              "SW / RD / GR / BL\n18 / 10.8 / 18 / 18",
+              "outerΦ205, innerΦ139, height 23mm",
+              "12V / 24V",
+              "300EA",
+              "Φ5 DIP TYPE",
+              "http://lvs.webmaker21.kr/pdf/LV-DRF-205R.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-DRF-42R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRF-54R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRF-68R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRF-82R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRF-96R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRF-117R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRF-138R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRF-175R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRF-205R.pdf"
+          ]
+        },
+        {
+          "name": "DRT Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-DRT-27R",
+              "SW / RD / GR / BL\n0.9 / 0.5 / 0.9 / 0.9",
+              "outerΦ27, innerΦ10, height22mm",
+              "12V / 24V",
+              "15EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-27R.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-DRT-46R",
+              "SW / RD / GR / BL\n2.9 / 1.5 / 2.9 / 2.9",
+              "outerΦ46, innerΦ18, height20mm",
+              "12V / 24V",
+              "48EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-46R.pdf"
+            ],
+            [
+              "3",
+              "LV-DRT-70A",
+              "SW / RD / GR / BL\n5.4 / 3.3 / 5.4 / 5.4",
+              "outerΦ70, innerΦ31, height20mm",
+              "12V / 24V",
+              "90EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-70A.pdf"
+            ],
+            [
+              "4",
+              "LV-DRT-97A",
+              "SW / RD / GR / BL\n9 / 5.4 / 9 / 9",
+              "outerΦ97, innerΦ58, height20mm",
+              "12V / 24V",
+              "150EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-97A.pdf"
+            ],
+            [
+              "5",
+              "LV-DRT-119A",
+              "SW / RD / GR / BL\n14.4 / 8.7 / 14.4 / 14.4",
+              "outerΦ119, innerΦ72, height21.5mm",
+              "12V / 24V",
+              "240EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-119A.pdf"
+            ],
+            [
+              "6",
+              "LV-DRT-61B",
+              "SW / RD / GR / BL\n3.6 / 2.2 / 3.6 / 3.6",
+              "outerΦ61, innerΦ32, height20mm",
+              "12V / 24V",
+              "60EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-61B.pdf"
+            ],
+            [
+              "7",
+              "LV-DRT-81B",
+              "SW / RD / GR / BL\n5.4 / 3.3 / 5.4 / 5.4",
+              "outerΦ81, innerΦ52, height20mm",
+              "12V / 24V",
+              "90EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-81B.pdf"
+            ],
+            [
+              "8",
+              "LV-DRT-101B",
+              "SW / RD / GR / BL\n7.2 / 4.4 / 7.2 / 7.2",
+              "outerΦ101, innerΦ72, height20mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-101B.pdf"
+            ],
+            [
+              "9",
+              "LV-DRT-122B",
+              "SW / RD / GR / BL\n12.6 / 7.6 / 12.6 / 12.6",
+              "outerΦ122, innerΦ86, height22mm",
+              "12V / 24V",
+              "210EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-122B.pdf"
+            ],
+            [
+              "10",
+              "LV-DRT-150B",
+              "SW / RD / GR / BL\n16.2 / 9.8 / 16.2 / 16.2",
+              "outerΦ150, innerΦ114, height22m",
+              "12V / 24V",
+              "270EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-150B.pdf"
+            ],
+            [
+              "11",
+              "LV-DRT-176B",
+              "SW / RD / GR / BL\n25.2 / 15.2 / 25.2 / 25.2",
+              "outerΦ176, innerΦ133, height24mm",
+              "12V / 24V",
+              "420EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-176B.pdf"
+            ],
+            [
+              "12",
+              "LV-DRT-79C",
+              "SW / RD / GR / BL\n5.4 / 3.3 / 5.4 / 5.4",
+              "outerΦ79, innerΦ50, height 20mm",
+              "12V / 24V",
+              "90EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-79C.pdf"
+            ],
+            [
+              "13",
+              "LV-DRT-99C",
+              "SW / RD / GR / BL\n7.2 / 4.4 / 7.2 / 7.2",
+              "outerΦ99, innerΦ70mm, height 20mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-99C.pdf"
+            ],
+            [
+              "14",
+              "LV-DRT-118C",
+              "SW / RD / GR / BL\n7.2 / 4.4 / 7.2 / 7.2",
+              "outerΦ118, innerΦ84, height23mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DRT-118C.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-27R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-46R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-70A.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-97A.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-119A.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-61B.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-81B.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-101B.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-122B.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-150B.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-176B.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-79C.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-99C.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DRT-118C.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "dla2-dl-series",
+    "category": "general",
+    "data": {
+      "series": [
+        {
+          "name": "DLA2 Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-DLA2-77D",
+              "SW / RD / GR / BL\n5.4 / 3.3 / 5.4 / 5.4",
+              "outerΦ77, innerΦ34, height20mm",
+              "12V / 24V",
+              "90EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DLA2-77D.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-DLA2-97D",
+              "SW / RD / GR / BL\n7.2 / 4.4 / 7.2 / 7.2",
+              "outerΦ97, innerΦ54, height20mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DLA2-97D.pdf"
+            ],
+            [
+              "3",
+              "LV-DLA2-115D",
+              "SW / RD / GR / BL\n12.6 / 7.6 / 12.6 / 12.6",
+              "outerΦ115, innerΦ68, height23.5mm",
+              "12V / 24V",
+              "210EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DLA2-115D.pdf"
+            ],
+            [
+              "4",
+              "LV-DLA2-130D",
+              "SW / RD / GR / BL\n14.4 / 8.7 / 14.4 / 14.4",
+              "outerΦ130, innerΦ83, height23.5mm",
+              "12V / 24V",
+              "240EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DLA2-130D.pdf"
+            ],
+            [
+              "5",
+              "LV-DLA2-143D",
+              "SW / RD / GR / BL\n16.2 / 9.8 / 16.2 / 16.2",
+              "outerΦ143, innerΦ96, height23.5mm",
+              "12V / 24V",
+              "270EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DLA2-143D.pdf"
+            ],
+            [
+              "6",
+              "LV-DLA2-56E",
+              "SW / RD / GR / BL\n3.6 / 2.2 / 3.6 / 3.6",
+              "outerΦ56, innerΦ17, height20.5mm",
+              "12V / 24V",
+              "60EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DLA2-56E.pdf"
+            ],
+            [
+              "7",
+              "LV-DLA2-76E",
+              "SW / RD / GR / BL\n5.4 / 3.3 / 5.4 / 5.4",
+              "outerΦ76, innerΦ37, height20.5mm",
+              "12V / 24V",
+              "90EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DLA2-76E.pdf"
+            ],
+            [
+              "8",
+              "LV-DLA2-85E",
+              "SW / RD / GR / BL\n9 / 5.4 / 9 / 9",
+              "outerΦ208, innerΦ176, height22mm",
+              "12V / 24V",
+              "150EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DLA2-85E.pdf"
+            ],
+            [
+              "9",
+              "LV-DLA2-98E",
+              "SW / RD / GR / BL\n10.8 / 6.5 / 10.8 / 10.8",
+              "outerΦ98, innerΦ57, height24.5mm",
+              "12V / 24V",
+              "180EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DLA2-98E.pdf"
+            ],
+            [
+              "10",
+              "LV-DLA2-111E",
+              "SW / RD / GR / BL\n12.6 / 7.6 / 12.6 / 12.6",
+              "outerΦ111, innerΦ70, height 24.5mm",
+              "12V / 24V",
+              "210EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DLA2-111E.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-DLA2-77D.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DLA2-97D.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DLA2-115D.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DLA2-130D.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DLA2-143D.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DLA2-56E.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DLA2-76E.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DLA2-85E.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DLA2-98E.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DLA2-111E.pdf"
+          ]
+        },
+        {
+          "name": "DL Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-DL-63R",
+              "SW / RD / GR / BL\n1.8 / 1.1 / 1.8 / 1.8",
+              "outerΦ63, innerΦ30, height10mm",
+              "12V / 24V",
+              "30EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DL-63R.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-DL-106R",
+              "SW / RD / GR / BL\n3.6 / 2.2 / 3.6 / 3.6",
+              "outerΦ106, innerΦ73, height10mm",
+              "12V / 24V",
+              "60EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DL-106R.pdf"
+            ],
+            [
+              "3",
+              "LV-DL-149R",
+              "SW / RD / GR / BL\n5.4 / 3.3 / 5.4 / 5.4",
+              "outerΦ149, innerΦ116, height 10mm",
+              "12V / 24V",
+              "90EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DL-149R.pdf"
+            ],
+            [
+              "4",
+              "LV-DL-192R",
+              "SW / RD / GR / BL\n7.2 / 4.4 / 7.2 / 7.2",
+              "outer Φ192, innerΦ159, height10mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DL-192R.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-DL-63R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DL-106R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DL-149R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DL-192R.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "db-db2-dbs-series",
+    "category": "general",
+    "data": {
+      "series": [
+        {
+          "name": "DB Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-DB-29X16-V2",
+              "SW / RD / GR / BL\n1.1 / 0.6 / 1.1 / 1.1",
+              "W 39mm x D 18mm x H 21mm",
+              "12V / 24V",
+              "18EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DB-29X16-V2.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-DB-55X16-V2",
+              "SW / RD / GR / BL\n2.2 / 1.1 / 2.2 / 2.2",
+              "W 65mm x D 18mm x H 21mm",
+              "12V / 24V",
+              "36EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DB-55X16-V2.pdf"
+            ],
+            [
+              "3",
+              "LV-DB-82X16-V2",
+              "SW / RD / GR / BL\n3.3 / 1.7 / 3.3 / 3.3",
+              "W 92mm x D 18mm x H 21mm",
+              "12V / 24V",
+              "54EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DB-82X16-V2.pdf"
+            ],
+            [
+              "4",
+              "LV-DB-55X24-V2",
+              "SW / RD / GR / BL\n3.6 / 1.8 / 3.6 / 3.6",
+              "W 65mm x D 26mm x H21mm",
+              "12V / 24V",
+              "60EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DB-55X24-V2.pdf"
+            ],
+            [
+              "5",
+              "LV-DB-82X24-V2",
+              "SW / RD / GR / BL\n5.4 / 2.7 / 5.4 / 5.4",
+              "W 92mm x D 26mm x H 21mm",
+              "12V / 24V",
+              "90EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DB-82X24-V2.pdf"
+            ],
+            [
+              "6",
+              "LV-DB-108X24-V2",
+              "SW / RD / GR / BL\n7.2 / 3.6 / 7.2 / 7.2",
+              "W 118mm x D 26mm x H 21mm",
+              "12V / 24V",
+              "120EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DB-108X24-V2.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-DB-29X16-V2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB-55X16-V2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB-82X16-V2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB-55X24-V2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB-82X24-V2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB-108X24-V2.pdf"
+          ]
+        },
+        {
+          "name": "DB2 Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-DB2-45X15",
+              "SW / RD / GR / BL\n1.8 / 1.1 / 1.8 / 1.8",
+              "W 55mm x D 24.5mm x H 23mm",
+              "12V / 24V",
+              "30EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-45X15.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-DB2-90X15",
+              "SW / RD / GR / BL\n3.6 / 2.2 / 3.6 / 3.6",
+              "W 100mm x D 24.5mm x H 23mm",
+              "12V / 24V",
+              "60EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-90X15.pdf"
+            ],
+            [
+              "3",
+              "LV-DB2-135X15",
+              "SW / RD / GR / BL\n5.4 / 3.3 / 5.4 / 5.4",
+              "W 145mm x D 24.5mm x H 23mm",
+              "12V / 24V",
+              "90EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-135X15.pdf"
+            ],
+            [
+              "4",
+              "LV-DB2-180X15",
+              "SW / RD / GR / BL\n7.2 / 4.4 / 7.2 / 7.2",
+              "W 190mm x D 24.5mm x H 23mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-180X15.pdf"
+            ],
+            [
+              "5",
+              "LV-DB2-108X22-V3",
+              "SW / RD / GR / BL\n7.2 / 4.3 / 7.2 / 7.2",
+              "W 118mm x D 32mm x H 23mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-108X22-V3.pdf"
+            ],
+            [
+              "6",
+              "LV-DB2-160X22",
+              "SW / RD / GR / BL\n10.8 / 5.4 / 10.8 / 10.8",
+              "W 170mm x D 32mm x H 23mm",
+              "12V / 24V",
+              "180EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-160X22.pdf"
+            ],
+            [
+              "7",
+              "LV-DB2-240X22-V2",
+              "SW / RD / GR / BL\n16.2 / 8.1 / 16.2 / 16.2",
+              "W 250mm x D 32mm x H 23mm",
+              "12V / 24V",
+              "270EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-240X22.pdf"
+            ],
+            [
+              "8",
+              "LV-DB2-68X28",
+              "SW / RD / GR / BL\n5.4 / 3.3 / 5.4 / 5.4",
+              "W 78mm x D 38mm x H 23mm",
+              "12V / 24V",
+              "90EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-68X28.pdf"
+            ],
+            [
+              "9",
+              "LV-DB2-90X28",
+              "SW / RD / GR / BL\n7.2 / 4.4 / 7.2 / 7.2",
+              "W 100mm x D 38mm x H 23mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-90X28.pdf"
+            ],
+            [
+              "10",
+              "LV-DB2-113X28",
+              "SW / RD / GR / BL\n9 / 5.4 / 9 / 9",
+              "W 122.5mm x D 38mm x H 23mm",
+              "12V / 24V",
+              "150EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-113X28.pdf"
+            ],
+            [
+              "11",
+              "LV-DB2-135X28",
+              "SW / RD / GR / BL\n10.8 / 6.5 / 10.8 / 10.8",
+              "W 122.5mm x D 38mm x H 23mm",
+              "12V / 24V",
+              "180EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-135X28.pdf"
+            ],
+            [
+              "12",
+              "LV-DB2-158X28",
+              "SW / RD / GR / BL\n12.6 / 7.6 / 12.6 / 12.6",
+              "W 167.5mm x D 38mm x H 23mm",
+              "12V / 24V",
+              "210EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-158X28.pdf"
+            ],
+            [
+              "13",
+              "LV-DB2-180X28",
+              "SW / RD / GR / BL\n14.4 / 8.7 / 14.4 / 14.4",
+              "W 190mm x  D 38mm x H 23mm",
+              "12V / 24V",
+              "240EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-180X28.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-45X15.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-90X15.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-135X15.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-180X15.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-108X22-V3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-160X22.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-240X22.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-68X28.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-90X28.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-113X28.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-135X28.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-158X28.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-180X28.pdf"
+          ]
+        },
+        {
+          "name": "DBS Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-DB2-SL-OPTION BLOCK-L",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-SL-OPTION BLOCK-L.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-DB2-SL-OPTION BLOCK-S",
+              "http://lvs.webmaker21.kr/pdf/LV-DB2-SL-OPTION BLOCK-S.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-SL-OPTION BLOCK-L.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DB2-SL-OPTION BLOCK-S.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "ifrk-series",
+    "category": "general",
+    "data": {
+      "series": [
+        {
+          "name": "IFRK Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option",
+            "Power / Consumption(W)",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-IFRK-75RF1-V2",
+              "SW/RD/GR/BL",
+              "5.4 / 3.3 / 5.4 / 5.4",
+              "12V / 24V",
+              "90EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-75RF1-V2.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-IFRK-96RF3",
+              "SW/RD/GR/BL",
+              "7.2 / 4.4 / 7.2 / 7.2",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-96RF3.pdf"
+            ],
+            [
+              "3",
+              "LV-IFRK-118RF3",
+              "SW/RD/GR/BL",
+              "9 / 5.4 / 9 / 9",
+              "12V / 24V",
+              "150EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-118RF3.pdf"
+            ],
+            [
+              "4",
+              "LV-IFRK-139RF3",
+              "SW/RD/GR/BL",
+              "10.8 / 6.5 / 10.8 / 10.8",
+              "12V / 24V",
+              "180EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-139RF3.pdf"
+            ],
+            [
+              "5",
+              "LV-IFRK-161RF3",
+              "SW/RD/GR/BL",
+              "12.6 / 7.6 / 12.6 / 12.6",
+              "12V / 24V",
+              "210EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-161RF3.pdf"
+            ],
+            [
+              "6",
+              "LV-IFRK-182RF3",
+              "SW/RD/GR/BL",
+              "14.4 / 8.7 / 14.4 / 14.4",
+              "12V / 24V",
+              "240EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-182RF3.pdf"
+            ],
+            [
+              "7",
+              "LV-IFRK-204RF",
+              "SW/RD/GR/BL",
+              "16.2 / 9.8 / 16.2 / 16.2",
+              "12V / 24V",
+              "270EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-204RF.pdf"
+            ],
+            [
+              "8",
+              "LV-IFRK-75RT1-V2",
+              "SW/RD/GR/BL",
+              "5.4 / 3.3 / 5.4 / 5.4",
+              "12V / 24V",
+              "96EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-75RT1-V2.pdf"
+            ],
+            [
+              "9",
+              "LV-IFRK-96RT3",
+              "SW/RD/GR/BL",
+              "7.2 / 4.4 / 7.2 / 7.2",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-96RT.pdf"
+            ],
+            [
+              "10",
+              "LV-IFRK-118RT",
+              "SW/RD/GR/BL",
+              "9 / 5.4 / 9 / 9",
+              "12V / 24V",
+              "150EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-118RT.pdf"
+            ],
+            [
+              "11",
+              "LV-IFRK-139RT",
+              "SW/RD/GR/BL",
+              "10.8 / 6.5 / 10.8 / 10.8",
+              "12V / 24V",
+              "180EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-139RT.pdf"
+            ],
+            [
+              "12",
+              "LV-IFRK-161RT",
+              "SW/RD/GR/BL",
+              "12.6 / 7.6 / 12.6 / 12.6",
+              "12V / 24V",
+              "210EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-161RT.pdf"
+            ],
+            [
+              "13",
+              "LV-IFRK-182RT3",
+              "SW/RD/GR/BL",
+              "14.4 / 8.7 / 14.4 / 14.4",
+              "12V / 24V",
+              "240EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-182RT3.pdf"
+            ],
+            [
+              "14",
+              "LV-IFRK-204RT3",
+              "SW/RD/GR/BL",
+              "16.2 / 9.8 / 16.2 / 16.2",
+              "12V / 24V",
+              "270EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IFRK-204RT3.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-75RF1-V2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-96RF3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-118RF3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-139RF3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-161RF3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-182RF3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-204RF.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-75RT1-V2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-96RT.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-118RT.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-139RT.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-161RT.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-182RT3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFRK-204RT3.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "ila-series",
+    "category": "general",
+    "data": {
+      "series": [
+        {
+          "name": "ILA Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "Remarks",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-ILA-66R",
+              "SW / RD / GR / BL\n3.6 / 2.2 / 3.6 / 3.6",
+              "outerΦ66, innerΦ37, height34mm",
+              "12V / 24V",
+              "60EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-66R.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-ILA-88R",
+              "SW / RD / GR / BL\n5.4 / 3.3 / 5.4 / 5.4",
+              "outerΦ88, innerΦ59, height34mm",
+              "12V / 24V",
+              "90EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-88R.pdf"
+            ],
+            [
+              "3",
+              "LV-ILA-110R",
+              "SW / RD / GR / BL\n7.2 / 4.4 / 7.2 / 7.2",
+              "outerΦ110, innerΦ81, height34mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-110R.pdf"
+            ],
+            [
+              "4",
+              "LV-ILA-132RT",
+              "SW / RD / GR / BL\n9 / 5.4 / 9 / 9",
+              "outerΦ132, innerΦ103, height34mm",
+              "12V / 24V",
+              "150EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-132RT.pdf"
+            ],
+            [
+              "5",
+              "LV-ILA-154RT",
+              "SW / RD / GR / BL\n10.8 / 6.5 / 10.8 / 10.8",
+              "outerΦ154, innerΦ125, height34mm",
+              "12V / 24V",
+              "180EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-154RT.pdf"
+            ],
+            [
+              "6",
+              "LV-ILA-176RT",
+              "SW / RD / GR / BL\n12.6 / 7.6 / 12.6 / 12.6",
+              "outerΦ176, innerΦ147, height34mm",
+              "12V / 24V",
+              "210EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-176RT.pdf"
+            ],
+            [
+              "7",
+              "LV-ILA-246RT",
+              "SW / RD / GR / BL\n27 / 16.2 / 27 / 27",
+              "outerΦ246, innerΦ209, height41mm",
+              "12V / 24V",
+              "450EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-246RT.pdf"
+            ],
+            [
+              "8",
+              "LV-ILA-85SF",
+              "SW / RD / GR / BL\n3.6 / 2.2 / 3.6 / 3.6",
+              "W85mm, D85mm, H34mm",
+              "12V / 24V",
+              "60EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-85SF.pdf"
+            ],
+            [
+              "9",
+              "LV-ILA-94SF",
+              "SW / RD / GR / BL\n7.2 / 4.4 / 7.2 / 7.2",
+              "W94mm, D94mm, H34mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-94SF.pdf"
+            ],
+            [
+              "10",
+              "LV-ILA-162SF",
+              "SW / RD / GR / BL\n14.4 / 8.7 / 14.4 / 14.4",
+              "W162mm, D162mm, H34mm",
+              "12V / 24V",
+              "240EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-162SF.pdf"
+            ],
+            [
+              "11",
+              "LV-ILA-85ST",
+              "SW / RD / GR / BL\n3.6 / 2.2 / 3.6 / 3.6",
+              "W85mm, D85mm, H34mm",
+              "12V / 24V",
+              "60EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-85ST.pdf"
+            ],
+            [
+              "12",
+              "LV-ILA-94ST",
+              "SW / RD / GR / BL\n16.2 / 9.8 / 16.2 / 16.2",
+              "W94mm, D94mm, H34mm",
+              "12V / 24V",
+              "120EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-94ST.pdf"
+            ],
+            [
+              "13",
+              "LV-ILA-162ST",
+              "SW / RD / GR / BL\n14.4 / 8.7 / 14.4 / 14.4",
+              "W162mm, D162mm, H34mm",
+              "12V / 24V",
+              "240EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-ILA-162ST.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-66R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-88R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-110R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-132RT.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-154RT.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-176RT.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-246RT.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-85SF.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-94SF.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-162SF.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-85ST.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-94ST.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ILA-162ST.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "idm-series",
+    "category": "general",
+    "data": {
+      "series": [
+        {
+          "name": "IDM2 Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-IDM2-46R",
+              "SW / RD / GR / BL\n2.9 / 1.4 / 2.9 / 2.9",
+              "outerΦ46, innerΦ11, height40mm",
+              "12V / 24V",
+              "48EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IDM2-46R.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-IDM2-56R",
+              "SW / RD / GR / BL\n3.6 / 1.8 / 3.6 / 3.6",
+              "outerΦ56, innerΦ11, height40mm",
+              "12V / 24V",
+              "60EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IDM2-56R.pdf"
+            ],
+            [
+              "3",
+              "LV-IDM2-90R",
+              "SW / RD / GR / BL\n12.2 / 6.1 / 12.2 / 12.2",
+              "outerΦ90, innerΦ16, height70mm",
+              "12V / 24V",
+              "204EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IDM2-90R.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-IDM2-46R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IDM2-56R.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IDM2-90R.pdf"
+          ]
+        },
+        {
+          "name": "IDM3 Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-IDM3-75R-LCC-V7",
+              "SW / RD / GR / BL\n5.4 / 3.3 / 5.4 / 5.4",
+              "outerΦ50, innerΦ22, height41mm",
+              "12V / 24V",
+              "24EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IDM3-75R-LCC-V7.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-IDM3-100R-V2-LCC",
+              "SW / RD / GR / BL\n7.8 / 4.7 / 7.8 / 7.8",
+              "outerΦ100, innerΦ35, height 65mm",
+              "12V / 24V",
+              "39EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IDM3-100R-V2-LCC.pdf"
+            ],
+            [
+              "3",
+              "LV-IDM3-136R-V2-LCC",
+              "SW / RD / GR / BL\n10.2 / 6.2 / 10.2 / 10.2",
+              "outerΦ136, innerΦ40, height85mm",
+              "12V / 24V",
+              "51EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IDM3-136R-V2-LCC.pdf"
+            ],
+            [
+              "4",
+              "LV-IDM3-198R-LCC",
+              "SW / RD / GR / BL\n15.6 / 9.36 / 15.6 / 15.6",
+              "outerΦ198, innerΦ60, height114mm",
+              "12V / 24V",
+              "78EA",
+              "",
+              "http://lvs.webmaker21.kr/pdf/LV-IDM3-198R-LCC.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-IDM3-75R-LCC-V7.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IDM3-100R-V2-LCC.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IDM3-136R-V2-LCC.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IDM3-198R-LCC.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "ifs-ifs2-series",
+    "category": "general",
+    "data": {
+      "series": [
+        {
+          "name": "IFS Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-IFS-27X27-FL",
+              "SW / RD / GR / BL\n1 / 0.8 / 1 / 1",
+              "W 37mm x D 37mm x H 17mm",
+              "12V / 24V",
+              "16EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS-27X27-FL.pdf",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS-27X27-FL.dwg"
+            ],
+            [
+              "2",
+              "LV-IFS-45X45-FL",
+              "SW / RD / GR / BL\n2.2 / 1.1 / 2.2 / 2.2",
+              "W 53.5mm x D 55mm x H 24mm",
+              "12V / 24V",
+              "36EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS-45X45-FL.pdf"
+            ],
+            [
+              "3",
+              "LV-IFS-64X64",
+              "SW / RD / GR / BL\n4.9 / 2.5 / 4.9 / 4.9",
+              "W 73mm x  D 66mm x H 24mm",
+              "12V / 24V",
+              "81EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS-64X64.pdf"
+            ],
+            [
+              "4",
+              "LV-IFS-80X80-V4",
+              "SW / RD / GR / BL\n8.7 / 4.4 / 8.7 / 8.7",
+              "W 92.5mm x D 85.5mm x H 24mm",
+              "12V / 24V",
+              "144EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS-80X80-V4.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-IFS-27X27-FL.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFS-45X45-FL.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFS-64X64.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFS-80X80-V4.pdf"
+          ]
+        },
+        {
+          "name": "IFS2 Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-IFS2-60X50",
+              "SW / RD / GR / BL\n3.6 / 2.2 / 3.6 / 3.6",
+              "W 112mm x D 105mm x H 25mm",
+              "12V / 24V",
+              "90EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS2-60X50.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-IFS2-100X60",
+              "SW / RD / GR / BL\n10.8 / 6.5 / 10.8 / 10.8",
+              "W 100mm x D 70mm x H 33mm",
+              "12V / 24V",
+              "180EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS2-100X60.pdf"
+            ],
+            [
+              "3",
+              "LV-IFS2-100X90",
+              "SW / RD / GR / BL\n16.2 / 9.7 / 16.2 / 16.2",
+              "W 110mm x D 100mm x H 33mm",
+              "12V / 24V",
+              "270EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS2-100X90.pdf"
+            ],
+            [
+              "4",
+              "LV-IFS2-120X100-V2",
+              "SW / RD / GR / BL\n21.6 / 13 / 21.6 / 21.6",
+              "W 130mm x D 110mm x H 33mm",
+              "12V / 24V",
+              "360EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS2-120X100-V2.pdf"
+            ],
+            [
+              "5",
+              "LV-IFS2-150X100-V2",
+              "SW / RD / GR / BL\n27 / 16.2 / 27 / 27",
+              "W 160mm x D 110mm x H 33mm",
+              "12V / 24V",
+              "450EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS2-150X100-V2.pdf"
+            ],
+            [
+              "6",
+              "LV-IFS2-150X120",
+              "SW / RD / GR / BL\n36 / 21.6 / 36 / 36",
+              "W 160mm x D 130mm x H 33mm",
+              "12V / 24V",
+              "600EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS2-150X120.pdf"
+            ],
+            [
+              "7",
+              "LV-IFS2-210X200",
+              "SW / RD / GR / BL\n75.6 / 45.4 / 75.6 / 75.6",
+              "W 220mm x D 210mm x H 33mm",
+              "12V / 24V",
+              "1260EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS2-210X200.pdf"
+            ],
+            [
+              "8",
+              "LV-IFS2-240X200",
+              "SW / RD / GR / BL\n75.6 / 45.4 / 75.6 / 75.6",
+              "W 250mm x D 210mm x H 33mm",
+              "12V / 24V",
+              "1260EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-IFS2-240X200.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-IFS2-60X50.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFS2-100X60.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFS2-100X90.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFS2-120X100-V2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFS2-150X100-V2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFS2-150X120.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFS2-210X200.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-IFS2-240X200.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "ddm-series",
+    "category": "general",
+    "data": {
+      "series": [
+        {
+          "name": "DDM Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-DDM-85-26R2",
+              "SW / RD / GR / BL\n10.5 / 5.3 / 10.5 / 10.5",
+              "outerΦ85, innerΦ62, height26.5mm",
+              "12V / 24V",
+              "174EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DDM-85-26R2.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-DDM-100-30R3",
+              "SW / RD / GR / BL\n12.6 / 7.6 / 12.6 / 12.6",
+              "outerΦ100, innerΦ43, height30mm",
+              "12V / 24V",
+              "210EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DDM-100-30R3.pdf"
+            ],
+            [
+              "3",
+              "LV-DDM-126-21R2",
+              "SW / RD / GR / BL\n9.8 / 4.9 / 9.8 / 9.8",
+              "outerΦ126, innerΦ75, height21mm",
+              "12V / 24V",
+              "126EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DDM-126-21R2.pdf"
+            ],
+            [
+              "4",
+              "LV-DDM-126-30.5R3",
+              "SW / RD / GR / BL\n21.5 / 10.7 / 21.5 / 21.5",
+              "outerΦ126, innerΦ93.8, height30.5mm",
+              "12V / 24V",
+              "582EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DDM-126-30.5R3.pdf"
+            ],
+            [
+              "5",
+              "LV-DDM-126-44.5R3",
+              "SW / RD / GR / BL\n35.3 / 17.7 / 35.3 / 3.53",
+              "outerΦ126, innerΦ110, height44.5mm",
+              "12V / 24V",
+              "588EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DDM-126-44.5R3.pdf"
+            ],
+            [
+              "6",
+              "LV-DDM-126-46R3",
+              "SW / RD / GR / BL\n32.8 / 16.4 / 32.8 / 32.8",
+              "outerΦ126, innerΦ101, height46mm",
+              "12V / 24V",
+              "546EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DDM-126-46R3.pdf"
+            ],
+            [
+              "7",
+              "LV-DDM-126-46R4",
+              "SW / RD / GR / BL\n35 / 17.5 / 35 / 35",
+              "outerΦ126, innerΦ101, height 46mm",
+              "12V / 24V",
+              "582EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DDM-126-46R4.pdf"
+            ],
+            [
+              "8",
+              "LV-DDM-166-40R3",
+              "SW / RD / GR / BL\n51.2 / 25.6 / 51.2 / 51.2",
+              "outerΦ166, innerΦ150, height40mm",
+              "12V / 24V",
+              "852EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-DDM-166-40R3.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-DDM-85-26R2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DDM-100-30R3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DDM-126-21R2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DDM-126-30.5R3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DDM-126-44.5R3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DDM-126-46R3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DDM-126-46R4.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-DDM-166-40R3.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "icfv-series",
+    "category": "general",
+    "data": {
+      "series": [
+        {
+          "name": "ICFV Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-ICFV-022",
+              "SW / RD / GR / BL\n1.8 / 0.9 / 1.8 / 1.8",
+              "W 48mm x D 34mm x H 30mm",
+              "12V / 24V",
+              "20EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-022.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-ICFV-40X42",
+              "SW / RD / GR / BL\n2.2 / 1.1 / 2.2 / 2.2",
+              "W 75mm x D 50mm x H 49mm",
+              "12V / 24V",
+              "36EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-40X42.pdf"
+            ],
+            [
+              "3",
+              "LV-ICFV-050",
+              "SW / RD / GR / BL\n2.2 / 1.1 / 2.2 / 2.2",
+              "W 69.7mm x D 52.5mm x H 50.5mm",
+              "12V / 24V",
+              "36EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-050.pdf"
+            ],
+            [
+              "4",
+              "LV-ICFV-50X50",
+              "SW / RD / GR / BL\n4.4 / 2.2 / 4.4 / 4.4",
+              "W 97mm x D 60mm x H 60mm",
+              "12V / 24V",
+              "72EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-50X50.pdf"
+            ],
+            [
+              "5",
+              "LV-ICFV-60X50",
+              "SW / RD / GR / BL\n3.6 / 2.2 / 3.6 / 3.6",
+              "W 88mm x D 70mm x H 60mm",
+              "12V / 24V",
+              "90EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-60X50.pdf"
+            ],
+            [
+              "6",
+              "LV-ICFV-100X60-V2",
+              "SW / RD / GR / BL\n10.8 / 6.5 / 10.8 / 10.8",
+              "W 98mm x D 110mm x H 70mm",
+              "12V / 24V",
+              "180EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-100X60.pdf"
+            ],
+            [
+              "7",
+              "LV-ICFV-100X90",
+              "SW / RD / GR / BL\n16.2 / 9.7 / 16.2 / 16.2",
+              "W 128mm x D 110mm x H 100mm",
+              "12V / 24V",
+              "270EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-100X90.pdf"
+            ],
+            [
+              "8",
+              "LV-ICFV-120X100",
+              "SW / RD / GR / BL\n21.6 / 13 / 21.6 / 21.6",
+              "W 138mm x D 130mm x H 110mm",
+              "12V / 24V",
+              "360EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-120X100.pdf"
+            ],
+            [
+              "9",
+              "LV-ICFV-150X100",
+              "SW / RD / GR / BL\n27 / 16.2 / 27 / 27",
+              "W 138m x D 160mm x H 110mm",
+              "12V / 24V",
+              "450EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-150X100.pdf"
+            ],
+            [
+              "10",
+              "LV-ICFV-150X120",
+              "SW / RD / GR / BL\n36 / 21.6 / 36 / 36",
+              "W 158m x D 160mm x H 130mm",
+              "12V / 24V",
+              "600EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-150X120.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-022.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-40X42.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-050.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-50X50.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-60X50.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-100X60.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-100X90.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-120X100.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-150X100.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-150X120.pdf"
+          ]
+        },
+        {
+          "name": "ICFV-WV Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-ICFV-200X60-WV",
+              "SW / RD / GR / BL\n21.6 / 13 / 21.6 / 21.6",
+              "W 98mm x D 210mm x H 70mm",
+              "12V / 24V",
+              "360EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-200X60-WV.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-ICFV-210X100-WV",
+              "SW / RD / GR / BL\n29 / 17.3 / 29 / 29",
+              "W 138mm x D 220mm x H 110mm",
+              "12V / 24V",
+              "480EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-210X100-WV.pdf"
+            ],
+            [
+              "3",
+              "LV-ICFV-300X60-WV",
+              "SW / RD / GR / BL\n36 / 21.6 / 36 / 36",
+              "W 98mm x D 310mm x H 70mm",
+              "12V / 24V",
+              "600EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-300X60-WV.pdf"
+            ],
+            [
+              "4",
+              "LV-ICFV-300X100-WV",
+              "SW / RD / GR / BL\n54 / 36.4 / 54 / 54",
+              "W 138mm x D 310mm x H 110mm",
+              "12V / 24V",
+              "900EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV-300X100-WV.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-200X60-WV.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-210X100-WV.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-300X60-WV.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV-300X100-WV.pdf"
+          ]
+        },
+        {
+          "name": "ICFV2 Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "Color Option / Power Consumption(W)",
+            "Dimensions",
+            "Voltage option",
+            "Number of LEDs",
+            "REMARKS",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-ICFV2-40X42",
+              "SW / RD / GR / BL\n2.2 / 1.1 / 2.2 / 2.2",
+              "W 71mm x D 50mm x H 52mm",
+              "12V / 24V",
+              "36EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV2-40X42.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-ICFV2-50X50",
+              "SW / RD / GR / BL\n4.4 / 2.2 / 4.4 / 4.4",
+              "W 97mm x D 60mm x H 60mm",
+              "12V / 24V",
+              "72EA",
+              "기존제품",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV2-50X50.pdf"
+            ],
+            [
+              "3",
+              "LV-ICFV2-60X50",
+              "SW / RD / GR / BL\n5.4 / 3.2 / 5.4 / 5.4",
+              "W 88mm x D 70mm x H 60mm",
+              "12V / 24V",
+              "90EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV2-60X50.pdf"
+            ],
+            [
+              "4",
+              "LV-ICFV2-100X90",
+              "SW / RD / GR / BL\n16.2 / 9.7 / 16.2 / 16.2",
+              "W 128mm x D 110mm x H 100mm",
+              "12V / 24V",
+              "270EA",
+              "L2835",
+              "http://lvs.webmaker21.kr/pdf/LV-ICFV2-100X90.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV2-40X42.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV2-50X50.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV2-60X50.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-ICFV2-100X90.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "svl-series",
+    "category": "general",
+    "data": {
+      "series": [
+        {
+          "name": "SVL Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-SVL2-150x150-V2",
+              "http://lvs.webmaker21.kr/pdf/LV-SVL2-150x150-V2.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LV-SVL-130-67",
+              "http://lvs.webmaker21.kr/pdf/LV-SVL-130-67.pdf"
+            ],
+            [
+              "3",
+              "LV-SVL-BAR 130x50",
+              "http://lvs.webmaker21.kr/pdf/LV-SVL-BAR 130x50.pdf"
+            ],
+            [
+              "4",
+              "LV-SVL-FLAT 90x70",
+              "http://lvs.webmaker21.kr/pdf/LV-SVL-FLAT 90x70.pdf"
+            ],
+            [
+              "5",
+              "LV-SVL-RING-120-40R",
+              "http://lvs.webmaker21.kr/pdf/LV-SVL-RING-120-40R.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-SVL2-150x150-V2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-SVL-130-67.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-SVL-BAR 130x50.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-SVL-FLAT 90x70.pdf",
+            "http://lvs.webmaker21.kr/pdf/LV-SVL-RING-120-40R.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "en-series",
+    "category": "power",
+    "data": {
+      "series": [
+        {
+          "name": "EN Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg/manual Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LVS-EN-0212",
+              "http://lvs.webmaker21.kr/pdf/LVS-EN-0212.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LVS-EN-0412",
+              "http://lvs.webmaker21.kr/pdf/LVS-EN-0412.pdf"
+            ],
+            [
+              "3",
+              "LVS-EN-0812",
+              "http://lvs.webmaker21.kr/pdf/LVS-EN-0812.pdf"
+            ],
+            [
+              "4",
+              "EX series - Test Program",
+              ""
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LVS-EN-0212.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-EN-0412.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-EN-0812.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "es-series",
+    "category": "power",
+    "data": {
+      "series": [
+        {
+          "name": "ES Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg/manual Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LVS-ES-0224",
+              "http://lvs.webmaker21.kr/pdf/LVS-ES-0224.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LVS-ES-0424",
+              "http://lvs.webmaker21.kr/pdf/LVS-ES-0424.pdf"
+            ],
+            [
+              "3",
+              "LVS-ES-0824",
+              "http://lvs.webmaker21.kr/pdf/LVS-ES-0824.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LVS-ES-0224.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-ES-0424.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-ES-0824.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "et-series",
+    "category": "power",
+    "data": {
+      "series": [
+        {
+          "name": "ET Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LVS-ET-0205",
+              "http://lvs.webmaker21.kr/pdf/LVS-ET-0205.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LVS-ET-0405",
+              "http://lvs.webmaker21.kr/pdf/LVS-ET-0405.pdf"
+            ],
+            [
+              "3",
+              "LVS-ET-0805",
+              "http://lvs.webmaker21.kr/pdf/LVS-ET-0805.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LVS-ET-0205.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-ET-0405.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-ET-0805.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "pa-series",
+    "category": "power",
+    "data": {
+      "series": [
+        {
+          "name": "PA Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg/manual Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LVS-PA-300L2",
+              "http://lvs.webmaker21.kr/pdf/LVS-PA-300L2.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LVS-PA-1500L2",
+              "http://lvs.webmaker21.kr/pdf/LVS-PA-1500L2.pdf"
+            ],
+            [
+              "3",
+              "LVS-PA-3000L2",
+              "http://lvs.webmaker21.kr/pdf/LVS-PA-3000L2.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LVS-PA-300L2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-PA-1500L2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-PA-3000L2.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "dn-series",
+    "category": "power",
+    "data": {
+      "series": [
+        {
+          "name": "DN Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg/manual Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LVS-DN-0424",
+              "http://lvs.webmaker21.kr/pdf/LVS-DN-0424.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LVS-DN-1024",
+              "http://lvs.webmaker21.kr/pdf/LVS-DN-1024.pdf"
+            ],
+            [
+              "3",
+              "LVS-DN-1612",
+              "http://lvs.webmaker21.kr/pdf/LVS-DN-1612.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LVS-DN-0424.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-DN-1024.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-DN-1612.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "ds-series",
+    "category": "power",
+    "data": {
+      "series": [
+        {
+          "name": "DS Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg/manual Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LVS-DS-1624",
+              "http://lvs.webmaker21.kr/pdf/LVS-DS-1624.pdf",
+              "/ko/sub06/02.php"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LVS-DS-1624.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "hpls-lp30",
+    "category": "led",
+    "data": {
+      "series": [
+        {
+          "name": "HPLS Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg/manual Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LVS-HPLS-LP30",
+              "http://lvs.webmaker21.kr/pdf/LVS-HPLS-LP30.pdf",
+              "/ko/sub06/02.php"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LVS-HPLS-LP30.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "hpls-cw50",
+    "category": "led",
+    "data": {
+      "series": [
+        {
+          "name": "HPLS Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg/manual Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LVS-HPLS-CW50",
+              "http://lvs.webmaker21.kr/pdf/LVS-HPLS-CW50.pdf",
+              "http://lvs.webmaker21.kr/pdf/LVS-HPLS-CW50.dwg"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LVS-HPLS-CW50.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "hpls-s-fs50",
+    "category": "led",
+    "data": {
+      "series": [
+        {
+          "name": "HPLS Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg/manual Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LVS-HPLS-FS50-AF-V3",
+              "http://lvs.webmaker21.kr/pdf/LVS-HPLS-FS50-AF-V3.pdf",
+              "/ko/sub06/02.php"
+            ],
+            [
+              "2",
+              "LVS-HPLS-FS50-V3",
+              "http://lvs.webmaker21.kr/pdf/LVS-HPLS-FS50-V3.pdf"
+            ],
+            [
+              "3",
+              "LVS-HPLS-P200-V2",
+              "http://lvs.webmaker21.kr/pdf/LVS-HPLS-P200-V2.pdf"
+            ],
+            [
+              "4",
+              "LVS-HPLS-S50-AF-V3",
+              "http://lvs.webmaker21.kr/pdf/LVS-HPLS-S50-AF-V3.dwg"
+            ],
+            [
+              "5",
+              "LVS-HPLS-S50-V3",
+              "http://lvs.webmaker21.kr/pdf/LVS-HPLS-S50-V3.pdf"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LVS-HPLS-FS50-AF-V3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-HPLS-FS50-V3.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-HPLS-P200-V2.pdf",
+            "http://lvs.webmaker21.kr/pdf/LVS-HPLS-S50-V3.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "hpls-cw150-v2",
+    "category": "led",
+    "data": {
+      "series": [
+        {
+          "name": "HPLS Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg/manual Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LV-HPLS-CW150",
+              "http://lvs.webmaker21.kr/pdf/LV-HPLS-CW150.pdf",
+              "http://lvs.webmaker21.kr/en/sub06/02.php"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LV-HPLS-CW150.pdf"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "slug": "hpls-rgb-v4",
+    "category": "led",
+    "data": {
+      "series": [
+        {
+          "name": "HPLS Series List",
+          "columns": [
+            "No.",
+            "Model Name",
+            "pdf Download",
+            "dwg/manual Download"
+          ],
+          "rows": [
+            [
+              "1",
+              "LVS-HPLS-RGB-V4",
+              "http://lvs.webmaker21.kr/pdf/LVS_HPLS_RGB_V4.pdf",
+              "/ko/sub06/02.php"
+            ]
+          ],
+          "pdfFiles": [
+            "http://lvs.webmaker21.kr/pdf/LVS_HPLS_RGB_V4.pdf"
+          ]
+        }
+      ]
+    }
+  }
+]

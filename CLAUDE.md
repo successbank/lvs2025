@@ -1,159 +1,149 @@
 # CLAUDE.md
 
-이 파일은 Claude Code (claude.ai/code)가 이 저장소에서 작업할 때 참고할 수 있는 가이드를 제공합니다.
+# 개발팀 페르소나
+- .claude/CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## 프로젝트 개요
 
-LVS (Lighting for Vision System)는 조명 시스템 회사의 기업 웹사이트입니다. PostgreSQL과 Redis를 사용하는 Docker 기반 개발 환경에서 실행되는 Next.js 14 애플리케이션입니다.
-
-## 개발팀 페르소나
-- ./persona.md
-
-## 아키텍처
+LVS (Lighting for Vision System) — 산업용 LED 조명 전문 기업의 공식 웹사이트. Next.js 14 App Router 기반, Docker 4-컨테이너 스택으로 운영.
 
 ## ai와의 소통언어
 - 한국어
 
-**기술 스택:**
-- Next.js 14.2.5 with App Router (`src/app/`)
-- React 18.3.1
-- Node.js 18 (Alpine container)
-- PostgreSQL 15 (Alpine)
-- Redis 7 (Alpine)
-- Tailwind 디자인 활용.
-
-**Docker 서비스:**
-애플리케이션은 4개 컨테이너 스택으로 실행됩니다:
-- `lvs_app`: Next.js 애플리케이션 (포트 5555)
-- `lvs_db`: PostgreSQL 데이터베이스 (포트 5556)
-- `lvs_redis`: Redis 캐시 (포트 5557)
-- `lvs_adminer`: 데이터베이스 관리 UI (포트 5558)
-
-모든 서비스는 `app-network` 브리지 네트워크를 통해 통신합니다. 데이터는 `postgres_data`와 `redis_data` 볼륨에 영구 저장됩니다.
+## 개발팀 페르소나
+- ./persona.md
 
 ## 개발 명령어
 
-### 애플리케이션 시작
-
 ```bash
-# 모든 서비스 시작 (프로젝트 루트에서)
+# 서비스 시작/중지
 docker-compose up -d
-
-# 애플리케이션 로그 확인
+docker-compose down
+docker-compose restart app
 docker-compose logs -f app
 
-# 모든 서비스 중지
-docker-compose down
-
-# 코드 변경 후 재시작
-docker-compose restart app
-```
-
-애플리케이션은 http://localhost:5555 에서 접근할 수 있습니다.
-
-### 컨테이너 접근
-
-```bash
-# app 컨테이너에서 명령 실행
+# 컨테이너 내부 접근
 docker exec -it lvs_app sh
-
-# PostgreSQL CLI 접근
 docker exec -it lvs_db psql -U lvs_user -d lvs_db
 
-# Redis CLI 접근
-docker exec -it lvs_redis redis-cli -a VQfag01CFpqJ62IB
+# Prisma (컨테이너 내부에서 실행)
+docker exec lvs_app npx prisma generate
+docker exec lvs_app npx prisma migrate dev
+docker exec lvs_app npx prisma studio
+docker exec lvs_app node prisma/seed.js
+
+# 패키지 설치 (컨테이너 내부에서 실행)
+docker exec lvs_app npm install <패키지명>
 ```
 
-### 데이터베이스 관리
+접속: http://localhost:5555 | Adminer: http://localhost:5558
 
-- Adminer UI: http://localhost:5558
-- System: PostgreSQL
-- Server: database
-- Username: lvs_user
-- Password: Yhq7xeDCA5h6v0ApgAVuX4588
-- Database: lvs_db
+## 아키텍처
 
-## 프로젝트 구조
+### 기술 스택
+- Next.js 14.2.5 (App Router), React 18.3.1, Node.js 18
+- PostgreSQL 15, Redis 7 (캐시 — 현재 미활용)
+- Next-Auth (JWT, CredentialsProvider)
+- Prisma ORM + pg Pool (하이브리드)
+- 순수 CSS (`globals.css` 3,500줄+ — Tailwind 미사용)
+- Path alias: `@/*` → `./*` (jsconfig.json)
+
+### 하이브리드 데이터 레이어 (핵심 패턴)
+
+프로젝트는 두 가지 DB 접근 방식을 혼용한다:
+
+| 영역 | 접근 방식 | 사용처 |
+|------|-----------|--------|
+| 제품/카테고리/사용자 | **Prisma ORM** | `src/lib/prisma.js` 싱글톤 |
+| 게시판/게시물/첨부파일 | **pg Pool 직접 쿼리** | `src/app/api/boards/`, `posts/`, `attachments/` |
+
+- Prisma 스키마: `src/prisma/schema.prisma` — Product, Category, User, Slider, Inquiry 등
+- 게시판 스키마: `database/create-board-schema.sql` — boards, posts, post_attachments 테이블 (Prisma 외부)
+
+새 기능 추가 시 어느 레이어를 사용할지 기존 패턴을 따를 것.
+
+### 렌더링 패턴
+
+**Server Component → Client Component 분리**:
+- 페이지 파일(`page.js`)은 Server Component로 Prisma 데이터를 직접 조회
+- `src/components/`의 컴포넌트는 `'use client'`로 인터랙티브 UI 처리
+- 데이터 흐름: `page.js (SSR fetch)` → props → `Component.js (CSR)`
+
+게시판 계열은 예외적으로 Client Component에서 `/api/` 엔드포인트를 fetch.
+
+### 라우트 구조
 
 ```
-lvs/
-├── src/                    # Next.js 애플리케이션
-│   ├── app/               # App Router 페이지 및 레이아웃
-│   │   ├── page.js        # 메인 홈페이지 컴포넌트
-│   │   ├── layout.js      # 루트 레이아웃
-│   │   └── styles/        # 전역 CSS
-│   └── package.json       # 의존성 패키지
-├── docker/                # 멀티 스테이지 Dockerfile
-├── docker-compose.yml     # 서비스 오케스트레이션
-├── .env                   # 환경 설정
-├── logs/                  # 애플리케이션 로그
-├── backups/              # 데이터베이스 백업
-└── query/                # SQL 쿼리 스크립트
+/                              홈페이지 (SSR)
+/products                      제품 메인
+/products/general-lighting      일반조명 (12개 서브카테고리)
+/products/power-supply          파워서플라이 (6개 시리즈)
+/products/led-lightsource       LED 광원 (7개 제품군)
+/products/[slug]                제품 상세
+/about/us|organization|why-led|certifications|dealers
+/support                        고객지원 메인
+/support/notices|tech-guide|downloads|consultation  게시판 목록
+/support/notices/[postId]       게시판 상세 (각 게시판 동일 패턴)
+/support/contact|catalog        연락처, 카탈로그 신청
+/admin/login                    관리자 로그인
+/admin/dashboard                관리자 대시보드
 ```
 
-## 애플리케이션 아키텍처
+### API 엔드포인트
 
-**현재 구현 사항:**
-애플리케이션은 단일 페이지 홈페이지(`src/app/page.js`)로 다음 기능을 포함합니다:
-- React hooks를 사용한 클라이언트 사이드 컴포넌트 상태 관리
-- 햄버거 메뉴가 있는 모바일 반응형 내비게이션
-- 3단계 다중 스텝 위저드 제품 찾기 모달
-- 5초마다 자동 회전하는 제품 쇼케이스 캐러셀 히어로 섹션
-- 회사 전화번호가 있는 연락처 배너
-- 표준 조명 제품 그리드
-- 공지사항 섹션 및 서비스 빠른 링크
-- 회사 정보가 있는 푸터
-
-**주요 UI 컴포넌트:**
-- 상단 내비게이션 바와 메인 내비게이션이 있는 헤더
-- 슬라이드 인 애니메이션이 있는 모바일 메뉴 오버레이
-- 옵션 카드 및 단계 내비게이션이 있는 제품 찾기 모달
-- 4개 슬라이드가 있는 히어로 캐러셀
-- 12개 조명 제품 카테고리를 표시하는 제품 그리드
-- 연락처 배너 및 푸터
-
-**상태 관리:**
-모든 상태는 React useState hooks로 로컬 관리됩니다:
-- `mobileMenuOpen`: 모바일 메뉴 표시 여부 제어
-- `productFinderOpen`: 제품 찾기 모달 제어
-- `currentStep`: 제품 찾기 위저드 단계 추적 (1-3)
-- `selectedOption`: 각 위저드 단계에서 선택된 옵션 저장
-- `currentSlide`: 현재 히어로 캐러셀 슬라이드 추적
-
-## 환경 변수
-
-데이터베이스 연결은 docker-compose.yml에서 자동 구성됩니다:
 ```
-DATABASE_URL=postgresql://lvs_user:Yhq7xeDCA5h6v0ApgAVuX4588@database:5432/lvs_db
-REDIS_URL=redis://:VQfag01CFpqJ62IB@redis:6379
+/api/auth/[...nextauth]         Next-Auth 인증
+/api/products                   GET (필터: categoryId, slug, isNew, isFeatured, page, limit) / POST
+/api/products/[id]              GET / PUT / DELETE
+/api/categories                 GET (?parentId, ?includeChildren) / POST
+/api/boards                     GET (?slug, ?type)
+/api/posts                      GET (?boardSlug, ?page, ?search, ?searchField)
+/api/posts/[id]                 GET / PUT / DELETE
+/api/attachments/[id]/download  파일 다운로드 (스트리밍)
 ```
 
-포트 매핑 (`.env`에 정의):
-- WEB_PORT=5555 (Next.js app)
-- DB_PORT=5556 (PostgreSQL)
-- REDIS_PORT=5557 (Redis)
-- ADMINER_PORT=5558 (Adminer)
+### 게시판 시스템
 
-## 개발 워크플로우
+4개 게시판 slug: `notices`, `tech-guide`, `downloads`, `consultation`
+- 공통 컴포넌트: `BoardListPage.js` (목록), `BoardViewPage.js` (상세)
+- 첨부파일 업로드 경로: `src/uploads/downloads/`, `src/uploads/notices/`
+- 게시물 검색: 제목/내용/작성자 필드별 ILIKE 검색
 
-**핫 리로드:**
-소스 코드는 자동 핫 리로드를 위해 볼륨 마운트됩니다(`./src:/app:cached`). `WATCHPACK_POLLING=true` 환경 변수가 Docker에서 파일 감시를 활성화합니다.
+### 파일 구조 (주요 경로)
 
-**Node Modules:**
-호스트와 컨테이너 환경 간 충돌을 방지하기 위해 `node_modules`와 `.next`는 익명 볼륨에 보관됩니다.
+```
+src/app/page.js              홈페이지 (SSR → HomePage 컴포넌트)
+src/app/layout.js            루트 레이아웃
+src/app/providers.js         SessionProvider 래퍼
+src/app/styles/globals.css   전체 스타일 (순수 CSS)
+src/components/              16개 클라이언트 컴포넌트
+src/lib/prisma.js            Prisma 클라이언트 싱글톤
+src/lib/auth.js              인증 헬퍼
+src/prisma/schema.prisma     DB 스키마 (276줄)
+src/prisma/seed.js           시드 데이터
+src/uploads/                 사용자 업로드 파일
+database/                    게시판 SQL 스크립트 (Prisma 외부)
+```
 
-**컨테이너 시작:**
-app 컨테이너는 시작 시 자동으로 `npm install && npm run dev`를 실행합니다.
+## Docker 환경
 
-## 중요 참고사항
+| 컨테이너 | 호스트 포트 | 내부 포트 |
+|-----------|-------------|-----------|
+| lvs_app | 5555 | 3000 |
+| lvs_db | 5556 | 5432 |
+| lvs_redis | 5557 | 6379 |
+| lvs_adminer | 5558 | 8080 |
 
-1. **호스트에서 직접 `npm run dev` 실행 금지** - 포트 충돌을 방지하기 위해 항상 `docker-compose up` 사용
-2. **컨테이너 내부에서 데이터베이스 연결** 시 `localhost:5556`이 아닌 서비스 이름 `database:5432` 사용 필수
-3. **컨테이너 내부에서 Redis 연결** 시 `localhost:5557`이 아닌 `redis:6379` 사용 필수
-4. **모바일 메뉴 상태**는 메뉴가 열릴 때 스크롤을 방지하기 위해 body overflow를 관리합니다
-5. **제품 찾기**는 다음 단계로 진행하기 전에 옵션 선택이 필요한 3단계 위저드입니다
-6. **캐러셀 자동 회전**은 useEffect 클린업을 사용하여 5초 간격으로 실행됩니다
+- 소스 볼륨 마운트: `./src:/app:cached` (핫 리로드)
+- `node_modules`와 `.next`는 익명 볼륨 (호스트/컨테이너 충돌 방지)
+- 컨테이너 내부 DB 연결: `database:5432` (localhost 아닌 서비스명 사용)
 
-## 현재 상태
+## 중요 제약사항
 
-프로젝트는 정적 콘텐츠가 있는 기본 홈페이지 구현을 가지고 있습니다. 조명 제품 데이터는 컴포넌트에 하드코딩되어 있습니다. 백엔드 API, 데이터베이스 스키마 또는 관리자 패널은 아직 구현되지 않았습니다.
+1. **호스트에서 `npm run dev` 직접 실행 금지** — 반드시 Docker Compose 사용
+2. **스타일링은 순수 CSS** — `globals.css`에 모든 스타일 정의, Tailwind 클래스 사용하지 않음
+3. **게시판 관련 DB 작업은 pg Pool** — Prisma 모델에 게시판 테이블이 없음
+4. **제품 관련 DB 작업은 Prisma** — 쿼리 빌더 일관성 유지
+5. **인증 보호가 클라이언트 사이드 전용** — 서버 미들웨어 없음, 관리 API 호출 시 세션 직접 확인 필요

@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { Pool } from 'pg';
 
 // GET /api/posts/[id] - 게시물 상세 조회 및 조회수 증가
@@ -29,6 +31,25 @@ export async function GET(request, { params }) {
     }
 
     const post = postResult.rows[0];
+
+    // 비밀글 접근 제어
+    if (post.is_secret && post.board_slug === 'consultation') {
+      const session = await getServerSession(authOptions);
+      const isAdmin = session && session.user.role === 'ADMIN';
+      const password = searchParams.get('password');
+      const passwordMatch = password && post.password === password;
+
+      if (!isAdmin && !passwordMatch) {
+        // 비밀번호 필드 제거 후 content 차단
+        const { password: _, ...safePost } = post;
+        return NextResponse.json({
+          post: { ...safePost, content: null, requiresPassword: true },
+          attachments: [],
+          prevPost: null,
+          nextPost: null,
+        });
+      }
+    }
 
     // 첨부파일 조회
     const attachmentsResult = await pool.query(
@@ -64,8 +85,11 @@ export async function GET(request, { params }) {
       [post.board_id, post.created_at]
     );
 
+    // 응답에서 password 필드 제거
+    const { password: _, ...safePost } = post;
+
     return NextResponse.json({
-      post,
+      post: safePost,
       attachments: attachmentsResult.rows,
       prevPost: prevResult.rows[0] || null,
       nextPost: nextResult.rows[0] || null,
@@ -83,6 +107,11 @@ export async function GET(request, { params }) {
 
 // PATCH /api/posts/[id] - 게시물 수정 (관리자 전용)
 export async function PATCH(request, { params }) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: '권한이 없습니다.' }, { status: 401 });
+  }
+
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
   });
@@ -153,6 +182,11 @@ export async function PATCH(request, { params }) {
 
 // DELETE /api/posts/[id] - 게시물 삭제 (관리자 전용)
 export async function DELETE(request, { params }) {
+  const session = await getServerSession(authOptions);
+  if (!session || session.user.role !== 'ADMIN') {
+    return NextResponse.json({ error: '권한이 없습니다.' }, { status: 401 });
+  }
+
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
   });

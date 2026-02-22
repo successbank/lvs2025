@@ -79,6 +79,7 @@ model Product {
   order           Int            @default(0)
   viewCount       Int            @default(0)
   relatedProducts String[]       @default([])
+  seriesData      Json?
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 

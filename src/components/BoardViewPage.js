@@ -1,27 +1,46 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import '../app/styles/globals.css';
 
 export default function BoardViewPage({ boardSlug, postId }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === 'ADMIN';
+
   const [post, setPost] = useState(null);
   const [attachments, setAttachments] = useState([]);
   const [prevPost, setPrevPost] = useState(null);
   const [nextPost, setNextPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [requiresPassword, setRequiresPassword] = useState(false);
+  const [gatePassword, setGatePassword] = useState('');
+  const [gateError, setGateError] = useState('');
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`/api/posts/${postId}?incrementView=true`);
+        // sessionStorage에서 저장된 비밀번호 확인
+        const savedPw = sessionStorage.getItem(`post_pw_${postId}`);
+        let url = `/api/posts/${postId}?incrementView=true`;
+        if (savedPw) {
+          url += `&password=${encodeURIComponent(savedPw)}`;
+        }
+
+        const response = await fetch(url);
         const data = await response.json();
 
         if (data.post) {
-          setPost(data.post);
-          setAttachments(data.attachments || []);
-          setPrevPost(data.prevPost);
-          setNextPost(data.nextPost);
+          if (data.post.requiresPassword) {
+            setPost(data.post);
+            setRequiresPassword(true);
+          } else {
+            setPost(data.post);
+            setAttachments(data.attachments || []);
+            setPrevPost(data.prevPost);
+            setNextPost(data.nextPost);
+            setRequiresPassword(false);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch post:', error);
@@ -33,14 +52,42 @@ export default function BoardViewPage({ boardSlug, postId }) {
     fetchData();
   }, [postId]);
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-    document.body.style.overflow = !mobileMenuOpen ? 'hidden' : '';
-  };
+  const handleGateSubmit = async () => {
+    if (!gatePassword) {
+      setGateError('비밀번호를 입력해주세요.');
+      return;
+    }
 
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-    document.body.style.overflow = '';
+    try {
+      // 비밀번호 확인
+      const verifyRes = await fetch(`/api/posts/${postId}/verify-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: gatePassword }),
+      });
+      const verifyData = await verifyRes.json();
+
+      if (!verifyData.verified) {
+        setGateError(verifyData.error || '비밀번호가 일치하지 않습니다.');
+        return;
+      }
+
+      // 비밀번호 저장 후 다시 조회
+      sessionStorage.setItem(`post_pw_${postId}`, gatePassword);
+
+      const response = await fetch(`/api/posts/${postId}?incrementView=false&password=${encodeURIComponent(gatePassword)}`);
+      const data = await response.json();
+
+      if (data.post && !data.post.requiresPassword) {
+        setPost(data.post);
+        setAttachments(data.attachments || []);
+        setPrevPost(data.prevPost);
+        setNextPost(data.nextPost);
+        setRequiresPassword(false);
+      }
+    } catch {
+      setGateError('비밀번호 확인에 실패했습니다.');
+    }
   };
 
   const formatDate = (dateString) => {
@@ -68,66 +115,6 @@ export default function BoardViewPage({ boardSlug, postId }) {
 
   return (
     <>
-      {/* Header */}
-      <div className="header-top">
-        <div className="header-top-content">
-          <a href="/about/dealers">대리점 안내</a>
-          <a href="/support/tech-guide">기술지원</a>
-          <a href="/support/downloads">다운로드 센터</a>
-          <a href="/about/careers">인재채용</a>
-          <a href="/en">ENGLISH</a>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="main-nav">
-        <div className="nav-container">
-          <a href="/" className="logo">
-            <div className="logo-text">LVS</div>
-          </a>
-          <ul className="nav-menu">
-            <li>
-              <a href="/products">제품소개</a>
-              <ul className="dropdown-menu">
-                <li><a href="/products/general-lighting">일반조명</a></li>
-                <li><a href="/products/power-supply">파워서플라이</a></li>
-                <li><a href="/products/led-lightsource">LED LIGHTSOURCE</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="/about">회사소개</a>
-              <ul className="dropdown-menu">
-                <li><a href="/about/us">회사소개</a></li>
-                <li><a href="/about/organization">개요 및 조직도</a></li>
-                <li><a href="/about/why-led">Why LED</a></li>
-                <li><a href="/about/certifications">인증현황</a></li>
-                <li><a href="/about/dealers">대리점 안내</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="/support" className="active">고객지원</a>
-            </li>
-          </ul>
-          <button className="mobile-menu-button" onClick={toggleMobileMenu}>
-            ☰
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
-          <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
-            <button className="mobile-menu-close" onClick={closeMobileMenu}>×</button>
-            <ul>
-              <li><a href="/products" onClick={closeMobileMenu}>제품소개</a></li>
-              <li><a href="/about" onClick={closeMobileMenu}>회사소개</a></li>
-              <li><a href="/support" onClick={closeMobileMenu}>고객지원</a></li>
-            </ul>
-          </div>
-        </div>
-      )}
-
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <div className="breadcrumb-container">
@@ -137,7 +124,7 @@ export default function BoardViewPage({ boardSlug, postId }) {
           <span>&gt;</span>
           <a href={`/support/${boardSlug}`}>{post?.board_name || '게시판'}</a>
           <span>&gt;</span>
-          <span>{post?.title || '게시물'}</span>
+          <span>{requiresPassword ? '비밀글' : (post?.title || '게시물')}</span>
         </div>
       </div>
 
@@ -170,11 +157,41 @@ export default function BoardViewPage({ boardSlug, postId }) {
             <p>게시물을 찾을 수 없습니다.</p>
             <a href={`/support/${boardSlug}`} className="btn-primary">목록으로</a>
           </div>
+        ) : requiresPassword ? (
+          /* 비밀번호 게이트 */
+          <div className="board-password-gate">
+            <div className="gate-icon">🔒</div>
+            <h3>비밀글입니다</h3>
+            <p>이 게시물은 비밀글로 등록되었습니다.<br/>비밀번호를 입력해주세요.</p>
+            <input
+              type="password"
+              className="password-input"
+              value={gatePassword}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                setGatePassword(val);
+                setGateError('');
+              }}
+              onKeyDown={(e) => e.key === 'Enter' && handleGateSubmit()}
+              inputMode="numeric"
+              maxLength={4}
+              placeholder="····"
+              autoFocus
+            />
+            <div className="password-error">{gateError}</div>
+            <div className="gate-buttons">
+              <button className="btn-gate-confirm" onClick={handleGateSubmit}>확인</button>
+              <a href={`/support/${boardSlug}`} className="btn-gate-list">목록</a>
+            </div>
+          </div>
         ) : (
           <>
             {/* Post Header */}
             <div className="board-view-header">
-              <h2 className="board-view-title">{post.title}</h2>
+              <h2 className="board-view-title">
+                {post.is_secret && <span className="secret-icon">🔒</span>}
+                {post.title}
+              </h2>
               <div className="board-view-meta">
                 <span className="board-meta-item">
                   <strong>작성자:</strong> {post.author}
@@ -242,25 +259,6 @@ export default function BoardViewPage({ boardSlug, postId }) {
           </>
         )}
       </div>
-
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h4>COMPANY INFO</h4>
-            <p>(주)엘브이에스 대표이사: 김태화<br />사업자번호: 131-86-14914<br />
-            인천광역시 연수구 송도미래로 30 (송도동 214번지) 스마트밸리 B동 801~803호</p>
-          </div>
-          <div className="footer-section">
-            <h4>CONTACT US</h4>
-            <div className="footer-contact">
-              <div>📞 032-461-1800</div>
-              <div>📠 032-461-1001</div>
-            </div>
-          </div>
-        </div>
-        <p className="copyright">COPYRIGHT(C) (주)엘브이에스. ALL RIGHT RESERVED.</p>
-      </footer>
     </>
   );
 }

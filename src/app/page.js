@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 
 async function getData() {
   try {
-    const [categories, featuredProducts, notices, companyInfo] = await Promise.all([
+    const [categories, featuredProducts, notices, companyInfo, sliders, partners] = await Promise.all([
       prisma.category.findMany({
         where: { isActive: true, parentId: null },
         include: {
@@ -19,11 +19,10 @@ async function getData() {
         include: {
           category: true,
           images: {
-            where: { isMain: true },
-            take: 1,
+            orderBy: { order: 'asc' },
           },
         },
-        take: 4,
+        take: 6,
         orderBy: { order: 'asc' },
       }),
       prisma.notice.findMany({
@@ -32,6 +31,14 @@ async function getData() {
         take: 5,
       }),
       prisma.companyInfo.findFirst(),
+      prisma.slider.findMany({
+        where: { isActive: true },
+        orderBy: { order: 'asc' },
+      }),
+      prisma.partner.findMany({
+        where: { isActive: true },
+        orderBy: { order: 'asc' },
+      }),
     ]);
 
     return {
@@ -39,6 +46,8 @@ async function getData() {
       featuredProducts,
       notices,
       companyInfo,
+      sliders,
+      partners,
     };
   } catch (error) {
     console.error('Data fetch error:', error);
@@ -47,6 +56,8 @@ async function getData() {
       featuredProducts: [],
       notices: [],
       companyInfo: null,
+      sliders: [],
+      partners: [],
     };
   }
 }
@@ -56,4 +67,3 @@ export default async function Page() {
 
   return <HomePage {...data} />;
 }
-

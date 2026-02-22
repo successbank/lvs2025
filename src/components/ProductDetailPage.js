@@ -4,99 +4,120 @@ import { useState } from 'react';
 import '../app/styles/globals.css';
 
 export default function ProductDetailPage({ product }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [inquiryOpen, setInquiryOpen] = useState(false);
+  const [inquiryForm, setInquiryForm] = useState({ name: '', password: '', content: '' });
+  const [inquirySubmitting, setInquirySubmitting] = useState(false);
+  const [inquirySuccess, setInquirySuccess] = useState(false);
+  const [seriesModalOpen, setSeriesModalOpen] = useState(false);
+  const [activeSeriesIndex, setActiveSeriesIndex] = useState(0);
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-    document.body.style.overflow = !mobileMenuOpen ? 'hidden' : '';
-  };
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-    document.body.style.overflow = '';
-  };
-
+  const seriesList = product.seriesData?.series || [];
   const mainImage = product.images?.find(img => img.isMain) || product.images?.[0];
   const images = product.images || [];
 
+  const openInquiry = () => {
+    setInquiryOpen(true);
+    setInquirySuccess(false);
+    setInquiryForm({ name: '', password: '', content: '' });
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeInquiry = () => {
+    setInquiryOpen(false);
+    setInquirySuccess(false);
+    document.body.style.overflow = '';
+  };
+
+  const openSeriesModal = (idx) => {
+    setActiveSeriesIndex(idx);
+    setSeriesModalOpen(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeSeriesModal = () => {
+    setSeriesModalOpen(false);
+    document.body.style.overflow = '';
+  };
+
+  const renderCell = (cellValue) => {
+    if (!cellValue) return '';
+    // PDF/DWG 다운로드 링크 감지
+    if (typeof cellValue === 'string' && cellValue.match(/\.pdf$/i)) {
+      return <a href={cellValue} target="_blank" rel="noopener noreferrer" className="series-download-link">PDF</a>;
+    }
+    if (typeof cellValue === 'string' && (cellValue.includes('sub06') || cellValue.match(/\.dwg$/i))) {
+      return <a href="/support/downloads" className="series-download-link">DWG</a>;
+    }
+    // 줄바꿈 처리
+    if (typeof cellValue === 'string' && cellValue.includes('\n')) {
+      return cellValue.split('\n').map((line, i) => (
+        <span key={i}>{line}{i < cellValue.split('\n').length - 1 && <br />}</span>
+      ));
+    }
+    return cellValue;
+  };
+
+  const handleInquirySubmit = async (e) => {
+    e.preventDefault();
+
+    if (!inquiryForm.name || !inquiryForm.password || !inquiryForm.content) {
+      alert('모든 필수 항목을 입력해주세요.');
+      return;
+    }
+
+    if (!/^\d{4}$/.test(inquiryForm.password)) {
+      alert('비밀번호는 4자리 숫자로 입력해주세요.');
+      return;
+    }
+
+    setInquirySubmitting(true);
+    try {
+      const res = await fetch('/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          boardId: 'board-consultation',
+          title: `[제품문의] ${product.name}`,
+          content: inquiryForm.content,
+          author: inquiryForm.name,
+          password: inquiryForm.password,
+          isSecret: true,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || '문의 등록에 실패했습니다.');
+      }
+
+      setInquirySuccess(true);
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setInquirySubmitting(false);
+    }
+  };
+
   return (
     <>
-      {/* Header */}
-      <div className="header-top">
-        <div className="header-top-content">
-          <a href="/about/dealers">대리점 안내</a>
-          <a href="/support/tech-guide">기술지원</a>
-          <a href="/support/downloads">다운로드 센터</a>
-          <a href="/about/careers">인재채용</a>
-          <a href="/en">ENGLISH</a>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="main-nav">
-        <div className="nav-container">
-          <a href="/" className="logo">
-            <div className="logo-text">LVS</div>
-          </a>
-          <ul className="nav-menu">
-            <li>
-              <a href="/products" className="active">제품소개</a>
-              <ul className="dropdown-menu">
-                <li><a href="/products/general-lighting">일반조명</a></li>
-                <li><a href="/products/power-supply">파워서플라이</a></li>
-                <li><a href="/products/led-lightsource">LED LIGHTSOURCE</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="/about">회사소개</a>
-              <ul className="dropdown-menu">
-                <li><a href="/about/us">회사소개</a></li>
-                <li><a href="/about/organization">개요 및 조직도</a></li>
-                <li><a href="/about/why-led">Why LED</a></li>
-                <li><a href="/about/certifications">인증현황</a></li>
-                <li><a href="/about/dealers">대리점 안내</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="/support">고객지원</a>
-            </li>
-          </ul>
-          <button className="mobile-menu-button" onClick={toggleMobileMenu}>
-            ☰
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
-          <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
-            <button className="mobile-menu-close" onClick={closeMobileMenu}>×</button>
-            <ul>
-              <li><a href="/products" onClick={closeMobileMenu}>제품소개</a></li>
-              <li><a href="/about" onClick={closeMobileMenu}>회사소개</a></li>
-              <li><a href="/support" onClick={closeMobileMenu}>고객지원</a></li>
-            </ul>
-          </div>
-        </div>
-      )}
-
       {/* Breadcrumb */}
       <div className="breadcrumb">
-        <a href="/">Home</a>
-        <span>&gt;</span>
-        <a href="/products">제품소개</a>
-        {product.category?.parent && (
-          <>
-            <span>&gt;</span>
-            <a href={`/products/${product.category.parent.slug}`}>{product.category.parent.name}</a>
-          </>
-        )}
-        <span>&gt;</span>
-        <a href={`/products/${product.category?.slug || ''}`}>{product.category?.name}</a>
-        <span>&gt;</span>
-        <span>{product.name}</span>
+        <div className="breadcrumb-container">
+          <a href="/">Home</a>
+          <span>&gt;</span>
+          <a href="/products">제품소개</a>
+          {product.category?.parent && (
+            <>
+              <span>&gt;</span>
+              <a href={`/products/${product.category.parent.slug}`}>{product.category.parent.name}</a>
+            </>
+          )}
+          <span>&gt;</span>
+          <a href={`/products/${product.category?.slug || ''}`}>{product.category?.name}</a>
+          <span>&gt;</span>
+          <span>{product.name}</span>
+        </div>
       </div>
 
       {/* Page Header */}
@@ -178,9 +199,23 @@ export default function ProductDetailPage({ product }) {
             </div>
 
             <div className="product-actions">
-              <a href="/support/contact" className="btn btn-primary">문의하기</a>
+              <button onClick={openInquiry} className="btn btn-primary">문의하기</button>
               <a href="/support/downloads" className="btn btn-secondary">자료 다운로드</a>
             </div>
+
+            {seriesList.length > 0 && (
+              <div className="series-buttons">
+                {seriesList.map((series, idx) => (
+                  <button
+                    key={idx}
+                    className="btn btn-series"
+                    onClick={() => openSeriesModal(idx)}
+                  >
+                    {series.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -239,24 +274,138 @@ export default function ProductDetailPage({ product }) {
         )}
       </div>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h4>COMPANY INFO</h4>
-            <p>(주)엘브이에스 대표이사: 김태화<br />사업자번호: 131-86-14914<br />
-            인천광역시 연수구 송도미래로 30 (송도동 214번지) 스마트밸리 B동 801~803호</p>
+      {/* 문의하기 모달 */}
+      {inquiryOpen && (
+        <div className="modal-overlay" onClick={closeInquiry}>
+          <div className="inquiry-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeInquiry}>×</button>
+
+            {inquirySuccess ? (
+              <div className="inquiry-success">
+                <div className="inquiry-success-icon">✓</div>
+                <h3>문의가 등록되었습니다</h3>
+                <p>빠른 시일 내에 답변 드리겠습니다.<br/>입력하신 비밀번호로 상담실에서 확인하실 수 있습니다.</p>
+                <a href="/support/consultation" className="inquiry-success-link">
+                  상담실 바로가기
+                </a>
+              </div>
+            ) : (
+              <>
+                <h2>제품 문의</h2>
+                <p className="inquiry-subtitle">{product.name}에 대해 문의하기</p>
+
+                <form onSubmit={handleInquirySubmit} className="inquiry-form">
+                  <div className="inquiry-form-row">
+                    <div className="inquiry-form-group">
+                      <label>이름 <span className="required">*</span></label>
+                      <input
+                        type="text"
+                        value={inquiryForm.name}
+                        onChange={(e) => setInquiryForm(prev => ({ ...prev, name: e.target.value }))}
+                        placeholder="이름을 입력해주세요"
+                        required
+                      />
+                    </div>
+                    <div className="inquiry-form-group">
+                      <label>비밀번호 <span className="required">*</span></label>
+                      <input
+                        type="password"
+                        value={inquiryForm.password}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                          setInquiryForm(prev => ({ ...prev, password: val }));
+                        }}
+                        placeholder="숫자 4자리"
+                        inputMode="numeric"
+                        maxLength={4}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="inquiry-form-group">
+                    <label>제목</label>
+                    <input
+                      type="text"
+                      value={`[제품문의] ${product.name}`}
+                      disabled
+                    />
+                  </div>
+
+                  <div className="inquiry-form-group">
+                    <label>문의 내용 <span className="required">*</span></label>
+                    <textarea
+                      value={inquiryForm.content}
+                      onChange={(e) => setInquiryForm(prev => ({ ...prev, content: e.target.value }))}
+                      placeholder="문의 내용을 입력해주세요"
+                      rows={5}
+                      required
+                    />
+                  </div>
+
+                  <div className="inquiry-notice">
+                    비밀글로 등록되며, 입력하신 비밀번호로 확인하실 수 있습니다.
+                  </div>
+
+                  <div className="inquiry-buttons">
+                    <button type="button" className="btn-inquiry-cancel" onClick={closeInquiry}>
+                      취소
+                    </button>
+                    <button type="submit" className="btn-inquiry-submit" disabled={inquirySubmitting}>
+                      {inquirySubmitting ? '등록 중...' : '문의 등록'}
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
           </div>
-          <div className="footer-section">
-            <h4>CONTACT US</h4>
-            <div className="footer-contact">
-              <div>📞 032-461-1800</div>
-              <div>📠 032-461-1001</div>
+        </div>
+      )}
+
+      {/* 시리즈 테이블 모달 */}
+      {seriesModalOpen && seriesList[activeSeriesIndex] && (
+        <div className="modal-overlay" onClick={closeSeriesModal}>
+          <div className="series-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeSeriesModal}>×</button>
+            <h2>{seriesList[activeSeriesIndex].name}</h2>
+
+            {seriesList.length > 1 && (
+              <div className="series-tabs">
+                {seriesList.map((series, idx) => (
+                  <button
+                    key={idx}
+                    className={`series-tab ${idx === activeSeriesIndex ? 'active' : ''}`}
+                    onClick={() => setActiveSeriesIndex(idx)}
+                  >
+                    {series.name.replace(' Series List', '')}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div className="series-table-wrapper">
+              <table className="series-table">
+                <thead>
+                  <tr>
+                    {seriesList[activeSeriesIndex].columns.map((col, idx) => (
+                      <th key={idx}>{col}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {seriesList[activeSeriesIndex].rows.map((row, rowIdx) => (
+                    <tr key={rowIdx}>
+                      {row.map((cell, cellIdx) => (
+                        <td key={cellIdx}>{renderCell(cell)}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-        <p className="copyright">COPYRIGHT(C) (주)엘브이에스. ALL RIGHT RESERVED.</p>
-      </footer>
+      )}
     </>
   );
 }

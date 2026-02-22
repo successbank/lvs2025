@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import '../app/styles/globals.css';
 
 export default function SubcategoryPage({ categorySlug, subcategorySlug }) {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [category, setCategory] = useState(null);
   const [subcategory, setSubcategory] = useState(null);
   const [products, setProducts] = useState([]);
@@ -47,78 +46,8 @@ export default function SubcategoryPage({ categorySlug, subcategorySlug }) {
     fetchData();
   }, [categorySlug, subcategorySlug]);
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-    document.body.style.overflow = !mobileMenuOpen ? 'hidden' : '';
-  };
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-    document.body.style.overflow = '';
-  };
-
   return (
     <>
-      {/* Header */}
-      <div className="header-top">
-        <div className="header-top-content">
-          <a href="/about/dealers">대리점 안내</a>
-          <a href="/support/tech-guide">기술지원</a>
-          <a href="/support/downloads">다운로드 센터</a>
-          <a href="/about/careers">인재채용</a>
-          <a href="/en">ENGLISH</a>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="main-nav">
-        <div className="nav-container">
-          <a href="/" className="logo">
-            <div className="logo-text">LVS</div>
-          </a>
-          <ul className="nav-menu">
-            <li>
-              <a href="/products" className="active">제품소개</a>
-              <ul className="dropdown-menu">
-                <li><a href="/products/general-lighting">일반조명</a></li>
-                <li><a href="/products/power-supply">파워서플라이</a></li>
-                <li><a href="/products/led-lightsource">LED LIGHTSOURCE</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="/about">회사소개</a>
-              <ul className="dropdown-menu">
-                <li><a href="/about/us">회사소개</a></li>
-                <li><a href="/about/organization">개요 및 조직도</a></li>
-                <li><a href="/about/why-led">Why LED</a></li>
-                <li><a href="/about/certifications">인증현황</a></li>
-                <li><a href="/about/dealers">대리점 안내</a></li>
-              </ul>
-            </li>
-            <li>
-              <a href="/support">고객지원</a>
-            </li>
-          </ul>
-          <button className="mobile-menu-button" onClick={toggleMobileMenu}>
-            ☰
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
-          <div className="mobile-menu" onClick={(e) => e.stopPropagation()}>
-            <button className="mobile-menu-close" onClick={closeMobileMenu}>×</button>
-            <ul>
-              <li><a href="/products" onClick={closeMobileMenu}>제품소개</a></li>
-              <li><a href="/about" onClick={closeMobileMenu}>회사소개</a></li>
-              <li><a href="/support" onClick={closeMobileMenu}>고객지원</a></li>
-            </ul>
-          </div>
-        </div>
-      )}
-
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <div className="breadcrumb-container">
@@ -194,25 +123,6 @@ export default function SubcategoryPage({ categorySlug, subcategorySlug }) {
           </div>
         )}
       </div>
-
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h4>COMPANY INFO</h4>
-            <p>(주)엘브이에스 대표이사: 김태화<br />사업자번호: 131-86-14914<br />
-            인천광역시 연수구 송도미래로 30 (송도동 214번지) 스마트밸리 B동 801~803호</p>
-          </div>
-          <div className="footer-section">
-            <h4>CONTACT US</h4>
-            <div className="footer-contact">
-              <div>📞 032-461-1800</div>
-              <div>📠 032-461-1001</div>
-            </div>
-          </div>
-        </div>
-        <p className="copyright">COPYRIGHT(C) (주)엘브이에스. ALL RIGHT RESERVED.</p>
-      </footer>
     </>
   );
 }
