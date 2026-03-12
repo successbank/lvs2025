@@ -60,10 +60,7 @@ export default function Navigation({ companyInfo }) {
       <nav className={`main-nav ${isScrolled ? 'nav-scrolled' : ''}`}>
         <div className="nav-container">
           <a href="/" className="logo">
-            <div className="logo-mark">
-              <span className="logo-text">LVS</span>
-              <span className="logo-sub">Lighting for Vision System</span>
-            </div>
+            <img src="/images/logo.png" alt="LVS - Lighting for Vision System" className="logo-img" />
           </a>
           <ul className="nav-menu">
             <li>
@@ -126,10 +123,7 @@ export default function Navigation({ companyInfo }) {
       <div className={`mobile-menu-overlay ${mobileMenuOpen ? 'active' : ''}`} onClick={closeMobileMenu}></div>
       <div className={`mobile-menu ${mobileMenuOpen ? 'active' : ''}`}>
         <div className="mobile-menu-header">
-          <div className="logo-mark">
-            <span className="logo-text">LVS</span>
-            <span className="logo-sub">Lighting for Vision System</span>
-          </div>
+          <img src="/images/logo.png" alt="LVS" className="logo-img mobile-logo-img" />
           <div className="mobile-menu-close" onClick={closeMobileMenu}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#333" strokeWidth="2">
               <path d="M18 6L6 18M6 6l12 12"/>

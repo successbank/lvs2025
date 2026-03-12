@@ -86,6 +86,10 @@ body {
   height: 64px;
 }
 
+.nav-scrolled .logo-img {
+  height: 36px;
+}
+
 .nav-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -128,6 +132,16 @@ body {
   letter-spacing: 1.5px;
   text-transform: uppercase;
   margin-top: 2px;
+}
+
+.logo-img {
+  height: 45px;
+  width: auto;
+  object-fit: contain;
+}
+
+.mobile-logo-img {
+  height: 32px;
 }
 
 .nav-menu {
@@ -2058,6 +2072,10 @@ body {
 
   .logo-sub {
     font-size: 8px;
+  }
+
+  .logo-img {
+    height: 36px;
   }
 
   .hero {
