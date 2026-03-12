@@ -19,3 +19,12 @@ node_modules/
 !src/**/*.txt
 !database/**/*.txt
 generate-all-files.sh
+
+# User uploads (바이너리 — Docker 볼륨으로 관리)
+src/uploads/downloads/
+src/uploads/sliders/
+src/uploads/notices/
+src/uploads/consultation/
+
+# Temp migration scripts
+src/migrate-old-downloads.js
