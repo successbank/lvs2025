@@ -8,6 +8,7 @@ const menuItems = [
   { href: '/admin/dashboard', label: '대시보드', icon: '📊' },
   { href: '/admin/products', label: '제품 관리', icon: '📦' },
   { href: '/admin/categories', label: '카테고리 관리', icon: '📁' },
+  { href: '/admin/lineup-icons', label: '라인업 아이콘', icon: '🎨' },
   { href: '/admin/inquiries', label: '문의 관리', icon: '💬' },
   { href: '/admin/catalog-requests', label: '카탈로그 신청', icon: '📋' },
   { href: '/admin/notices', label: '공지사항 관리', icon: '📢' },

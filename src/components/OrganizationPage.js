@@ -39,144 +39,157 @@ export default function OrganizationPage({ companyInfo }) {
       <section className="content-section">
         <div className="container">
           {/* Company Overview */}
-          <div className="company-intro">
-            <h2>회사 개요</h2>
-            <div className="company-info-grid" style={{ marginTop: '30px' }}>
-              <div className="info-card">
-                <div className="info-label">회사명</div>
-                <div className="info-value">{companyInfo?.name || '(주)엘브이에스'}</div>
-              </div>
-              <div className="info-card">
-                <div className="info-label">대표이사</div>
-                <div className="info-value">{companyInfo?.ceo || '김태화'}</div>
-              </div>
-              <div className="info-card">
-                <div className="info-label">설립일</div>
-                <div className="info-value">2005년 1월</div>
-              </div>
-              <div className="info-card">
-                <div className="info-label">사업자등록번호</div>
-                <div className="info-value">{companyInfo?.business_number || '131-86-14914'}</div>
-              </div>
-              <div className="info-card">
-                <div className="info-label">업종</div>
-                <div className="info-value">산업용 LED 조명 제조 및 판매</div>
-              </div>
-              <div className="info-card">
-                <div className="info-label">주요사업</div>
-                <div className="info-value">머신비전용 조명, 일반조명, 파워서플라이</div>
-              </div>
-              <div className="info-card">
-                <div className="info-label">본사 주소</div>
-                <div className="info-value">{companyInfo?.address || '인천광역시 연수구 송도미래로 30'}</div>
-              </div>
-              <div className="info-card">
-                <div className="info-label">연락처</div>
-                <div className="info-value">
-                  Tel: {companyInfo?.phone || '032-461-1800'}<br/>
-                  Fax: {companyInfo?.fax || '032-461-1001'}
+          <div className="ovw-section">
+            <h2 className="ovw-section-title">회사 개요</h2>
+
+            {/* Profile Header */}
+            <div className="ovw-profile-header">
+              <span className="ovw-profile-badge">Since 2005</span>
+              <h3 className="ovw-company-name">{companyInfo?.name || '(주)엘브이에스'}</h3>
+              <p className="ovw-company-subtitle">산업용 LED 조명 전문 기업</p>
+            </div>
+
+            {/* Key Facts Strip */}
+            <div className="ovw-keyfacts">
+              <div className="ovw-keyfact-item">
+                <div className="ovw-keyfact-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                 </div>
+                <span className="ovw-keyfact-value">2005</span>
+                <span className="ovw-keyfact-label">설립연도</span>
               </div>
-              <div className="info-card">
-                <div className="info-label">임직원 수</div>
-                <div className="info-value">약 25명</div>
+              <div className="ovw-keyfact-divider" />
+              <div className="ovw-keyfact-item">
+                <div className="ovw-keyfact-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                </div>
+                <span className="ovw-keyfact-value">25명</span>
+                <span className="ovw-keyfact-label">임직원</span>
+              </div>
+              <div className="ovw-keyfact-divider" />
+              <div className="ovw-keyfact-item">
+                <div className="ovw-keyfact-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </div>
+                <span className="ovw-keyfact-value">LED 조명</span>
+                <span className="ovw-keyfact-label">주요 사업</span>
+              </div>
+              <div className="ovw-keyfact-divider" />
+              <div className="ovw-keyfact-item">
+                <div className="ovw-keyfact-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <span className="ovw-keyfact-value">인천 송도</span>
+                <span className="ovw-keyfact-label">본사 소재지</span>
+              </div>
+            </div>
+
+            {/* Details Table */}
+            <div className="ovw-details-table">
+              <div className="ovw-details-row">
+                <div className="ovw-details-label">대표이사</div>
+                <div className="ovw-details-value">{companyInfo?.ceo || '김태화'}</div>
+              </div>
+              <div className="ovw-details-row">
+                <div className="ovw-details-label">사업자등록번호</div>
+                <div className="ovw-details-value">{companyInfo?.business_number || '131-86-14914'}</div>
+              </div>
+              <div className="ovw-details-row">
+                <div className="ovw-details-label">본사 주소</div>
+                <div className="ovw-details-value">{companyInfo?.address || '인천광역시 연수구 송도미래로 30'}</div>
+              </div>
+              <div className="ovw-details-row">
+                <div className="ovw-details-label">연락처</div>
+                <div className="ovw-details-value">
+                  Tel: {companyInfo?.phone || '032-461-1800'} &nbsp;|&nbsp; Fax: {companyInfo?.fax || '032-461-1001'}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Organization Chart */}
-          <div className="org-chart">
-            <h2 style={{ fontSize: '32px', fontWeight: '700', color: '#333', marginBottom: '40px', textAlign: 'center' }}>조직도</h2>
+          <div className="orgchart-section">
+            <h2 className="orgchart-section-title">조직도</h2>
 
-            {/* CEO Level */}
-            <div className="org-level">
-              <div className="org-boxes" style={{ maxWidth: '300px', margin: '0 auto' }}>
-                <div className="org-box ceo">
-                  <div className="org-title">대표이사</div>
-                  <div className="org-name">{companyInfo?.ceo || '김태화'}</div>
+            <div className="orgchart-tree">
+              {/* CEO */}
+              <div className="orgchart-ceo-level">
+                <div className="orgchart-node orgchart-node--ceo">
+                  <div className="orgchart-node-title">대표이사</div>
+                  <div className="orgchart-node-name">{companyInfo?.ceo || '김태화'}</div>
                 </div>
               </div>
-            </div>
 
-            {/* Executive Level */}
-            <div className="org-level">
-              <div className="org-boxes">
-                <div className="org-box">
-                  <div className="org-title">경영지원본부</div>
-                  <div className="org-name">총무/인사/회계</div>
-                </div>
-                <div className="org-box">
-                  <div className="org-title">연구개발본부</div>
-                  <div className="org-name">제품개발/기술연구</div>
-                </div>
-                <div className="org-box">
-                  <div className="org-title">생산본부</div>
-                  <div className="org-name">제조/품질관리</div>
-                </div>
-                <div className="org-box">
-                  <div className="org-title">영업본부</div>
-                  <div className="org-name">국내/해외 영업</div>
-                </div>
-              </div>
-            </div>
+              {/* Vertical connector from CEO */}
+              <div className="orgchart-connector-vertical" />
 
-            {/* Department Level */}
-            <div className="org-level">
-              <h3 style={{ fontSize: '20px', color: '#666', marginBottom: '20px' }}>경영지원본부</h3>
-              <div className="org-boxes">
-                <div className="org-box">
-                  <div className="org-title">총무팀</div>
-                </div>
-                <div className="org-box">
-                  <div className="org-title">인사팀</div>
-                </div>
-                <div className="org-box">
-                  <div className="org-title">회계팀</div>
-                </div>
-              </div>
-            </div>
+              {/* Horizontal branch line */}
+              <div className="orgchart-connector-horizontal" />
 
-            <div className="org-level">
-              <h3 style={{ fontSize: '20px', color: '#666', marginBottom: '20px' }}>연구개발본부</h3>
-              <div className="org-boxes">
-                <div className="org-box">
-                  <div className="org-title">기술연구팀</div>
+              {/* Division columns */}
+              <div className="orgchart-divisions">
+                {/* 경영지원본부 */}
+                <div className="orgchart-division">
+                  <div className="orgchart-div-connector" />
+                  <div className="orgchart-node orgchart-node--division orgchart-node--mgmt">
+                    <div className="orgchart-node-title">경영지원본부</div>
+                  </div>
+                  <div className="orgchart-teams">
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">총무팀</div>
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">인사팀</div>
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">회계팀</div>
+                  </div>
                 </div>
-                <div className="org-box">
-                  <div className="org-title">제품개발팀</div>
-                </div>
-                <div className="org-box">
-                  <div className="org-title">설계팀</div>
-                </div>
-              </div>
-            </div>
 
-            <div className="org-level">
-              <h3 style={{ fontSize: '20px', color: '#666', marginBottom: '20px' }}>생산본부</h3>
-              <div className="org-boxes">
-                <div className="org-box">
-                  <div className="org-title">생산관리팀</div>
+                {/* 연구개발본부 */}
+                <div className="orgchart-division">
+                  <div className="orgchart-div-connector" />
+                  <div className="orgchart-node orgchart-node--division orgchart-node--rnd">
+                    <div className="orgchart-node-title">연구개발본부</div>
+                  </div>
+                  <div className="orgchart-teams">
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">기술연구팀</div>
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">제품개발팀</div>
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">설계팀</div>
+                  </div>
                 </div>
-                <div className="org-box">
-                  <div className="org-title">제조팀</div>
-                </div>
-                <div className="org-box">
-                  <div className="org-title">품질관리팀</div>
-                </div>
-              </div>
-            </div>
 
-            <div className="org-level">
-              <h3 style={{ fontSize: '20px', color: '#666', marginBottom: '20px' }}>영업본부</h3>
-              <div className="org-boxes">
-                <div className="org-box">
-                  <div className="org-title">국내영업팀</div>
+                {/* 생산본부 */}
+                <div className="orgchart-division">
+                  <div className="orgchart-div-connector" />
+                  <div className="orgchart-node orgchart-node--division orgchart-node--prod">
+                    <div className="orgchart-node-title">생산본부</div>
+                  </div>
+                  <div className="orgchart-teams">
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">생산관리팀</div>
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">제조팀</div>
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">품질관리팀</div>
+                  </div>
                 </div>
-                <div className="org-box">
-                  <div className="org-title">해외영업팀</div>
-                </div>
-                <div className="org-box">
-                  <div className="org-title">고객지원팀</div>
+
+                {/* 영업본부 */}
+                <div className="orgchart-division">
+                  <div className="orgchart-div-connector" />
+                  <div className="orgchart-node orgchart-node--division orgchart-node--sales">
+                    <div className="orgchart-node-title">영업본부</div>
+                  </div>
+                  <div className="orgchart-teams">
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">국내영업팀</div>
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">해외영업팀</div>
+                    <div className="orgchart-team-connector" />
+                    <div className="orgchart-node orgchart-node--team">고객지원팀</div>
+                  </div>
                 </div>
               </div>
             </div>

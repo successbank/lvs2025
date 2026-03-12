@@ -91,7 +91,12 @@ export default function CategoryPage({ categorySlug }) {
                       href={`/products/${categorySlug}/${subcat.slug}`}
                       className="subcategory-card"
                     >
-                      <div className="subcategory-icon">💡</div>
+                      <div className="subcategory-icon">
+                        {subcat.iconUrl ? (
+                          <img src={subcat.iconUrl} alt={subcat.name}
+                               style={{ width: '40px', height: '40px', objectFit: 'contain' }} />
+                        ) : '💡'}
+                      </div>
                       <div className="subcategory-name">{subcat.name}</div>
                     </a>
                   ))}

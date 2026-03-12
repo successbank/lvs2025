@@ -1,48 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import '../app/styles/globals.css';
 
 export default function ContactPage({ companyInfo }) {
-  useEffect(() => {
-    // 카카오맵 API 스크립트 로드
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_KEY || 'YOUR_KAKAO_MAP_KEY'}&autoload=false`;
-    document.head.appendChild(script);
-
-    script.onload = () => {
-      window.kakao.maps.load(() => {
-        const container = document.getElementById('map');
-        const options = {
-          center: new window.kakao.maps.LatLng(37.3872, 126.6560), // 송도 스마트밸리 좌표
-          level: 3,
-        };
-
-        const map = new window.kakao.maps.Map(container, options);
-
-        // 마커 표시
-        const markerPosition = new window.kakao.maps.LatLng(37.3872, 126.6560);
-        const marker = new window.kakao.maps.Marker({
-          position: markerPosition,
-        });
-        marker.setMap(map);
-
-        // 인포윈도우 표시
-        const iwContent = '<div style="padding:5px;">엘브이에스<br>스마트밸리 B동 801~803호</div>';
-        const infowindow = new window.kakao.maps.InfoWindow({
-          content: iwContent,
-        });
-        infowindow.open(map, marker);
-      });
-    };
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-    };
-  }, []);
 
   return (
     <>
@@ -81,7 +41,14 @@ export default function ContactPage({ companyInfo }) {
       <div className="contact-container">
         {/* Map */}
         <div className="contact-map-section">
-          <div id="map" className="kakao-map"></div>
+          <iframe
+              src="https://map.kakao.com/link/map/엘브이에스,37.3872,126.6560"
+              className="kakao-map"
+              title="엘브이에스 위치"
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
         </div>
 
         {/* Company Info */}

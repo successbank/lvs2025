@@ -643,14 +643,14 @@ body {
 .product-cards-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 16px;
 }
 
 .product-lineup-card {
-  background: #f8fafc;
-  border: 1px solid #e8ecf0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
-  padding: 28px 20px;
+  padding: 16px 16px 14px;
   text-align: center;
   text-decoration: none;
   color: inherit;
@@ -666,24 +666,30 @@ body {
 }
 
 .product-lineup-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  width: 100px;
+  height: 100px;
+  border-radius: 12px;
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
+  margin: 0 auto 10px;
 }
 
 .product-lineup-icon svg {
   color: #2563eb;
 }
 
+.product-lineup-icon img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
 .product-lineup-card h4 {
   font-size: 15px;
   color: #1a1a2e;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   font-weight: 600;
 }
 
@@ -691,19 +697,17 @@ body {
   font-size: 13px;
   color: #888;
   line-height: 1.5;
-  margin-bottom: 12px;
+  margin-bottom: 0;
+}
+
+.product-lineup-card p:empty {
+  display: none;
 }
 
 .product-lineup-link {
   font-size: 13px;
   color: #2563eb;
   font-weight: 500;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-.product-lineup-card:hover .product-lineup-link {
-  opacity: 1;
 }
 
 .products-cta {
@@ -1830,82 +1834,433 @@ body {
   line-height: 1.6;
 }
 
-/* Organization Chart */
-.org-chart {
-  margin-top: 60px;
+/* ── Organization Page: Company Overview (ovw-) ── */
+.ovw-section {
+  margin-bottom: 80px;
 }
 
-.org-level {
-  margin-bottom: 40px;
-}
-
-.org-boxes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.org-box {
-  background-color: #f8f9fa;
-  border: 2px solid #1976d2;
-  border-radius: 8px;
-  padding: 20px;
-  text-align: center;
-}
-
-.org-box.ceo {
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-  color: white;
-}
-
-.org-title {
-  font-size: 16px;
+.ovw-section-title {
+  font-size: 32px;
   font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.org-name {
-  font-size: 14px;
-  color: #666;
-}
-
-.org-box.ceo .org-name {
-  color: rgba(255,255,255,0.9);
-}
-
-/* Certifications Grid */
-.cert-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 40px;
-  margin-top: 40px;
-}
-
-.cert-card {
-  background-color: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 0;
+  color: #333;
   text-align: center;
-  transition: all 0.3s;
+  margin-bottom: 36px;
+}
+
+.ovw-profile-header {
+  background: linear-gradient(135deg, #f0f4f8 0%, #e8edf3 100%);
+  border-radius: 16px;
+  padding: 48px 40px 40px;
+  text-align: center;
+  border-top: 4px solid #1976d2;
+  margin-bottom: 32px;
+}
+
+.ovw-profile-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #1976d2, #1565c0);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 18px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+.ovw-company-name {
+  font-size: 36px;
+  font-weight: 800;
+  color: #222;
+  margin: 0 0 8px;
+}
+
+.ovw-company-subtitle {
+  font-size: 17px;
+  color: #666;
+  margin: 0;
+}
+
+.ovw-keyfacts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 28px 40px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 32px;
+}
+
+.ovw-keyfact-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ovw-keyfact-icon {
+  width: 28px;
+  height: 28px;
+  color: #1976d2;
+}
+
+.ovw-keyfact-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ovw-keyfact-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1976d2;
+}
+
+.ovw-keyfact-label {
+  font-size: 13px;
+  color: #888;
+}
+
+.ovw-keyfact-divider {
+  width: 1px;
+  height: 48px;
+  background: #e0e0e0;
+}
+
+.ovw-details-table {
+  max-width: 800px;
+  margin: 0 auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
   overflow: hidden;
 }
 
-.cert-card:hover {
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+.ovw-details-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+}
+
+.ovw-details-row:nth-child(even) {
+  background: #fafbfc;
+}
+
+.ovw-details-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+  padding: 16px 20px;
+  background: #f0f4f8;
+  border-right: 1px solid #e0e0e0;
+}
+
+.ovw-details-value {
+  font-size: 15px;
+  color: #333;
+  padding: 16px 20px;
+  line-height: 1.6;
+}
+
+/* ── Organization Page: Org Chart (orgchart-) ── */
+.orgchart-section {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 60px;
+}
+
+.orgchart-section-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.orgchart-tree {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.orgchart-ceo-level {
+  display: flex;
+  justify-content: center;
+}
+
+.orgchart-node--ceo {
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+  color: #fff;
+  padding: 20px 48px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(25,118,210,0.3);
+}
+
+.orgchart-node--ceo .orgchart-node-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.orgchart-node--ceo .orgchart-node-name {
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+.orgchart-connector-vertical {
+  width: 2px;
+  height: 40px;
+  background: #bbb;
+}
+
+.orgchart-connector-horizontal {
+  height: 2px;
+  background: #bbb;
+  width: 75%;
+  max-width: 900px;
+}
+
+.orgchart-divisions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  width: 100%;
+}
+
+.orgchart-division {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.orgchart-div-connector {
+  width: 2px;
+  height: 32px;
+  background: #bbb;
+}
+
+.orgchart-node--division {
+  width: 100%;
+  padding: 16px 12px;
+  border-radius: 10px;
+  text-align: center;
+  background: #fff;
+  border: 2px solid #ccc;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+}
+
+.orgchart-node--division:hover {
   transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.orgchart-node--division .orgchart-node-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Division accent colors */
+.orgchart-node--mgmt { border-color: #2196F3; }
+.orgchart-node--mgmt .orgchart-node-title { color: #1565c0; }
+
+.orgchart-node--rnd { border-color: #00897B; }
+.orgchart-node--rnd .orgchart-node-title { color: #00695c; }
+
+.orgchart-node--prod { border-color: #EF6C00; }
+.orgchart-node--prod .orgchart-node-title { color: #e65100; }
+
+.orgchart-node--sales { border-color: #7B1FA2; }
+.orgchart-node--sales .orgchart-node-title { color: #6a1b9a; }
+
+.orgchart-teams {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.orgchart-team-connector {
+  width: 2px;
+  height: 24px;
+  background: #d0d0d0;
+}
+
+.orgchart-node--team {
+  width: 100%;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.orgchart-node--team:hover {
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+/* Certifications — Intro Section */
+.cert-intro-section {
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.cert-intro-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cert-intro-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 12px;
+}
+
+.cert-intro-desc {
+  font-size: 16px;
+  color: #666;
+  margin: 0 0 40px;
+  line-height: 1.6;
+}
+
+.cert-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+}
+
+.cert-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.cert-stat-number {
+  font-size: 36px;
+  font-weight: 800;
+  color: #1976d2;
+  line-height: 1;
+}
+
+.cert-stat-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.cert-stat-divider {
+  width: 1px;
+  height: 48px;
+  background-color: #d0d5dd;
+}
+
+/* Certifications — Filter Tabs */
+.cert-filter {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+
+.cert-filter-btn {
+  padding: 10px 24px;
+  border: 1px solid #d0d5dd;
+  border-radius: 24px;
+  background: white;
+  color: #555;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.cert-filter-btn:hover {
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.cert-filter-btn.active {
+  background: #1976d2;
+  border-color: #1976d2;
+  color: white;
+}
+
+/* Certifications — Grid */
+.cert-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.cert-card {
+  position: relative;
+  background-color: white;
+  border: 1px solid #e8ecf0;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cert-card:hover {
+  border-color: #1976d2;
+  box-shadow: 0 8px 24px rgba(25, 118, 210, 0.12);
+  transform: translateY(-4px);
+}
+
+.cert-card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(25, 118, 210, 0.9);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.cert-card-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1976d2;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  z-index: 2;
+  border: 1px solid rgba(25, 118, 210, 0.2);
 }
 
 .cert-image {
+  position: relative;
   width: 100%;
-  height: 320px;
+  aspect-ratio: 3 / 4;
   background-color: #f8f9fa;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 16px;
+  border-bottom: 1px solid #e8ecf0;
+  overflow: hidden;
 }
 
 .cert-image img {
@@ -1914,28 +2269,237 @@ body {
   object-fit: contain;
 }
 
+.cert-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(25, 118, 210, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.cert-card:hover .cert-image-overlay {
+  opacity: 1;
+}
+
+.cert-zoom-icon {
+  font-size: 32px;
+  filter: grayscale(1) brightness(10);
+}
+
 .cert-card h3 {
-  font-size: 16px;
+  font-size: 14px;
   color: #333;
-  padding: 20px;
+  padding: 14px 16px;
   margin: 0;
   font-weight: 600;
+  text-align: center;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.cert-card p {
+.cert-image-fallback {
+  background: linear-gradient(135deg, #e8ecf0, #f0f2f5);
+}
+
+.cert-image-fallback::after {
+  content: '인증서';
+  color: #aaa;
   font-size: 14px;
-  color: #666;
-  margin-bottom: 5px;
-  padding: 0 20px 10px;
 }
 
+/* Certifications — Lightbox */
+.cert-lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.cert-lightbox-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 600px;
+  max-height: 85vh;
+}
+
+.cert-lightbox-image {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+}
+
+.cert-lightbox-title {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.cert-lightbox-counter {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.cert-lightbox-close {
+  position: fixed;
+  top: 20px;
+  right: 28px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
+  z-index: 10000;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.cert-lightbox-close:hover {
+  opacity: 1;
+}
+
+.cert-lightbox-nav {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: white;
+  font-size: 36px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  transition: background 0.2s;
+}
+
+.cert-lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.cert-lightbox-prev {
+  left: 24px;
+}
+
+.cert-lightbox-next {
+  right: 24px;
+}
+
+/* Certifications — Responsive */
 @media (max-width: 1024px) {
   .cert-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
   }
 
-  .cert-image {
-    height: 280px;
+  .cert-stats {
+    gap: 28px;
+  }
+
+  .cert-stat-number {
+    font-size: 28px;
+  }
+
+  .cert-intro-section {
+    padding: 40px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cert-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .cert-stats {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .cert-stat-divider {
+    display: none;
+  }
+
+  .cert-intro-title {
+    font-size: 22px;
+  }
+
+  .cert-filter {
+    gap: 8px;
+  }
+
+  .cert-filter-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .cert-lightbox-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+  }
+
+  .cert-lightbox-prev {
+    left: 12px;
+  }
+
+  .cert-lightbox-next {
+    right: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cert-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .cert-stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .cert-card-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .cert-card-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+
+  .cert-card h3 {
+    font-size: 12px;
+    padding: 10px 8px;
+  }
+
+  .cert-lightbox-nav {
+    display: none;
+  }
+
+  .cert-lightbox-overlay {
+    padding: 20px;
   }
 }
 
@@ -2148,11 +2712,21 @@ body {
 
   .product-cards-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+    gap: 12px;
   }
 
   .product-lineup-card {
-    padding: 20px 14px;
+    padding: 14px 12px 12px;
+  }
+
+  .product-lineup-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .product-lineup-icon img {
+    width: 64px;
+    height: 64px;
   }
 
   .info-section {
@@ -2197,10 +2771,6 @@ body {
 
   .company-info-grid {
     grid-template-columns: 1fr;
-  }
-
-  .cert-grid {
-    grid-template-columns: repeat(2, 1fr);
   }
 
   .dealer-grid {
@@ -2250,6 +2820,16 @@ body {
 
   .product-cards-grid {
     grid-template-columns: 1fr;
+  }
+
+  .product-lineup-icon {
+    width: 72px;
+    height: 72px;
+  }
+
+  .product-lineup-icon img {
+    width: 56px;
+    height: 56px;
   }
 
   .services-grid {
@@ -2764,152 +3344,182 @@ body {
   }
 }
 
-/* Products Main Page */
+/* Products Main Page — Showcase Layout */
 .products-main-container {
-  max-width: 1400px;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.category-showcase {
+  padding: 80px 0;
+  background: #ffffff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.category-showcase-alt {
+  background: #f8fafc;
+}
+
+.category-showcase:last-child {
+  border-bottom: none;
+}
+
+.category-showcase-inner {
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 40px 20px 60px;
+  padding: 0 40px;
 }
 
-.categories-grid {
+.category-showcase-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.category-showcase-title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+}
+
+.category-showcase-subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  line-height: 1.7;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.category-showcase-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 30px;
-  margin-bottom: 60px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
 }
 
-.category-card {
-  background: #fff;
+.subcategory-card-v2 {
+  background: #ffffff;
   border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.category-card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  transform: translateY(-4px);
-}
-
-.category-card a {
+  border-radius: 4px;
   text-decoration: none;
   color: inherit;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.category-image {
-  height: 200px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.category-showcase-alt .subcategory-card-v2 {
+  background: #ffffff;
+}
+
+.subcategory-card-v2:hover {
+  border-color: #2563eb;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+}
+
+.subcategory-card-v2-image {
+  aspect-ratio: 1 / 1;
+  padding: 24px;
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  overflow: hidden;
 }
 
-.category-icon {
-  font-size: 80px;
-  opacity: 0.9;
+.subcategory-card-v2-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
 }
 
-.category-info {
-  padding: 25px;
+.subcategory-card-v2:hover .subcategory-card-v2-image img {
+  transform: scale(1.08);
 }
 
-.category-info h2 {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: #000;
-}
-
-.category-description {
-  font-size: 15px;
-  color: #666;
-  margin-bottom: 15px;
-  line-height: 1.6;
-}
-
-.category-meta {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
-  font-size: 14px;
-  color: #999;
-}
-
-.category-meta span {
+.subcategory-card-v2-placeholder {
   display: flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #d1d5db;
 }
 
-.view-more {
-  color: #0066cc;
-  font-weight: 600;
+.subcategory-card-v2-info {
+  padding: 16px 20px 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.subcategory-card-v2-name {
   font-size: 15px;
-  transition: color 0.2s;
-}
-
-.category-card:hover .view-more {
-  color: #004999;
-}
-
-.category-details-section {
-  background: #f5f5f5;
-  border-radius: 12px;
-  padding: 40px;
-}
-
-.category-detail {
-  margin-bottom: 40px;
-}
-
-.category-detail:last-child {
-  margin-bottom: 0;
-}
-
-.category-detail h3 {
-  font-size: 22px;
   font-weight: 700;
-  margin-bottom: 20px;
-  color: #000;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #ddd;
+  color: #374151;
+  line-height: 1.4;
+  word-break: keep-all;
+  margin: 0;
+  transition: color 0.2s ease;
 }
 
-.subcategories-list ul {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
+.subcategory-card-v2:hover .subcategory-card-v2-name {
+  color: #2563eb;
 }
 
-.subcategories-list li {
-  background: #fff;
-  border-radius: 6px;
-  transition: all 0.2s;
+.subcategory-card-v2-desc {
+  font-size: 13px;
+  color: #9ca3af;
+  line-height: 1.5;
+  margin: 6px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.subcategories-list li:hover {
-  background: #e8f4ff;
+.category-showcase-cta-wrap {
+  text-align: center;
+  margin-top: 40px;
 }
 
-.subcategories-list a {
-  display: block;
-  padding: 12px 16px;
-  color: #333;
-  text-decoration: none;
+.category-showcase-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: #2563eb;
+  color: #ffffff;
+  border-radius: 10px;
   font-size: 15px;
-  transition: color 0.2s;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
-.subcategories-list a:hover {
-  color: #0066cc;
+.category-showcase-cta:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+  transform: translateY(-2px);
+}
+
+.cta-arrow {
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+.category-showcase-cta:hover .cta-arrow {
+  transform: translateX(4px);
 }
 
 .no-subcategories {
   color: #999;
   font-style: italic;
+  grid-column: 1 / -1;
 }
 
 /* No Products Message */
@@ -2977,46 +3587,131 @@ body {
   margin-bottom: 12px;
 }
 
+.subcategory-icon img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
 .subcategory-name {
   font-size: 14px;
   font-weight: 500;
   color: #333;
 }
 
-/* Responsive Design for Products Main */
-@media (max-width: 768px) {
-  .categories-grid {
-    grid-template-columns: 1fr;
+/* Responsive Design for Products Showcase */
+@media (max-width: 1024px) {
+  .category-showcase {
+    padding: 60px 0;
+  }
+
+  .category-showcase-inner {
+    padding: 0 30px;
+  }
+
+  .category-showcase-title {
+    font-size: 28px;
+  }
+
+  .category-showcase-header {
+    margin-bottom: 36px;
+  }
+
+  .category-showcase-grid {
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
 
-  .category-image {
-    height: 150px;
-  }
-
-  .category-icon {
-    font-size: 60px;
-  }
-
-  .category-info {
+  .subcategory-card-v2-image {
     padding: 20px;
   }
+}
 
-  .category-info h2 {
+@media (max-width: 768px) {
+  .category-showcase {
+    padding: 48px 0;
+  }
+
+  .category-showcase-inner {
+    padding: 0 20px;
+  }
+
+  .category-showcase-title {
+    font-size: 24px;
+  }
+
+  .category-showcase-header {
+    margin-bottom: 28px;
+  }
+
+  .category-showcase-subtitle {
+    font-size: 14px;
+  }
+
+  .category-showcase-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .subcategory-card-v2-image {
+    padding: 16px;
+  }
+
+  .subcategory-card-v2-info {
+    padding: 12px 16px 16px;
+  }
+
+  .subcategory-card-v2-name {
+    font-size: 14px;
+  }
+
+  .category-showcase-cta-wrap {
+    margin-top: 32px;
+  }
+
+  .category-showcase-cta {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-showcase {
+    padding: 36px 0;
+  }
+
+  .category-showcase-inner {
+    padding: 0 16px;
+  }
+
+  .category-showcase-title {
     font-size: 20px;
   }
 
-  .category-details-section {
-    padding: 25px 20px;
+  .category-showcase-header {
+    margin-bottom: 24px;
   }
 
-  .subcategories-list ul {
-    grid-template-columns: 1fr;
-  }
-
-  .subcategories-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  .category-showcase-grid {
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
+  }
+
+  .subcategory-card-v2-image {
+    padding: 12px;
+  }
+
+  .subcategory-card-v2-info {
+    padding: 10px 12px 14px;
+  }
+
+  .subcategory-card-v2-name {
+    font-size: 13px;
+  }
+
+  .subcategory-card-v2-desc {
+    -webkit-line-clamp: 1;
+    font-size: 12px;
   }
 }
 
@@ -4731,5 +5426,118 @@ body {
 
   .series-table tbody td {
     padding: 5px 6px;
+  }
+}
+
+/* ── Organization Page Responsive ── */
+@media (max-width: 1024px) {
+  .orgchart-divisions {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .orgchart-connector-horizontal {
+    display: none;
+  }
+
+  .orgchart-div-connector {
+    display: none;
+  }
+
+  .ovw-keyfact-value {
+    font-size: 19px;
+  }
+
+  .ovw-keyfacts {
+    gap: 20px;
+    padding: 24px 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ovw-keyfacts {
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px 20px;
+  }
+
+  .ovw-keyfact-divider {
+    width: 48px;
+    height: 1px;
+  }
+
+  .ovw-keyfact-item {
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .ovw-keyfact-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .ovw-details-row {
+    grid-template-columns: 120px 1fr;
+  }
+
+  .ovw-profile-header {
+    padding: 36px 24px 32px;
+  }
+
+  .ovw-company-name {
+    font-size: 28px;
+  }
+
+  .orgchart-divisions {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+  }
+
+  .orgchart-section-title,
+  .ovw-section-title {
+    font-size: 26px;
+  }
+
+  .orgchart-node--ceo {
+    padding: 16px 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ovw-details-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ovw-details-label {
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 12px 16px 8px;
+  }
+
+  .ovw-details-value {
+    padding: 8px 16px 12px;
+  }
+
+  .ovw-company-name {
+    font-size: 24px;
+  }
+
+  .ovw-profile-header {
+    padding: 28px 16px 24px;
+  }
+
+  .orgchart-section {
+    padding-top: 40px;
+  }
+
+  .ovw-section {
+    margin-bottom: 48px;
+  }
+
+  .orgchart-section-title,
+  .ovw-section-title {
+    font-size: 22px;
+    margin-bottom: 24px;
   }
 }
