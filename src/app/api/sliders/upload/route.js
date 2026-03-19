@@ -11,7 +11,7 @@ const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads', 'sliders');
 
 // 통이미지 최대 크기
 const FULL_IMAGE_MAX_WIDTH = 1920;
-const FULL_IMAGE_MAX_HEIGHT = 600;
+const FULL_IMAGE_MAX_HEIGHT = 520;
 
 export async function POST(request) {
   try {
