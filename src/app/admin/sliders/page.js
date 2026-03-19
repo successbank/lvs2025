@@ -242,7 +242,7 @@ export default function AdminSliders() {
               </div>
               <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.35rem' }}>
                 {formData.type === 'FULL_IMAGE'
-                  ? '전체 영역을 채우는 단일 이미지. 권장: 1920×306px, WebP/JPG, 200KB 이하'
+                  ? '전체 영역을 채우는 단일 이미지. 최적 사이즈: 1920×306px, WebP/JPG, 200KB 이하'
                   : '좌측 텍스트 + 우측 제품 이미지 형태의 기본 배너'}
               </p>
             </div>
@@ -389,7 +389,7 @@ export default function AdminSliders() {
                     background: '#f0f9ff', borderRadius: '4px', border: '1px solid #bae6fd',
                   }}>
                     <p style={{ fontSize: '0.75rem', color: '#0369a1', margin: 0 }}>
-                      <strong>통이미지 가이드:</strong> 1920×306px | 비율 3.2:1 | WebP/JPG | 200KB 이하
+                      <strong>최적 사이즈:</strong> 1920×306px | 비율 6.3:1 | WebP/JPG | 200KB 이하
                     </p>
                   </div>
                 )}
