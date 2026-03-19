@@ -55,6 +55,7 @@ export default function AdminSliders() {
     try {
       const fd = new FormData();
       fd.append('image', file);
+      fd.append('type', formData.type);
       const res = await fetch('/api/sliders/upload', { method: 'POST', body: fd });
       if (!res.ok) {
         const err = await res.json();
