@@ -19,6 +19,7 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
         title: s.title,
         description: s.description || '',
         imageUrl: s.imageUrl,
+        mobileImageUrl: s.mobileImageUrl || null,
         link: s.link,
         category: null,
       }))
@@ -105,23 +106,24 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
                 <div className="hero-carousel-slide" key={slide.id || index}>
                   {slide.type === 'FULL_IMAGE' ? (
                     /* 통이미지 배너 */
-                    slide.link ? (
-                      <a href={slide.link} className="hero-fullimage-link" aria-label={slide.title || '배너 링크'}>
-                        <img
-                          src={slide.imageUrl}
-                          alt={slide.title || '배너'}
-                          className="hero-fullimage"
-                        />
-                      </a>
-                    ) : (
-                      <div className="hero-fullimage-wrap">
-                        <img
-                          src={slide.imageUrl}
-                          alt={slide.title || '배너'}
-                          className="hero-fullimage"
-                        />
-                      </div>
-                    )
+                    (() => {
+                      const imgEl = slide.mobileImageUrl ? (
+                        <picture>
+                          <source media="(min-width: 769px)" srcSet={slide.imageUrl} />
+                          <source media="(max-width: 768px)" srcSet={slide.mobileImageUrl} />
+                          <img src={slide.imageUrl} alt={slide.title || '배너'} className="hero-fullimage" />
+                        </picture>
+                      ) : (
+                        <img src={slide.imageUrl} alt={slide.title || '배너'} className="hero-fullimage" />
+                      );
+                      return slide.link ? (
+                        <a href={slide.link} className="hero-fullimage-link" aria-label={slide.title || '배너 링크'}>
+                          {imgEl}
+                        </a>
+                      ) : (
+                        <div className="hero-fullimage-wrap">{imgEl}</div>
+                      );
+                    })()
                   ) : (
                     /* 기존 텍스트+이미지 배너 */
                     <div className="hero-content">

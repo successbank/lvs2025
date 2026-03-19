@@ -149,12 +149,13 @@ enum FileType {
 // ========================================
 
 model Slider {
-  id          String   @id @default(cuid())
-  type        String   @default("TEXT_IMAGE") // TEXT_IMAGE | FULL_IMAGE
-  title       String
-  description String?
-  imageUrl    String
-  link        String?
+  id             String   @id @default(cuid())
+  type           String   @default("TEXT_IMAGE") // TEXT_IMAGE | FULL_IMAGE
+  title          String
+  description    String?
+  imageUrl       String
+  mobileImageUrl String?  // 통이미지 모바일용 (null이면 PC 이미지 사용)
+  link           String?
   isActive    Boolean  @default(true)
   order       Int      @default(0)
   createdAt   DateTime @default(now())

@@ -31,6 +31,7 @@ export async function POST(request) {
         title: data.title,
         description: data.description || null,
         imageUrl: data.imageUrl,
+        mobileImageUrl: data.mobileImageUrl || null,
         link: data.link || null,
         isActive: data.isActive !== false,
         order: data.order || 0,

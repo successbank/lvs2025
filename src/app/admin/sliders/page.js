@@ -9,7 +9,7 @@ export default function AdminSliders() {
   const [showForm, setShowForm] = useState(false);
   const [editingSlider, setEditingSlider] = useState(null);
   const [formData, setFormData] = useState({
-    type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', link: '', isActive: true, order: 0,
+    type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', mobileImageUrl: '', link: '', isActive: true, order: 0,
   });
 
   // 이미지 업로드 관련 상태
@@ -18,6 +18,13 @@ export default function AdminSliders() {
   const [imagePreview, setImagePreview] = useState('');
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+
+  // 모바일 이미지 업로드 상태
+  const [mobileUploading, setMobileUploading] = useState(false);
+  const [mobileImagePreview, setMobileImagePreview] = useState('');
+  const [mobileDragActive, setMobileDragActive] = useState(false);
+  const mobileFileInputRef = useRef(null);
+  const [applyAllScreens, setApplyAllScreens] = useState(true);
 
   useEffect(() => { fetchSliders(); }, []);
 
@@ -89,6 +96,45 @@ export default function AdminSliders() {
     }
   };
 
+  // ── 모바일 이미지 업로드 ──
+  const handleMobileImageUpload = async (file) => {
+    if (!file) return;
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(file.type)) { alert('허용되지 않는 파일 형식입니다.'); return; }
+    if (file.size > 5 * 1024 * 1024) { alert('파일 크기는 5MB를 초과할 수 없습니다.'); return; }
+
+    setMobileImagePreview(URL.createObjectURL(file));
+    setMobileUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      fd.append('type', 'FULL_IMAGE');
+      fd.append('device', 'mobile');
+      const res = await fetch('/api/sliders/upload', { method: 'POST', body: fd });
+      if (!res.ok) throw new Error((await res.json()).error || '업로드 실패');
+      const { url } = await res.json();
+      setFormData(p => ({ ...p, mobileImageUrl: url }));
+      setMobileImagePreview(url);
+    } catch (error) {
+      alert(error.message);
+      setMobileImagePreview('');
+      setFormData(p => ({ ...p, mobileImageUrl: '' }));
+    }
+    setMobileUploading(false);
+  };
+
+  const handleMobileDrag = (e) => {
+    e.preventDefault(); e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') setMobileDragActive(true);
+    if (e.type === 'dragleave') setMobileDragActive(false);
+  };
+
+  const handleMobileDrop = (e) => {
+    e.preventDefault(); e.stopPropagation();
+    setMobileDragActive(false);
+    if (e.dataTransfer.files?.[0]) handleMobileImageUpload(e.dataTransfer.files[0]);
+  };
+
   // ── 활성/비활성 토글 ──
   const handleToggleActive = async (slider) => {
     try {
@@ -146,10 +192,15 @@ export default function AdminSliders() {
       const url = editingSlider ? `/api/sliders/${editingSlider.id}` : '/api/sliders';
       const method = editingSlider ? 'PUT' : 'POST';
 
+      const submitData = { ...formData, order };
+      if (formData.type === 'FULL_IMAGE' && applyAllScreens) {
+        submitData.mobileImageUrl = null;
+      }
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, order }),
+        body: JSON.stringify(submitData),
       });
       if (!res.ok) throw new Error('저장에 실패했습니다.');
 
@@ -169,12 +220,15 @@ export default function AdminSliders() {
       title: slider.title,
       description: slider.description || '',
       imageUrl: slider.imageUrl,
+      mobileImageUrl: slider.mobileImageUrl || '',
       link: slider.link || '',
       isActive: slider.isActive,
       order: slider.order,
     });
     setImagePreview(slider.imageUrl || '');
+    setMobileImagePreview(slider.mobileImageUrl || '');
     setImageUploadMode(slider.imageUrl?.startsWith('/uploads/') ? 'upload' : 'url');
+    setApplyAllScreens(!slider.mobileImageUrl);
     setShowForm(true);
   };
 
@@ -190,11 +244,15 @@ export default function AdminSliders() {
   };
 
   const resetForm = () => {
-    setFormData({ type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', link: '', isActive: true, order: 0 });
+    setFormData({ type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', mobileImageUrl: '', link: '', isActive: true, order: 0 });
     setImagePreview('');
+    setMobileImagePreview('');
     setImageUploadMode('upload');
     setDragActive(false);
+    setMobileDragActive(false);
+    setApplyAllScreens(true);
     if (fileInputRef.current) fileInputRef.current.value = '';
+    if (mobileFileInputRef.current) mobileFileInputRef.current.value = '';
   };
 
   return (
@@ -412,11 +470,82 @@ export default function AdminSliders() {
                 </div>
               )}
               {formData.type === 'FULL_IMAGE' && (
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginTop: '0.5rem' }}>
-                  <input type="checkbox" checked={formData.isActive}
-                    onChange={e => setFormData(p => ({ ...p, isActive: e.target.checked }))} />
-                  <span style={{ fontSize: '0.9rem' }}>활성화</span>
-                </label>
+                <div style={{ marginTop: '0.75rem' }}>
+                  {/* 동시적용 체크박스 */}
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: '0.75rem' }}>
+                    <input type="checkbox" checked={applyAllScreens}
+                      onChange={e => setApplyAllScreens(e.target.checked)} />
+                    <span style={{ fontSize: '0.9rem' }}>모든 화면에 동시 적용</span>
+                    <span style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
+                      (해제 시 모바일 별도 이미지 등록)
+                    </span>
+                  </label>
+
+                  {/* 모바일 이미지 업로드 — 체크 해제 시만 표시 */}
+                  {!applyAllScreens && (
+                    <div style={{
+                      padding: '1rem', background: '#fefce8', borderRadius: '8px',
+                      border: '1px solid #fde68a',
+                    }}>
+                      <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>
+                        모바일 이미지
+                        <span style={{ fontWeight: '400', color: '#9ca3af', marginLeft: '0.5rem' }}>
+                          (권장 768×306px)
+                        </span>
+                      </label>
+                      <div
+                        onDragEnter={handleMobileDrag}
+                        onDragOver={handleMobileDrag}
+                        onDragLeave={handleMobileDrag}
+                        onDrop={handleMobileDrop}
+                        onClick={() => mobileFileInputRef.current?.click()}
+                        style={{
+                          border: `2px dashed ${mobileDragActive ? '#f59e0b' : '#d1d5db'}`,
+                          borderRadius: '8px', padding: '1.5rem', textAlign: 'center',
+                          cursor: 'pointer', background: mobileDragActive ? '#fef9c3' : 'white',
+                          transition: 'all 0.2s',
+                        }}
+                      >
+                        <input
+                          ref={mobileFileInputRef}
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/gif"
+                          style={{ display: 'none' }}
+                          onChange={(e) => {
+                            if (e.target.files[0]) handleMobileImageUpload(e.target.files[0]);
+                          }}
+                        />
+                        {mobileUploading ? (
+                          <p style={{ color: '#f59e0b', fontWeight: '500' }}>업로드 중...</p>
+                        ) : (
+                          <p style={{ color: '#6b7280', fontSize: '0.85rem', margin: 0 }}>
+                            클릭하거나 모바일용 이미지를 드래그하여 업로드
+                          </p>
+                        )}
+                      </div>
+                      {mobileImagePreview && (
+                        <div style={{ marginTop: '0.5rem' }}>
+                          <label style={labelStyle}>모바일 미리보기</label>
+                          <div style={{
+                            width: '200px', height: '80px', background: '#f3f4f6',
+                            borderRadius: '6px', overflow: 'hidden',
+                          }}>
+                            <img src={mobileImagePreview} alt="모바일 미리보기"
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              onError={() => setMobileImagePreview('')} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 활성화 체크박스 */}
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginTop: '0.75rem' }}>
+                    <input type="checkbox" checked={formData.isActive}
+                      onChange={e => setFormData(p => ({ ...p, isActive: e.target.checked }))} />
+                    <span style={{ fontSize: '0.9rem' }}>활성화</span>
+                  </label>
+                </div>
               )}
             </div>
 

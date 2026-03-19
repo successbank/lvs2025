@@ -21,6 +21,7 @@ export async function PUT(request, { params }) {
         title: data.title,
         description: data.description,
         imageUrl: data.imageUrl,
+        mobileImageUrl: data.mobileImageUrl,
         link: data.link,
         isActive: data.isActive,
         order: data.order,
@@ -73,10 +74,12 @@ export async function DELETE(request, { params }) {
     }
 
     // 업로드된 이미지 파일 삭제 (외부 URL은 건너뜀)
-    if (slider.imageUrl && slider.imageUrl.startsWith('/uploads/sliders/')) {
+    const filesToDelete = [slider.imageUrl, slider.mobileImageUrl].filter(
+      url => url && url.startsWith('/uploads/sliders/')
+    );
+    for (const url of filesToDelete) {
       try {
-        const filePath = path.join(process.cwd(), 'public', slider.imageUrl);
-        await unlink(filePath);
+        await unlink(path.join(process.cwd(), 'public', url));
       } catch (fileError) {
         console.warn('이미지 파일 삭제 실패 (무시):', fileError.message);
       }

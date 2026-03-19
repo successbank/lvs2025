@@ -9,9 +9,11 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads', 'sliders');
 
-// 통이미지 최대 크기
-const FULL_IMAGE_MAX_WIDTH = 1920;
-const FULL_IMAGE_MAX_HEIGHT = 306;
+// 통이미지 크기 — PC/모바일
+const FULL_IMAGE_PC_WIDTH = 1920;
+const FULL_IMAGE_PC_HEIGHT = 306;
+const FULL_IMAGE_MOBILE_WIDTH = 768;
+const FULL_IMAGE_MOBILE_HEIGHT = 306;
 
 export async function POST(request) {
   try {
@@ -23,6 +25,7 @@ export async function POST(request) {
     const formData = await request.formData();
     const file = formData.get('image');
     const type = formData.get('type') || 'TEXT_IMAGE';
+    const device = formData.get('device') || 'pc'; // 'pc' | 'mobile'
 
     if (!file || typeof file === 'string') {
       return NextResponse.json({ error: '이미지 파일이 필요합니다.' }, { status: 400 });
@@ -45,15 +48,14 @@ export async function POST(request) {
     let filename;
 
     if (type === 'FULL_IMAGE') {
-      // 통이미지: 1920×600 고정 크기로 리사이징 + WebP 변환
+      const w = device === 'mobile' ? FULL_IMAGE_MOBILE_WIDTH : FULL_IMAGE_PC_WIDTH;
+      const h = device === 'mobile' ? FULL_IMAGE_MOBILE_HEIGHT : FULL_IMAGE_PC_HEIGHT;
+      const prefix = device === 'mobile' ? 'slider-mobile' : 'slider-full';
       outputBuffer = await sharp(buffer)
-        .resize(FULL_IMAGE_MAX_WIDTH, FULL_IMAGE_MAX_HEIGHT, {
-          fit: 'cover',
-          position: 'center',
-        })
+        .resize(w, h, { fit: 'cover', position: 'center' })
         .webp({ quality: 85 })
         .toBuffer();
-      filename = `slider-full-${Date.now()}-${random}.webp`;
+      filename = `${prefix}-${Date.now()}-${random}.webp`;
     } else {
       // 기존 텍스트+이미지: 원본 그대로 저장
       const ext = file.name.split('.').pop().toLowerCase();
