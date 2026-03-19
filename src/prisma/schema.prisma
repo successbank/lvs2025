@@ -81,6 +81,7 @@ model Product {
   viewCount       Int            @default(0)
   relatedProducts String[]       @default([])
   seriesData      Json?
+  viewLogs        ProductViewLog[]
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
@@ -276,4 +277,65 @@ model CompanyInfo {
   updatedAt      DateTime @updatedAt
 
   @@map("company_info")
+}
+
+// ========================================
+// 페이지 방문 추적
+// ========================================
+
+model PageView {
+  id         String   @id @default(cuid())
+  path       String
+  sessionId  String
+  userAgent  String?
+  deviceType String   @default("desktop")
+  browser    String?
+  os         String?
+  referrer   String?
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path, createdAt])
+  @@index([sessionId])
+  @@index([deviceType, createdAt])
+  @@map("page_views")
+}
+
+// ========================================
+// 일별 집계 통계
+// ========================================
+
+model DailyStat {
+  id             String   @id @default(cuid())
+  date           DateTime @unique @db.Date
+  totalViews     Int      @default(0)
+  uniqueVisitors Int      @default(0)
+  desktopViews   Int      @default(0)
+  mobileViews    Int      @default(0)
+  tabletViews    Int      @default(0)
+  topPages       Json?
+  topReferrers   Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([date])
+  @@map("daily_stats")
+}
+
+// ========================================
+// 제품 조회 로그
+// ========================================
+
+model ProductViewLog {
+  id         String   @id @default(cuid())
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sessionId  String
+  deviceType String?  @default("desktop")
+  createdAt  DateTime @default(now())
+
+  @@index([productId, createdAt])
+  @@index([createdAt])
+  @@map("product_view_logs")
 }

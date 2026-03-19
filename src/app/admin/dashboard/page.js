@@ -40,6 +40,7 @@ export default function AdminDashboard() {
     { href: '/admin/catalog-requests', label: '카탈로그 신청', icon: '📋' },
     { href: '/admin/notices', label: '공지사항 관리', icon: '📢' },
     { href: '/admin/sliders', label: '슬라이더 관리', icon: '🖼' },
+    { href: '/admin/analytics', label: '접속 통계', icon: '📈' },
     { href: '/admin/settings', label: '사이트 설정', icon: '⚙' },
   ];
 
