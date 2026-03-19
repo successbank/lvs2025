@@ -27,6 +27,7 @@ export async function POST(request) {
     const data = await request.json();
     const slider = await prisma.slider.create({
       data: {
+        type: data.type || 'TEXT_IMAGE',
         title: data.title,
         description: data.description || null,
         imageUrl: data.imageUrl,

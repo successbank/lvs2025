@@ -15,6 +15,7 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
   const heroSlides = sliders.length > 0
     ? sliders.map(s => ({
         id: s.id,
+        type: s.type || 'TEXT_IMAGE',
         title: s.title,
         description: s.description || '',
         imageUrl: s.imageUrl,
@@ -102,35 +103,57 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
             <div className="hero-carousel-container">
               {heroSlides.map((slide, index) => (
                 <div className="hero-carousel-slide" key={slide.id || index}>
-                  <div className="hero-content">
-                    <div className="hero-text">
-                      {slide.category && (
-                        <span className="hero-badge">{slide.category}</span>
-                      )}
-                      <h1>{slide.title || 'Lighting for Vision System'}</h1>
-                      <p className="hero-desc">{slide.description || '산업용 LED 조명의 새로운 기준을 제시합니다'}</p>
-                      <div className="hero-buttons">
-                        {slide.link && (
-                          <a href={slide.link} className="hero-btn-primary">자세히 보기</a>
+                  {slide.type === 'FULL_IMAGE' ? (
+                    /* 통이미지 배너 */
+                    slide.link ? (
+                      <a href={slide.link} className="hero-fullimage-link" aria-label={slide.title || '배너 링크'}>
+                        <img
+                          src={slide.imageUrl}
+                          alt={slide.title || '배너'}
+                          className="hero-fullimage"
+                        />
+                      </a>
+                    ) : (
+                      <div className="hero-fullimage-wrap">
+                        <img
+                          src={slide.imageUrl}
+                          alt={slide.title || '배너'}
+                          className="hero-fullimage"
+                        />
+                      </div>
+                    )
+                  ) : (
+                    /* 기존 텍스트+이미지 배너 */
+                    <div className="hero-content">
+                      <div className="hero-text">
+                        {slide.category && (
+                          <span className="hero-badge">{slide.category}</span>
                         )}
-                        <a href="/support/catalog" className="hero-btn-ghost">카탈로그 신청</a>
+                        <h1>{slide.title || 'Lighting for Vision System'}</h1>
+                        <p className="hero-desc">{slide.description || '산업용 LED 조명의 새로운 기준을 제시합니다'}</p>
+                        <div className="hero-buttons">
+                          {slide.link && (
+                            <a href={slide.link} className="hero-btn-primary">자세히 보기</a>
+                          )}
+                          <a href="/support/catalog" className="hero-btn-ghost">카탈로그 신청</a>
+                        </div>
+                      </div>
+                      <div className="hero-image">
+                        {slide.imageUrl ? (
+                          <img src={slide.imageUrl} alt={slide.title || 'LVS Product'} />
+                        ) : (
+                          <div className="hero-image-fallback">
+                            <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
+                              <circle cx="100" cy="100" r="80" stroke="rgba(255,255,255,0.1)" strokeWidth="2"/>
+                              <circle cx="100" cy="100" r="50" stroke="rgba(255,255,255,0.15)" strokeWidth="2"/>
+                              <circle cx="100" cy="100" r="20" fill="rgba(59,130,246,0.3)"/>
+                              <path d="M100 40 L100 20 M100 160 L100 180 M40 100 L20 100 M160 100 L180 100" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+                            </svg>
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <div className="hero-image">
-                      {slide.imageUrl ? (
-                        <img src={slide.imageUrl} alt={slide.title || 'LVS Product'} />
-                      ) : (
-                        <div className="hero-image-fallback">
-                          <svg width="200" height="200" viewBox="0 0 200 200" fill="none">
-                            <circle cx="100" cy="100" r="80" stroke="rgba(255,255,255,0.1)" strokeWidth="2"/>
-                            <circle cx="100" cy="100" r="50" stroke="rgba(255,255,255,0.15)" strokeWidth="2"/>
-                            <circle cx="100" cy="100" r="20" fill="rgba(59,130,246,0.3)"/>
-                            <path d="M100 40 L100 20 M100 160 L100 180 M40 100 L20 100 M160 100 L180 100" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
-                          </svg>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                  )}
                 </div>
               ))}
             </div>

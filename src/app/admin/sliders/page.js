@@ -9,7 +9,7 @@ export default function AdminSliders() {
   const [showForm, setShowForm] = useState(false);
   const [editingSlider, setEditingSlider] = useState(null);
   const [formData, setFormData] = useState({
-    title: '', description: '', imageUrl: '', link: '', isActive: true, order: 0,
+    type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', link: '', isActive: true, order: 0,
   });
 
   // 이미지 업로드 관련 상태
@@ -164,6 +164,7 @@ export default function AdminSliders() {
   const handleEdit = (slider) => {
     setEditingSlider(slider);
     setFormData({
+      type: slider.type || 'TEXT_IMAGE',
       title: slider.title,
       description: slider.description || '',
       imageUrl: slider.imageUrl,
@@ -188,7 +189,7 @@ export default function AdminSliders() {
   };
 
   const resetForm = () => {
-    setFormData({ title: '', description: '', imageUrl: '', link: '', isActive: true, order: 0 });
+    setFormData({ type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', link: '', isActive: true, order: 0 });
     setImagePreview('');
     setImageUploadMode('upload');
     setDragActive(false);
@@ -221,15 +222,45 @@ export default function AdminSliders() {
             {editingSlider ? '슬라이더 수정' : '슬라이더 추가'}
           </h3>
           <form onSubmit={handleSubmit}>
+            {/* 슬라이더 유형 선택 */}
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={labelStyle}>슬라이더 유형</label>
+              <div style={{ display: 'flex', gap: '0' }}>
+                <button type="button"
+                  onClick={() => setFormData(p => ({ ...p, type: 'TEXT_IMAGE' }))}
+                  style={typeTabStyle(formData.type === 'TEXT_IMAGE')}
+                >
+                  텍스트 + 이미지
+                </button>
+                <button type="button"
+                  onClick={() => setFormData(p => ({ ...p, type: 'FULL_IMAGE' }))}
+                  style={{ ...typeTabStyle(formData.type === 'FULL_IMAGE'), borderRadius: '0 6px 6px 0', borderLeft: 'none' }}
+                >
+                  통이미지 배너
+                </button>
+              </div>
+              <p style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.35rem' }}>
+                {formData.type === 'FULL_IMAGE'
+                  ? '전체 영역을 채우는 단일 이미지. 권장: 1920×600px, WebP/JPG, 200KB 이하'
+                  : '좌측 텍스트 + 우측 제품 이미지 형태의 기본 배너'}
+              </p>
+            </div>
+
             {/* 제목 + 링크 */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
               <div>
-                <label style={labelStyle}>제목 *</label>
-                <input style={inputStyle} value={formData.title} required
+                <label style={labelStyle}>
+                  {formData.type === 'FULL_IMAGE' ? '대체 텍스트 (alt)' : '제목 *'}
+                </label>
+                <input style={inputStyle} value={formData.title}
+                  required={formData.type === 'TEXT_IMAGE'}
+                  placeholder={formData.type === 'FULL_IMAGE' ? '이미지 설명 (접근성용)' : ''}
                   onChange={e => setFormData(p => ({ ...p, title: e.target.value }))} />
               </div>
               <div>
-                <label style={labelStyle}>링크</label>
+                <label style={labelStyle}>
+                  {formData.type === 'FULL_IMAGE' ? '클릭 시 이동 링크' : '링크'}
+                </label>
                 <input style={inputStyle} value={formData.link} placeholder="https://..."
                   onChange={e => setFormData(p => ({ ...p, link: e.target.value }))} />
               </div>
@@ -237,7 +268,14 @@ export default function AdminSliders() {
 
             {/* 이미지 입력 — 탭 전환 */}
             <div style={{ marginTop: '1rem' }}>
-              <label style={labelStyle}>이미지 *</label>
+              <label style={labelStyle}>
+                이미지 *
+                {formData.type === 'FULL_IMAGE' && (
+                  <span style={{ fontWeight: '400', color: '#9ca3af', marginLeft: '0.5rem' }}>
+                    (권장 1920×600px)
+                  </span>
+                )}
+              </label>
               <div style={{ display: 'flex', gap: '0', marginBottom: '0.5rem' }}>
                 <button type="button"
                   onClick={() => setImageUploadMode('upload')}
@@ -319,11 +357,17 @@ export default function AdminSliders() {
             </div>
 
             {/* 이미지 미리보기 + 설명/활성화 */}
-            <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: '1rem', marginTop: '1rem' }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: formData.type === 'FULL_IMAGE' ? '1fr' : '240px 1fr',
+              gap: '1rem', marginTop: '1rem',
+            }}>
               <div>
                 <label style={labelStyle}>미리보기</label>
                 <div style={{
-                  width: '240px', height: '120px', background: '#f3f4f6',
+                  width: formData.type === 'FULL_IMAGE' ? '100%' : '240px',
+                  height: formData.type === 'FULL_IMAGE' ? '180px' : '120px',
+                  background: '#f3f4f6',
                   borderRadius: '6px', overflow: 'hidden',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
@@ -338,22 +382,41 @@ export default function AdminSliders() {
                     <span style={{ color: '#9ca3af', fontSize: '0.85rem' }}>이미지 없음</span>
                   )}
                 </div>
+                {formData.type === 'FULL_IMAGE' && (
+                  <div style={{
+                    marginTop: '0.5rem', padding: '0.5rem 0.75rem',
+                    background: '#f0f9ff', borderRadius: '4px', border: '1px solid #bae6fd',
+                  }}>
+                    <p style={{ fontSize: '0.75rem', color: '#0369a1', margin: 0 }}>
+                      <strong>통이미지 가이드:</strong> 1920×600px | 비율 3.2:1 | WebP/JPG | 200KB 이하
+                    </p>
+                  </div>
+                )}
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <div>
-                  <label style={labelStyle}>설명</label>
-                  <textarea
-                    style={{ ...inputStyle, height: '60px', resize: 'vertical' }}
-                    value={formData.description}
-                    onChange={e => setFormData(p => ({ ...p, description: e.target.value }))}
-                  />
+              {formData.type === 'TEXT_IMAGE' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div>
+                    <label style={labelStyle}>설명</label>
+                    <textarea
+                      style={{ ...inputStyle, height: '60px', resize: 'vertical' }}
+                      value={formData.description}
+                      onChange={e => setFormData(p => ({ ...p, description: e.target.value }))}
+                    />
+                  </div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input type="checkbox" checked={formData.isActive}
+                      onChange={e => setFormData(p => ({ ...p, isActive: e.target.checked }))} />
+                    <span style={{ fontSize: '0.9rem' }}>활성화</span>
+                  </label>
                 </div>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+              )}
+              {formData.type === 'FULL_IMAGE' && (
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginTop: '0.5rem' }}>
                   <input type="checkbox" checked={formData.isActive}
                     onChange={e => setFormData(p => ({ ...p, isActive: e.target.checked }))} />
                   <span style={{ fontSize: '0.9rem' }}>활성화</span>
                 </label>
-              </div>
+              )}
             </div>
 
             {/* 버튼 */}
@@ -428,7 +491,17 @@ export default function AdminSliders() {
 
             {/* 정보 */}
             <div style={{ flex: 1, padding: '0.75rem 1rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>{slider.title}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                <span style={{ fontWeight: '600' }}>{slider.title}</span>
+                {slider.type === 'FULL_IMAGE' && (
+                  <span style={{
+                    fontSize: '0.65rem', padding: '0.1rem 0.4rem', borderRadius: '4px',
+                    background: '#fef3c7', color: '#92400e', fontWeight: '600',
+                  }}>
+                    통이미지
+                  </span>
+                )}
+              </div>
               {slider.description && (
                 <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.15rem' }}>
                   {slider.description}
@@ -489,6 +562,12 @@ export default function AdminSliders() {
 }
 
 // ── 스타일 상수 ──
+const typeTabStyle = (active) => ({
+  padding: '0.5rem 1.2rem', border: `1px solid ${active ? '#3b82f6' : '#d1d5db'}`,
+  cursor: 'pointer', fontSize: '0.85rem', fontWeight: active ? '600' : '400',
+  background: active ? '#3b82f6' : 'white', color: active ? 'white' : '#374151',
+  borderRadius: '6px 0 0 6px', transition: 'all 0.15s ease',
+});
 const labelStyle = { display: 'block', fontSize: '0.85rem', fontWeight: '500', marginBottom: '0.25rem', color: '#374151' };
 const inputStyle = { width: '100%', padding: '0.5rem', border: '1px solid #d1d5db', borderRadius: '4px', fontSize: '0.9rem' };
 const submitBtnStyle = { background: '#3b82f6', color: 'white', padding: '0.5rem 1.5rem', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: '600' };

@@ -150,6 +150,7 @@ enum FileType {
 
 model Slider {
   id          String   @id @default(cuid())
+  type        String   @default("TEXT_IMAGE") // TEXT_IMAGE | FULL_IMAGE
   title       String
   description String?
   imageUrl    String

@@ -17,6 +17,7 @@ export async function PUT(request, { params }) {
     const slider = await prisma.slider.update({
       where: { id: params.id },
       data: {
+        type: data.type,
         title: data.title,
         description: data.description,
         imageUrl: data.imageUrl,
