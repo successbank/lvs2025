@@ -45,9 +45,12 @@ export async function POST(request) {
     let filename;
 
     if (type === 'FULL_IMAGE') {
-      // 통이미지: 폭 1920px 기준 비율 리사이징 (크롭 없음) + WebP 변환
+      // 통이미지: 1920×600 고정 크기로 리사이징 + WebP 변환
       outputBuffer = await sharp(buffer)
-        .resize({ width: FULL_IMAGE_MAX_WIDTH, withoutEnlargement: true })
+        .resize(FULL_IMAGE_MAX_WIDTH, FULL_IMAGE_MAX_HEIGHT, {
+          fit: 'cover',
+          position: 'center',
+        })
         .webp({ quality: 85 })
         .toBuffer();
       filename = `slider-full-${Date.now()}-${random}.webp`;
