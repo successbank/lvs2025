@@ -76,6 +76,7 @@ export async function PUT(request, { params }) {
         isNew: data.isNew,
         isFeatured: data.isFeatured,
         isActive: data.isActive,
+        order: data.order,
       },
       include: {
         category: true,

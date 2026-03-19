@@ -102,6 +102,13 @@ export async function POST(request) {
 
     const data = await request.json();
 
+    // 카테고리 내 최대 순서값 조회하여 새 제품을 마지막에 배치
+    const maxOrder = await prisma.product.aggregate({
+      where: { categoryId: data.categoryId },
+      _max: { order: true },
+    });
+    const newOrder = (maxOrder._max.order ?? -1) + 1;
+
     const product = await prisma.product.create({
       data: {
         modelName: data.modelName,
@@ -116,6 +123,7 @@ export async function POST(request) {
         voltageOptions: data.voltageOptions || [],
         isNew: data.isNew || false,
         isFeatured: data.isFeatured || false,
+        order: newOrder,
       },
       include: {
         category: true,
@@ -127,6 +135,39 @@ export async function POST(request) {
     console.error('Product Create Error:', error);
     return NextResponse.json(
       { error: '제품 생성에 실패했습니다.' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT /api/products - 제품 순서 일괄 변경 (관리자 전용)
+export async function PUT(request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== 'ADMIN') {
+      return NextResponse.json({ error: '권한이 없습니다.' }, { status: 401 });
+    }
+
+    const { orderedIds } = await request.json();
+
+    if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
+      return NextResponse.json({ error: '올바른 형식이 아닙니다.' }, { status: 400 });
+    }
+
+    await prisma.$transaction(
+      orderedIds.map((id, index) =>
+        prisma.product.update({
+          where: { id },
+          data: { order: index },
+        })
+      )
+    );
+
+    return NextResponse.json({ message: '순서가 저장되었습니다.' });
+  } catch (error) {
+    console.error('Product Order Update Error:', error);
+    return NextResponse.json(
+      { error: '순서 변경에 실패했습니다.' },
       { status: 500 }
     );
   }
