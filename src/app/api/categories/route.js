@@ -50,11 +50,16 @@ export async function GET(request) {
             children: {
               where: { isActive: true },
               orderBy: { order: 'asc' },
+              include: {
+                _count: { select: { products: true } },
+              },
             },
             parent: true,
+            _count: { select: { products: true } },
           }
         : {
             parent: true,
+            _count: { select: { products: true } },
           },
       orderBy: { order: 'asc' },
     });
@@ -64,6 +69,39 @@ export async function GET(request) {
     console.error('Categories API Error:', error);
     return NextResponse.json(
       { error: '카테고리 목록을 불러오는데 실패했습니다.' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT /api/categories - 카테고리 순서 일괄 변경 (관리자 전용)
+export async function PUT(request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== 'ADMIN') {
+      return NextResponse.json({ error: '권한이 없습니다.' }, { status: 401 });
+    }
+
+    const { orderedIds } = await request.json();
+
+    if (!Array.isArray(orderedIds) || orderedIds.length === 0) {
+      return NextResponse.json({ error: '올바른 형식이 아닙니다.' }, { status: 400 });
+    }
+
+    await prisma.$transaction(
+      orderedIds.map((id, index) =>
+        prisma.category.update({
+          where: { id },
+          data: { order: index },
+        })
+      )
+    );
+
+    return NextResponse.json({ message: '순서가 저장되었습니다.' });
+  } catch (error) {
+    console.error('Category Order Update Error:', error);
+    return NextResponse.json(
+      { error: '순서 저장에 실패했습니다.' },
       { status: 500 }
     );
   }
