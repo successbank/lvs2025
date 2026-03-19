@@ -26,6 +26,10 @@ export default function AdminProducts() {
     isNew: false, isFeatured: false,
   });
 
+  // 검색
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+
   // 드래그 앤 드롭
   const [dragIndex, setDragIndex] = useState(null);
   const [dragOverIndex, setDragOverIndex] = useState(null);
@@ -42,12 +46,15 @@ export default function AdminProducts() {
 
   useEffect(() => {
     fetchProducts();
-  }, [currentPage, selectedParentId, selectedChildId]);
+  }, [currentPage, selectedParentId, selectedChildId, searchQuery]);
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
       let url = `/api/products?page=${currentPage}&limit=${isFiltered ? 200 : 20}`;
+      if (searchQuery) {
+        url += `&search=${encodeURIComponent(searchQuery)}`;
+      }
       if (selectedChildId) {
         url += `&categoryId=${selectedChildId}`;
       } else if (selectedParentId) {
@@ -72,6 +79,19 @@ export default function AdminProducts() {
     } catch (error) {
       console.error('Failed to fetch categories:', error);
     }
+  };
+
+  // === 검색 핸들러 ===
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearchQuery(searchInput.trim());
+    setCurrentPage(1);
+  };
+
+  const clearSearch = () => {
+    setSearchInput('');
+    setSearchQuery('');
+    setCurrentPage(1);
   };
 
   // === 트리 헬퍼 ===
@@ -339,6 +359,59 @@ export default function AdminProducts() {
 
         {/* 우측: 제품 패널 */}
         <div style={{ flex: 1, minWidth: 0 }}>
+
+          {/* 검색바 */}
+          <form onSubmit={handleSearch} style={{
+            display: 'flex', gap: '0.5rem', marginBottom: '1rem',
+          }}>
+            <div style={{ flex: 1, position: 'relative' }}>
+              <input
+                type="text"
+                value={searchInput}
+                onChange={e => setSearchInput(e.target.value)}
+                placeholder="모델명, 제품명으로 검색..."
+                style={{
+                  width: '100%', padding: '0.6rem 0.75rem',
+                  paddingRight: searchInput ? '2rem' : '0.75rem',
+                  border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.9rem',
+                  background: 'white',
+                }}
+              />
+              {searchInput && (
+                <button type="button" onClick={clearSearch} style={{
+                  position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  color: '#9ca3af', fontSize: '1.1rem', lineHeight: 1, padding: '0.2rem',
+                }}>
+                  ×
+                </button>
+              )}
+            </div>
+            <button type="submit" style={{
+              ...primaryBtnStyle, padding: '0.6rem 1.25rem', whiteSpace: 'nowrap',
+            }}>
+              검색
+            </button>
+          </form>
+
+          {/* 검색 결과 안내 */}
+          {searchQuery && (
+            <div style={{
+              background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '6px',
+              padding: '0.6rem 1rem', marginBottom: '1rem',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            }}>
+              <span style={{ color: '#1e40af', fontSize: '0.9rem' }}>
+                "<strong>{searchQuery}</strong>" 검색 결과: <strong>{pagination.total || 0}</strong>건
+              </span>
+              <button onClick={clearSearch} style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                color: '#3b82f6', fontSize: '0.85rem', textDecoration: 'underline',
+              }}>
+                검색 초기화
+              </button>
+            </div>
+          )}
 
           {/* 순서 변경 알림바 */}
           {orderChanged && (

@@ -11,11 +11,20 @@ export async function GET(request) {
     const category = searchParams.get('category');
     const isNew = searchParams.get('isNew');
     const isFeatured = searchParams.get('isFeatured');
+    const search = searchParams.get('search');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
     const skip = (page - 1) * limit;
 
     const where = { isActive: true };
+
+    if (search && search.trim()) {
+      where.OR = [
+        { modelName: { contains: search.trim(), mode: 'insensitive' } },
+        { name: { contains: search.trim(), mode: 'insensitive' } },
+        { slug: { contains: search.trim(), mode: 'insensitive' } },
+      ];
+    }
     let parentCategory = null;
     let subcategories = [];
 
