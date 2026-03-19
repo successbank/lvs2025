@@ -45,20 +45,14 @@ export async function POST(request) {
     let filename;
 
     if (type === 'FULL_IMAGE') {
-      // 통이미지: 1920×600 이내로 리사이징 + WebP 변환
-      const metadata = await sharp(buffer).metadata();
-      const needsResize =
-        metadata.width > FULL_IMAGE_MAX_WIDTH ||
-        metadata.height > FULL_IMAGE_MAX_HEIGHT;
-
-      let pipeline = sharp(buffer);
-      if (needsResize) {
-        pipeline = pipeline.resize(FULL_IMAGE_MAX_WIDTH, FULL_IMAGE_MAX_HEIGHT, {
-          fit: 'inside',
-          withoutEnlargement: true,
-        });
-      }
-      outputBuffer = await pipeline.webp({ quality: 85 }).toBuffer();
+      // 통이미지: 1920×600 고정 크기로 리사이징 + WebP 변환
+      outputBuffer = await sharp(buffer)
+        .resize(FULL_IMAGE_MAX_WIDTH, FULL_IMAGE_MAX_HEIGHT, {
+          fit: 'cover',
+          position: 'center',
+        })
+        .webp({ quality: 85 })
+        .toBuffer();
       filename = `slider-full-${Date.now()}-${random}.webp`;
     } else {
       // 기존 텍스트+이미지: 원본 그대로 저장
