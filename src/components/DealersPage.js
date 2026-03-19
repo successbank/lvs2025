@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import '../app/styles/globals.css';
 
 const DOMESTIC_DEALERS = [
@@ -25,7 +26,7 @@ const DOMESTIC_DEALERS = [
   },
   {
     id: 3,
-    name: '이미징웍스㈜',
+    name: '이미징웍스(주)',
     address: '경기도 수원시 영통구 법조로25, SK ViewLake 에이동 2109호',
     tel: '070-7604-4096',
     fax: '031-624-3078',
@@ -90,6 +91,7 @@ const INTERNATIONAL_DEALERS = [
     id: 101,
     name: 'Laser Vision System Pte., Ltd.',
     country: 'Singapore',
+    flag: '\u{1F1F8}\u{1F1EC}',
     tel: '65-6841-2311 | 65-9023-3211',
     fax: '65-6841-2355',
     email: 'sales@laservision.com.sg',
@@ -100,6 +102,7 @@ const INTERNATIONAL_DEALERS = [
     id: 102,
     name: 'Alternative Vision Corporation',
     country: 'USA',
+    flag: '\u{1F1FA}\u{1F1F8}',
     tel: '+1-520-615-4073',
     email: 'sales@alt-vision.com',
     website: 'www.alt-vision.com',
@@ -109,6 +112,7 @@ const INTERNATIONAL_DEALERS = [
     id: 103,
     name: 'ColS s.r.o.',
     country: 'Slovakia',
+    flag: '\u{1F1F8}\u{1F1F0}',
     tel: '+421-948-231-361',
     email: 'pcopjan@cois.sk',
     website: 'www.cois.sk',
@@ -118,6 +122,7 @@ const INTERNATIONAL_DEALERS = [
     id: 104,
     name: 'Nevis Co., Ltd.',
     country: 'Taiwan',
+    flag: '\u{1F1F9}\u{1F1FC}',
     tel: '+886-2-2226-9796',
     fax: '+886-2-2226-6586',
     email: 'support@nevis.com.tw',
@@ -128,6 +133,7 @@ const INTERNATIONAL_DEALERS = [
     id: 105,
     name: 'imRN Asia Co., Ltd.',
     country: 'Thailand',
+    flag: '\u{1F1F9}\u{1F1ED}',
     tel: '087-803-1661',
     fax: '02-889-1198',
     email: 'sale@imRNasia.com',
@@ -138,6 +144,7 @@ const INTERNATIONAL_DEALERS = [
     id: 106,
     name: 'VIETNAM SEBONG VINA',
     country: 'Vietnam',
+    flag: '\u{1F1FB}\u{1F1F3}',
     tel: '84.4.3226.2970',
     fax: '84.4.3226.2971',
     email: 'dhshin@osebong.com',
@@ -148,6 +155,7 @@ const INTERNATIONAL_DEALERS = [
     id: 107,
     name: 'Abiz Technology Co., Ltd.',
     country: 'Thailand',
+    flag: '\u{1F1F9}\u{1F1ED}',
     tel: '+66 (0) 2-275-5475',
     fax: '+66 (0) 2-275-5875',
     email: 'info@abizsensor.com',
@@ -157,57 +165,133 @@ const INTERNATIONAL_DEALERS = [
 
 const DEALER_IMAGE_BASE = 'http://lvs.webmaker21.kr/ko/images/';
 
+function extractCity(address) {
+  if (!address) return '';
+  const match = address.match(/^(서울|부산|대구|인천|광주|대전|울산|세종|경기도\s*\S+?시|충[북남]|전[북남]|경[북남]|강원|제주|서울특별시|서울시)/);
+  if (match) {
+    let city = match[1];
+    city = city.replace(/특별시|광역시/, '');
+    if (city.startsWith('경기도')) {
+      city = city.replace('경기도', '').trim();
+      city = '경기 ' + city;
+    }
+    return city;
+  }
+  return '';
+}
+
+const UNIQUE_COUNTRIES = [...new Set(INTERNATIONAL_DEALERS.map(d => d.country))].length;
+
+/* SVG Icons */
+const IconMapPin = () => (
+  <svg className="dealer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+    <circle cx="12" cy="10" r="3" />
+  </svg>
+);
+
+const IconPhone = () => (
+  <svg className="dealer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+  </svg>
+);
+
+const IconPrinter = () => (
+  <svg className="dealer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="6 9 6 2 18 2 18 9" />
+    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+    <rect x="6" y="14" width="12" height="8" />
+  </svg>
+);
+
+const IconMail = () => (
+  <svg className="dealer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+    <polyline points="22,6 12,13 2,6" />
+  </svg>
+);
+
+const IconGlobe = () => (
+  <svg className="dealer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="12" r="10" />
+    <line x1="2" y1="12" x2="22" y2="12" />
+    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+  </svg>
+);
+
 function DealerCard({ dealer, isInternational }) {
+  const city = isInternational ? dealer.country : extractCity(dealer.address);
+  const badgeLabel = isInternational ? dealer.flag : '\u{1F1F0}\u{1F1F7}';
+  const cardClass = `dealer-card ${isInternational ? 'dealer-card--international' : 'dealer-card--domestic'}`;
+
+  const websiteUrl = dealer.website
+    ? dealer.website.startsWith('http') ? dealer.website : `http://${dealer.website}`
+    : null;
+
   return (
-    <div className="dealer-card">
-      <div className="dealer-logo">
+    <div className={cardClass}>
+      <div className="dealer-card-logo">
+        <span className="dealer-card-badge">{badgeLabel}</span>
         <img
           src={`${DEALER_IMAGE_BASE}${dealer.image}`}
           alt={dealer.name}
-          onError={(e) => {
-            e.target.style.display = 'none';
-          }}
+          onError={(e) => { e.target.style.display = 'none'; }}
         />
       </div>
-      <div className="dealer-header">
-        <div className="dealer-name">{dealer.name}</div>
-        {isInternational && dealer.country && (
-          <div className="dealer-region">{dealer.country}</div>
-        )}
-      </div>
-      <div className="dealer-info">
-        {dealer.address && (
-          <div className="dealer-info-item">
-            <div className="dealer-info-label">주소</div>
-            <div className="dealer-info-value">{dealer.address}</div>
+      <div className="dealer-card-body">
+        <h4 className="dealer-card-name">{dealer.name}</h4>
+        {city && <div className="dealer-card-location">{city}</div>}
+        <div className="dealer-card-contacts">
+          {dealer.address && (
+            <div className="dealer-contact-row">
+              <IconMapPin />
+              <span>{dealer.address}</span>
+            </div>
+          )}
+          <div className="dealer-contact-row">
+            <IconPhone />
+            <span>{dealer.tel}</span>
           </div>
-        )}
-        <div className="dealer-info-item">
-          <div className="dealer-info-label">TEL</div>
-          <div className="dealer-info-value">{dealer.tel}</div>
+          {dealer.fax && (
+            <div className="dealer-contact-row">
+              <IconPrinter />
+              <span>{dealer.fax}</span>
+            </div>
+          )}
+          <div className="dealer-contact-row">
+            <IconMail />
+            <span>{dealer.email}</span>
+          </div>
         </div>
-        {dealer.fax && (
-          <div className="dealer-info-item">
-            <div className="dealer-info-label">FAX</div>
-            <div className="dealer-info-value">{dealer.fax}</div>
-          </div>
-        )}
-        <div className="dealer-info-item">
-          <div className="dealer-info-label">이메일</div>
-          <div className="dealer-info-value">{dealer.email}</div>
-        </div>
-        {dealer.website && (
-          <div className="dealer-info-item">
-            <div className="dealer-info-label">홈페이지</div>
-            <div className="dealer-info-value">{dealer.website}</div>
-          </div>
-        )}
       </div>
+      {websiteUrl && (
+        <div className="dealer-card-footer">
+          <a href={websiteUrl} target="_blank" rel="noopener noreferrer" className="dealer-website-btn">
+            <IconGlobe />
+            <span>Homepage</span>
+          </a>
+        </div>
+      )}
     </div>
   );
 }
 
 export default function DealersPage({ companyInfo }) {
+  const [filter, setFilter] = useState('all');
+
+  const domesticCount = DOMESTIC_DEALERS.length;
+  const internationalCount = INTERNATIONAL_DEALERS.length;
+  const totalCount = domesticCount + internationalCount;
+
+  const filteredDealers = filter === 'domestic'
+    ? DOMESTIC_DEALERS.map(d => ({ ...d, _type: 'domestic' }))
+    : filter === 'international'
+      ? INTERNATIONAL_DEALERS.map(d => ({ ...d, _type: 'international' }))
+      : [
+          ...DOMESTIC_DEALERS.map(d => ({ ...d, _type: 'domestic' })),
+          ...INTERNATIONAL_DEALERS.map(d => ({ ...d, _type: 'international' })),
+        ];
+
   return (
     <>
       {/* Breadcrumb */}
@@ -240,41 +324,85 @@ export default function DealersPage({ companyInfo }) {
         </div>
       </div>
 
+      {/* Intro Section with Stats */}
+      <section className="dealer-intro-section">
+        <div className="dealer-intro-inner">
+          <h2 className="dealer-intro-title">LVS Global Dealer Network</h2>
+          <p className="dealer-intro-desc">
+            국내외 전문 파트너와 함께 산업용 LED 조명 솔루션을 제공합니다.
+          </p>
+          <div className="dealer-stats">
+            <div className="dealer-stat-item">
+              <span className="dealer-stat-number">{totalCount}</span>
+              <span className="dealer-stat-label">전체 대리점</span>
+            </div>
+            <span className="dealer-stat-divider" />
+            <div className="dealer-stat-item">
+              <span className="dealer-stat-number">{domesticCount}</span>
+              <span className="dealer-stat-label">국내</span>
+            </div>
+            <span className="dealer-stat-divider" />
+            <div className="dealer-stat-item">
+              <span className="dealer-stat-number">{internationalCount}</span>
+              <span className="dealer-stat-label">해외</span>
+            </div>
+            <span className="dealer-stat-divider" />
+            <div className="dealer-stat-item">
+              <span className="dealer-stat-number">{UNIQUE_COUNTRIES}</span>
+              <span className="dealer-stat-label">국가</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Content Section */}
       <section className="content-section">
         <div className="container">
-          {/* 국내 대리점 */}
-          <div className="dealer-section">
-            <h3 className="dealer-section-title">LVS Local Network — 국내대리점</h3>
-            <div className="dealer-grid">
-              {DOMESTIC_DEALERS.map((dealer) => (
-                <DealerCard key={dealer.id} dealer={dealer} isInternational={false} />
-              ))}
-            </div>
+          {/* Tab Filter */}
+          <div className="dealer-tabs">
+            <button
+              className={`dealer-tab-btn ${filter === 'all' ? 'active' : ''}`}
+              onClick={() => setFilter('all')}
+            >
+              전체 ({totalCount})
+            </button>
+            <button
+              className={`dealer-tab-btn ${filter === 'domestic' ? 'active' : ''}`}
+              onClick={() => setFilter('domestic')}
+            >
+              국내 대리점 ({domesticCount})
+            </button>
+            <button
+              className={`dealer-tab-btn ${filter === 'international' ? 'active' : ''}`}
+              onClick={() => setFilter('international')}
+            >
+              해외 대리점 ({internationalCount})
+            </button>
           </div>
 
-          {/* 해외 대리점 */}
-          <div className="dealer-section" style={{ marginTop: '60px' }}>
-            <h3 className="dealer-section-title">LVS World Wide Network — 해외대리점</h3>
-            <div className="dealer-grid">
-              {INTERNATIONAL_DEALERS.map((dealer) => (
-                <DealerCard key={dealer.id} dealer={dealer} isInternational={true} />
-              ))}
-            </div>
+          {/* Dealer Grid */}
+          <div className="dealer-grid">
+            {filteredDealers.map((dealer) => (
+              <DealerCard
+                key={dealer.id}
+                dealer={dealer}
+                isInternational={dealer._type === 'international'}
+              />
+            ))}
           </div>
 
-          {/* Dealer Inquiry */}
-          <div style={{ marginTop: '80px', background: 'linear-gradient(135deg, #1976d2 0%, #1565c0 100%)', color: 'white', padding: '60px 40px', borderRadius: '12px', textAlign: 'center' }}>
-            <h3 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '20px' }}>대리점 개설 문의</h3>
-            <p style={{ fontSize: '16px', marginBottom: '30px', opacity: '0.9' }}>(주)엘브이에스의 대리점이 되어 함께 성장하실 파트너를 모집합니다.</p>
-            <div style={{ display: 'flex', gap: '40px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <div>
-                <div style={{ fontSize: '14px', opacity: '0.8', marginBottom: '5px' }}>전화 문의</div>
-                <div style={{ fontSize: '24px', fontWeight: '700' }}>{companyInfo?.phone || '032-461-1800'}</div>
+          {/* Dealer Inquiry CTA */}
+          <div className="dealer-inquiry-cta">
+            <h3 className="dealer-cta-title">대리점 개설 문의</h3>
+            <p className="dealer-cta-desc">(주)엘브이에스의 대리점이 되어 함께 성장하실 파트너를 모집합니다.</p>
+            <div className="dealer-cta-contacts">
+              <div className="dealer-cta-item">
+                <div className="dealer-cta-label">전화 문의</div>
+                <div className="dealer-cta-value">{companyInfo?.phone || '032-461-1800'}</div>
               </div>
-              <div>
-                <div style={{ fontSize: '14px', opacity: '0.8', marginBottom: '5px' }}>이메일 문의</div>
-                <div style={{ fontSize: '24px', fontWeight: '700' }}>{companyInfo?.email || 'info@lvs.co.kr'}</div>
+              <div className="dealer-cta-item">
+                <div className="dealer-cta-label">이메일 문의</div>
+                <div className="dealer-cta-value">{companyInfo?.email || 'info@lvs.co.kr'}</div>
               </div>
             </div>
           </div>
