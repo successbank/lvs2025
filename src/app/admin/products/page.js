@@ -577,27 +577,38 @@ export default function AdminProducts() {
                       }}>
                         ⠿
                       </td>
-                      {/* 썸네일 */}
+                      {/* 썸네일 — 클릭 시 소비자 페이지 새창 */}
                       <td style={{ ...tdStyle, padding: '0.4rem 0.5rem' }}>
-                        {product.mainImage ? (
-                          <img
-                            src={product.mainImage}
-                            alt={product.name}
-                            draggable={false}
-                            style={{
-                              width: '44px', height: '44px', objectFit: 'cover',
-                              borderRadius: '4px', display: 'block', border: '1px solid #e5e7eb',
-                            }}
-                          />
-                        ) : (
-                          <div style={{
-                            width: '44px', height: '44px', background: '#f9fafb', borderRadius: '4px',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            color: '#d1d5db', fontSize: '0.65rem', border: '1px solid #e5e7eb',
-                          }}>
-                            No img
-                          </div>
-                        )}
+                        <a
+                          href={`/products/${product.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          draggable={false}
+                          onClick={(e) => e.stopPropagation()}
+                          title="소비자 페이지 보기"
+                        >
+                          {product.mainImage ? (
+                            <img
+                              src={product.mainImage}
+                              alt={product.name}
+                              draggable={false}
+                              style={{
+                                width: '44px', height: '44px', objectFit: 'cover',
+                                borderRadius: '4px', display: 'block', border: '1px solid #e5e7eb',
+                                cursor: 'pointer',
+                              }}
+                            />
+                          ) : (
+                            <div style={{
+                              width: '44px', height: '44px', background: '#f9fafb', borderRadius: '4px',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              color: '#d1d5db', fontSize: '0.65rem', border: '1px solid #e5e7eb',
+                              cursor: 'pointer',
+                            }}>
+                              No img
+                            </div>
+                          )}
+                        </a>
                       </td>
                       {/* 모델명 */}
                       <td style={tdStyle}>
