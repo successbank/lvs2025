@@ -1,6 +1,8 @@
 import ProductsMainPage from '@/components/ProductsMainPage';
 import prisma from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: '제품소개 - LVS',
   description: 'LVS의 다양한 조명 제품을 만나보세요.',

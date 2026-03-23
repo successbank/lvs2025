@@ -1,6 +1,8 @@
 import CertificationsPage from '@/components/CertificationsPage';
 import { Pool } from 'pg';
 
+export const dynamic = 'force-dynamic';
+
 async function getData() {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,

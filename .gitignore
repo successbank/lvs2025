@@ -28,3 +28,6 @@ src/uploads/consultation/
 
 # Temp migration scripts
 src/migrate-old-downloads.js
+transfer/
+lvs_db_backup.dump
+migrate-data.py

@@ -1,6 +1,8 @@
 import HomePage from '@/components/HomePage';
 import prisma from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 async function getData() {
   try {
     const [categories, featuredProducts, notices, companyInfo, sliders, partners] = await Promise.all([
