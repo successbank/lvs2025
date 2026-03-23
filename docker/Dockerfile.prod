@@ -42,8 +42,10 @@ COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder /app/prisma ./prisma
 
-# uploads 디렉토리 생성
-RUN mkdir -p /app/uploads && chown -R nextjs:nodejs /app/uploads
+# uploads 디렉토리 생성 (public/uploads에 마운트됨, /app/uploads는 심볼릭 링크)
+RUN mkdir -p /app/public/uploads && \
+    ln -sf /app/public/uploads /app/uploads && \
+    chown -R nextjs:nodejs /app/public/uploads
 
 USER nextjs
 
