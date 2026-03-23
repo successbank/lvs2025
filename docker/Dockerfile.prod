@@ -1,0 +1,52 @@
+FROM node:18-alpine AS base
+
+# 빌드 단계
+FROM base AS builder
+WORKDIR /app
+
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+RUN apk add --no-cache libc6-compat openssl
+
+# src/ 디렉토리의 package.json 복사
+COPY src/package*.json ./
+RUN npm ci
+
+# Prisma 스키마 복사 및 generate
+COPY src/prisma ./prisma
+RUN npx prisma generate
+
+# 소스코드 복사 및 빌드
+COPY src/ .
+RUN npm run build
+
+# 프로덕션 실행 단계
+FROM base AS production
+WORKDIR /app
+
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+RUN apk add --no-cache openssl && \
+    addgroup -g 1001 nodejs && \
+    adduser -S nextjs -u 1001
+
+# standalone 출력 복사
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+# Prisma 클라이언트 복사
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/prisma ./prisma
+
+# uploads 디렉토리 생성
+RUN mkdir -p /app/uploads && chown -R nextjs:nodejs /app/uploads
+
+USER nextjs
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
