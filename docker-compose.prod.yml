@@ -43,15 +43,7 @@ services:
       start_period: 40s
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.lvs-https.rule=Host(`lvs.co.kr`)"
-      - "traefik.http.routers.lvs-https.entrypoints=https"
-      - "traefik.http.routers.lvs-https.tls=true"
-      - "traefik.http.routers.lvs-https.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.lvs-https.middlewares=gzip,security-headers@file"
-      - "traefik.http.routers.lvs-http.rule=Host(`lvs.co.kr`)"
-      - "traefik.http.routers.lvs-http.entrypoints=http"
-      - "traefik.http.routers.lvs-http.middlewares=redirect-to-https"
-      - "traefik.http.services.lvs-app.loadbalancer.server.port=3000"
+      - "traefik.docker.network=d9dr3vdf9alez7mjz06uroz0"
 
   database:
     image: postgres:15-alpine
