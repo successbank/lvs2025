@@ -10,6 +10,10 @@ export default function ConsultationWritePage() {
   const [formData, setFormData] = useState({
     name: '',
     password: '',
+    company: '',
+    contactName: '',
+    contactEmail: '',
+    contactPhone: '',
     title: '',
     content: '',
     isSecret: true,
@@ -53,6 +57,10 @@ export default function ConsultationWritePage() {
           author: formData.name,
           password: formData.password,
           isSecret: formData.isSecret,
+          company: formData.company,
+          contactName: formData.contactName,
+          contactEmail: formData.contactEmail,
+          contactPhone: formData.contactPhone,
         }),
       });
 
@@ -133,6 +141,54 @@ export default function ConsultationWritePage() {
                     required
                     className="form-input"
                     placeholder="수정/삭제 시 필요합니다"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>업체명</th>
+                <td>
+                  <input
+                    type="text"
+                    name="company"
+                    value={formData.company}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="업체명을 입력해주세요"
+                  />
+                </td>
+                <th>담당자</th>
+                <td>
+                  <input
+                    type="text"
+                    name="contactName"
+                    value={formData.contactName}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="담당자명을 입력해주세요"
+                  />
+                </td>
+              </tr>
+              <tr>
+                <th>이메일</th>
+                <td>
+                  <input
+                    type="email"
+                    name="contactEmail"
+                    value={formData.contactEmail}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="이메일을 입력해주세요"
+                  />
+                </td>
+                <th>연락처</th>
+                <td>
+                  <input
+                    type="tel"
+                    name="contactPhone"
+                    value={formData.contactPhone}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="연락처를 입력해주세요"
                   />
                 </td>
               </tr>
