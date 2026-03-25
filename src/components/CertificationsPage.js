@@ -31,7 +31,7 @@ const CERT_DATA = [
   { id: 25, title: 'DL, DLA2 인증서', image: 'thumb_5a66c5c2b6ff2.JPG', category: 'product' },
 ];
 
-const CERT_IMAGE_BASE = 'http://lvs.webmaker21.kr/ksboard/data/cert/';
+const CERT_IMAGE_BASE = '/images/certifications/';
 
 const FILTERS = [
   { key: 'all', label: '전체', count: 25 },
