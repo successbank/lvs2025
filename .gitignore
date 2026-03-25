@@ -7,7 +7,7 @@ node_modules/
 .DS_Store
 
 # Claude Code
-.claude/
+.claude/settings.local.json
 
 # Playwright MCP (debug logs & screenshots)
 .playwright-mcp/
