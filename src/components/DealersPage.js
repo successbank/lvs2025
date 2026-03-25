@@ -163,7 +163,7 @@ const INTERNATIONAL_DEALERS = [
   },
 ];
 
-const DEALER_IMAGE_BASE = 'http://lvs.webmaker21.kr/ko/images/';
+const DEALER_IMAGE_BASE = '/images/dealers/';
 
 function extractCity(address) {
   if (!address) return '';
