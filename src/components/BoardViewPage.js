@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import '../app/styles/globals.css';
 
-export default function BoardViewPage({ boardSlug, postId }) {
+export default function BoardViewPage({ boardSlug, postId, section = 'support' }) {
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === 'ADMIN';
 
@@ -113,6 +113,29 @@ export default function BoardViewPage({ boardSlug, postId }) {
     return Math.round(bytes / Math.pow(k, i) * 10) / 10 + ' ' + sizes[i];
   };
 
+  const basePath = section === 'about' ? `/about/${boardSlug}` : `/support/${boardSlug}`;
+
+  const supportNav = [
+    { href: '/support/tech-guide', slug: 'tech-guide', label: '테크니컬 가이드' },
+    { href: '/support/downloads', slug: 'downloads', label: '자료 다운로드' },
+    { href: '/support/consultation', slug: 'consultation', label: '온라인 상담실' },
+    { href: '/support/notices', slug: 'notices', label: '공지사항' },
+    { href: '/support/contact', slug: 'contact', label: '찾아오시는 길' },
+    { href: '/support/catalog', slug: 'catalog', label: '카탈로그 신청' },
+  ];
+
+  const aboutNav = [
+    { href: '/about/us', slug: 'us', label: '회사소개' },
+    { href: '/about/organization', slug: 'organization', label: '개요 및 조직도' },
+    { href: '/about/why-led', slug: 'why-led', label: 'Why LED' },
+    { href: '/about/certifications', slug: 'certifications', label: '인증현황' },
+    { href: '/about/dealers', slug: 'dealers', label: '대리점 안내' },
+    { href: '/about/careers', slug: 'careers', label: '인재채용' },
+  ];
+
+  const navItems = section === 'about' ? aboutNav : supportNav;
+  const sectionLabel = section === 'about' ? '회사소개' : '고객지원';
+
   return (
     <>
       {/* Breadcrumb */}
@@ -120,9 +143,9 @@ export default function BoardViewPage({ boardSlug, postId }) {
         <div className="breadcrumb-container">
           <a href="/">Home</a>
           <span>&gt;</span>
-          <a href="/support">고객지원</a>
+          <a href={`/${section}`}>{sectionLabel}</a>
           <span>&gt;</span>
-          <a href={`/support/${boardSlug}`}>{post?.board_name || '게시판'}</a>
+          <a href={basePath}>{post?.board_name || '게시판'}</a>
           <span>&gt;</span>
           <span>{requiresPassword ? '비밀글' : (post?.title || '게시물')}</span>
         </div>
@@ -139,12 +162,11 @@ export default function BoardViewPage({ boardSlug, postId }) {
       {/* Sub Navigation */}
       <div className="sub-nav">
         <div className="sub-nav-container">
-          <a href="/support/tech-guide" className={boardSlug === 'tech-guide' ? 'active' : ''}>테크니컬 가이드</a>
-          <a href="/support/downloads" className={boardSlug === 'downloads' ? 'active' : ''}>자료 다운로드</a>
-          <a href="/support/consultation" className={boardSlug === 'consultation' ? 'active' : ''}>온라인 상담실</a>
-          <a href="/support/notices" className={boardSlug === 'notices' ? 'active' : ''}>공지사항</a>
-          <a href="/support/contact" className={boardSlug === 'contact' ? 'active' : ''}>찾아오시는 길</a>
-          <a href="/support/catalog" className={boardSlug === 'catalog' ? 'active' : ''}>카탈로그 신청</a>
+          {navItems.map((item) => (
+            <a key={item.slug} href={item.href} className={boardSlug === item.slug ? 'active' : ''}>
+              {item.label}
+            </a>
+          ))}
         </div>
       </div>
 
@@ -155,7 +177,7 @@ export default function BoardViewPage({ boardSlug, postId }) {
         ) : !post ? (
           <div className="board-error">
             <p>게시물을 찾을 수 없습니다.</p>
-            <a href={`/support/${boardSlug}`} className="btn-primary">목록으로</a>
+            <a href={basePath} className="btn-primary">목록으로</a>
           </div>
         ) : requiresPassword ? (
           /* 비밀번호 게이트 */
@@ -181,7 +203,7 @@ export default function BoardViewPage({ boardSlug, postId }) {
             <div className="password-error">{gateError}</div>
             <div className="gate-buttons">
               <button className="btn-gate-confirm" onClick={handleGateSubmit}>확인</button>
-              <a href={`/support/${boardSlug}`} className="btn-gate-list">목록</a>
+              <a href={basePath} className="btn-gate-list">목록</a>
             </div>
           </div>
         ) : (
@@ -247,7 +269,7 @@ export default function BoardViewPage({ boardSlug, postId }) {
             {/* Post Navigation */}
             <div className="board-view-navigation">
               <div className="board-nav-buttons">
-                <a href={`/support/${boardSlug}`} className="btn-list">
+                <a href={basePath} className="btn-list">
                   목록
                 </a>
               </div>
@@ -258,7 +280,7 @@ export default function BoardViewPage({ boardSlug, postId }) {
               {nextPost && (
                 <div className="board-prevnext-item">
                   <span className="prevnext-label">다음글</span>
-                  <a href={`/support/${boardSlug}/${nextPost.id}`} className="prevnext-title">
+                  <a href={`${basePath}/${nextPost.id}`} className="prevnext-title">
                     {nextPost.title}
                   </a>
                 </div>
@@ -266,7 +288,7 @@ export default function BoardViewPage({ boardSlug, postId }) {
               {prevPost && (
                 <div className="board-prevnext-item">
                   <span className="prevnext-label">이전글</span>
-                  <a href={`/support/${boardSlug}/${prevPost.id}`} className="prevnext-title">
+                  <a href={`${basePath}/${prevPost.id}`} className="prevnext-title">
                     {prevPost.title}
                   </a>
                 </div>

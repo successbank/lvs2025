@@ -321,6 +321,7 @@ export default function DealersPage({ companyInfo }) {
           <a href="/about/why-led">Why LED</a>
           <a href="/about/certifications">인증현황</a>
           <a href="/about/dealers" className="active">대리점 안내</a>
+          <a href="/about/careers">인재채용</a>
         </div>
       </div>
 

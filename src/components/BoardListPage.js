@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import '../app/styles/globals.css';
 
-export default function BoardListPage({ boardSlug }) {
+export default function BoardListPage({ boardSlug, section = 'support' }) {
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === 'ADMIN';
 
@@ -130,7 +130,7 @@ export default function BoardListPage({ boardSlug }) {
     }
 
     // 기본: 상세 페이지 이동
-    window.location.href = `/support/${boardSlug}/${post.id}`;
+    window.location.href = `${basePath}/${post.id}`;
   };
 
   const handlePasswordSubmit = async () => {
@@ -150,7 +150,7 @@ export default function BoardListPage({ boardSlug }) {
       if (data.verified) {
         sessionStorage.setItem(`post_pw_${passwordTarget.id}`, passwordInput);
         setPasswordModalOpen(false);
-        window.location.href = `/support/${boardSlug}/${passwordTarget.id}`;
+        window.location.href = `${basePath}/${passwordTarget.id}`;
       } else {
         setPasswordError(data.error || '비밀번호가 일치하지 않습니다.');
       }
@@ -262,6 +262,29 @@ export default function BoardListPage({ boardSlug }) {
     );
   };
 
+  const basePath = section === 'about' ? `/about/${boardSlug}` : `/support/${boardSlug}`;
+
+  const supportNav = [
+    { href: '/support/tech-guide', slug: 'tech-guide', label: '테크니컬 가이드' },
+    { href: '/support/downloads', slug: 'downloads', label: '자료 다운로드' },
+    { href: '/support/consultation', slug: 'consultation', label: '온라인 상담실' },
+    { href: '/support/notices', slug: 'notices', label: '공지사항' },
+    { href: '/support/contact', slug: 'contact', label: '찾아오시는 길' },
+    { href: '/support/catalog', slug: 'catalog', label: '카탈로그 신청' },
+  ];
+
+  const aboutNav = [
+    { href: '/about/us', slug: 'us', label: '회사소개' },
+    { href: '/about/organization', slug: 'organization', label: '개요 및 조직도' },
+    { href: '/about/why-led', slug: 'why-led', label: 'Why LED' },
+    { href: '/about/certifications', slug: 'certifications', label: '인증현황' },
+    { href: '/about/dealers', slug: 'dealers', label: '대리점 안내' },
+    { href: '/about/careers', slug: 'careers', label: '인재채용' },
+  ];
+
+  const navItems = section === 'about' ? aboutNav : supportNav;
+  const sectionLabel = section === 'about' ? '회사소개' : '고객지원';
+
   return (
     <>
       {/* Breadcrumb */}
@@ -269,7 +292,7 @@ export default function BoardListPage({ boardSlug }) {
         <div className="breadcrumb-container">
           <a href="/">Home</a>
           <span>&gt;</span>
-          <a href="/support">고객지원</a>
+          <a href={`/${section}`}>{sectionLabel}</a>
           <span>&gt;</span>
           <span>{board?.name || '게시판'}</span>
         </div>
@@ -286,12 +309,11 @@ export default function BoardListPage({ boardSlug }) {
       {/* Sub Navigation */}
       <div className="sub-nav">
         <div className="sub-nav-container">
-          <a href="/support/tech-guide" className={boardSlug === 'tech-guide' ? 'active' : ''}>테크니컬 가이드</a>
-          <a href="/support/downloads" className={boardSlug === 'downloads' ? 'active' : ''}>자료 다운로드</a>
-          <a href="/support/consultation" className={boardSlug === 'consultation' ? 'active' : ''}>온라인 상담실</a>
-          <a href="/support/notices" className={boardSlug === 'notices' ? 'active' : ''}>공지사항</a>
-          <a href="/support/contact" className={boardSlug === 'contact' ? 'active' : ''}>찾아오시는 길</a>
-          <a href="/support/catalog" className={boardSlug === 'catalog' ? 'active' : ''}>카탈로그 신청</a>
+          {navItems.map((item) => (
+            <a key={item.slug} href={item.href} className={boardSlug === item.slug ? 'active' : ''}>
+              {item.label}
+            </a>
+          ))}
         </div>
       </div>
 
@@ -321,7 +343,7 @@ export default function BoardListPage({ boardSlug }) {
                     </td>
                     <td className="board-col-title">
                       <a
-                        href={`/support/${boardSlug}/${notice.id}`}
+                        href={`${basePath}/${notice.id}`}
                         className="board-title-link"
                         onClick={(e) => handlePostClick(e, notice)}
                       >
@@ -355,7 +377,7 @@ export default function BoardListPage({ boardSlug }) {
                         <td className="board-col-number">{postNumber}</td>
                         <td className="board-col-title">
                           <a
-                            href={`/support/${boardSlug}/${post.id}`}
+                            href={`${basePath}/${post.id}`}
                             className="board-title-link"
                             onClick={(e) => handlePostClick(e, post)}
                           >
@@ -375,7 +397,7 @@ export default function BoardListPage({ boardSlug }) {
             {/* Write Button + Search Form */}
             {(boardSlug === 'consultation' || boardSlug === 'catalog') && (
               <div style={{ textAlign: 'right', marginBottom: '0.5rem' }}>
-                <a href={`/support/${boardSlug}/write`}
+                <a href={`${basePath}/write`}
                   style={{
                     display: 'inline-block', padding: '0.5rem 1.25rem',
                     background: '#2c5f8a', color: 'white', borderRadius: '4px',

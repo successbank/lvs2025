@@ -111,6 +111,7 @@ export default function CertificationsPage() {
           <a href="/about/why-led">Why LED</a>
           <a href="/about/certifications" className="active">인증현황</a>
           <a href="/about/dealers">대리점 안내</a>
+          <a href="/about/careers">인재채용</a>
         </div>
       </div>
 

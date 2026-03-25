@@ -74,5 +74,6 @@ VALUES
   ('board-notices', '공지사항', 'notices', '엘브이에스의 소식과 공지사항을 확인하세요.', 'notice', false, true, 1),
   ('board-tech-guide', '테크니컬 가이드', 'tech-guide', '제품 사용 가이드 및 기술 자료', 'tech-guide', false, true, 2),
   ('board-downloads', '자료 다운로드', 'downloads', '제품 카탈로그 및 기술 자료 다운로드', 'download', false, true, 3),
-  ('board-consultation', '온라인 상담실', 'consultation', '제품 문의 및 기술 상담', 'consultation', true, true, 4)
+  ('board-consultation', '온라인 상담실', 'consultation', '제품 문의 및 기술 상담', 'consultation', true, true, 4),
+  ('board-careers', '인재채용', 'careers', 'LVS와 함께 성장할 인재를 찾습니다.', 'notice', false, true, 5)
 ON CONFLICT (id) DO NOTHING;
