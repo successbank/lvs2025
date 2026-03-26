@@ -7,7 +7,26 @@ const CERT_DATA = [
   { id: 1, title: 'DB,DBS 인증서', image: 'thumb_5a66b7c4012ad.JPG', category: 'system' },
   { id: 2, title: 'EN04 인증서', image: '5b0f53694aa8b.jpg', category: 'system' },
   { id: 3, title: 'EN02 인증서', image: '5b0f4f02269de.jpg', category: 'system' },
-  { id: 4, title: 'EN-08 Series CE Certificates', image: 'thumb_5afbd2637efed.jpg', category: 'system' },
+  { id: 26, title: 'CE 인증서 (1)', image: 'ce-cert-001.jpg', category: 'system' },
+  { id: 27, title: 'CE 인증서 (2)', image: 'ce-cert-002.jpg', category: 'system' },
+  { id: 28, title: 'CE 인증서 (3)', image: 'ce-cert-003.jpg', category: 'system' },
+  { id: 29, title: 'CE 인증서 (4)', image: 'ce-cert-004.jpg', category: 'system' },
+  { id: 30, title: 'CE 인증서 (5)', image: 'ce-cert-005.jpg', category: 'system' },
+  { id: 31, title: 'CE 인증서 (6)', image: 'ce-cert-006.jpg', category: 'system' },
+  { id: 32, title: 'CE 인증서 (7)', image: 'ce-cert-007.jpg', category: 'system' },
+  { id: 33, title: 'CE 인증서 (8)', image: 'ce-cert-008.jpg', category: 'system' },
+  { id: 34, title: 'CE 인증서 (9)', image: 'ce-cert-009.jpg', category: 'system' },
+  { id: 35, title: 'CE 인증서 (10)', image: 'ce-cert-010.jpg', category: 'system' },
+  { id: 36, title: 'CE 인증서 (11)', image: 'ce-cert-011.jpg', category: 'system' },
+  { id: 37, title: 'CE 인증서 (12)', image: 'ce-cert-012.jpg', category: 'system' },
+  { id: 38, title: 'CE 인증서 (13)', image: 'ce-cert-013.jpg', category: 'system' },
+  { id: 39, title: 'CE 인증서 (14)', image: 'ce-cert-014.jpg', category: 'system' },
+  { id: 40, title: 'CE 인증서 (15)', image: 'ce-cert-015.jpg', category: 'system' },
+  { id: 41, title: 'CE 인증서 (16)', image: 'ce-cert-016.jpg', category: 'system' },
+  { id: 42, title: 'CE 인증서 (17)', image: 'ce-cert-017.jpg', category: 'system' },
+  { id: 43, title: 'CE 인증서 (18)', image: 'ce-cert-018.jpg', category: 'system' },
+  { id: 44, title: 'CE 인증서 (19)', image: 'ce-cert-019.jpg', category: 'system' },
+  { id: 45, title: 'CE 인증서 (20)', image: 'ce-cert-020.jpg', category: 'system' },
   { id: 5, title: 'SHL 인증서', image: 'thumb_5a66c9a28d3e1.JPG', category: 'system' },
   { id: 6, title: 'PT08-N04_LVD 인증서', image: 'thumb_5a66c960d563a.JPG', category: 'product' },
   { id: 7, title: 'PT08-N04 인증서', image: 'thumb_5a66c9480236f.JPG', category: 'product' },
@@ -34,9 +53,9 @@ const CERT_DATA = [
 const CERT_IMAGE_BASE = '/images/certifications/';
 
 const FILTERS = [
-  { key: 'all', label: '전체', count: 25 },
+  { key: 'all', label: '전체', count: 44 },
   { key: 'product', label: '제품 인증', count: 20 },
-  { key: 'system', label: '시스템 인증', count: 5 },
+  { key: 'system', label: '시스템 인증', count: 24 },
 ];
 
 export default function CertificationsPage() {
