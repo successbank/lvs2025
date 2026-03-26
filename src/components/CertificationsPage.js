@@ -9,12 +9,13 @@ const CERT_DATA = [
   { id: 3,  title: 'EN02 인증서',                image: '5b0f4f02269de.jpg',        category: 'system' },
   { id: 4,  title: 'EN-08 Series CE Certificates', image: 'thumb_5afbd2637efed.jpg', category: 'system' },
   { id: 5,  title: 'SHL 인증서',                 image: 'ce-shl.jpg',              category: 'system' },
-  { id: 6,  title: 'PT08-N04_LVD 인증서',        image: 'thumb_5a66c960d563a.JPG', category: 'product' },
-  { id: 7,  title: 'PT08-N04 인증서',            image: 'thumb_5a66c9480236f.JPG', category: 'product' },
+  { id: 6,  title: 'PT08-N04_LVD 인증서',        image: 'ce-pt.jpg',               category: 'product' },
+  { id: 7,  title: 'PT08-N04 인증서',            image: 'ce-pt.jpg',               category: 'product' },
   { id: 8,  title: 'PT 인증서',                  image: 'ce-pt.jpg',               category: 'product' },
   { id: 9,  title: 'PS-21 인증서',               image: 'ce-ps21.jpg',             category: 'product' },
   { id: 10, title: 'PS 인증서',                  image: 'ce-ps.jpg',               category: 'product' },
   { id: 11, title: 'PN 인증서',                  image: 'ce-pn.jpg',               category: 'product' },
+  { id: 46, title: 'PN-abxx-yy 인증서',          image: 'ce-pn-abxx-yy.jpg',       category: 'product' },
   { id: 12, title: 'PA10 인증서',                image: 'thumb_5a66c81f54b11.JPG', category: 'product' },
   { id: 13, title: 'PA 인증서',                  image: 'thumb_5a66c808dd7c6.JPG', category: 'product' },
   { id: 14, title: 'ILA-R, ILA-S 인증서',        image: 'ce-ila-r-ila-s.jpg',     category: 'product' },
@@ -34,8 +35,8 @@ const CERT_DATA = [
 const CERT_IMAGE_BASE = '/images/certifications/';
 
 const FILTERS = [
-  { key: 'all', label: '전체', count: 25 },
-  { key: 'product', label: '제품 인증', count: 20 },
+  { key: 'all', label: '전체', count: 26 },
+  { key: 'product', label: '제품 인증', count: 21 },
   { key: 'system', label: '시스템 인증', count: 5 },
 ];
 
