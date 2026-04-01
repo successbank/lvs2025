@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 
 // 폴백 메뉴 데이터 (DB 데이터가 없을 때 사용)
 const fallbackMenus = [
@@ -30,6 +31,7 @@ export default function Navigation({ companyInfo, navigationData }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [liveMenus, setLiveMenus] = useState(null);
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   // 클라이언트에서 최신 메뉴 데이터 fetch (캐시 우회)
   useEffect(() => {
@@ -91,7 +93,19 @@ export default function Navigation({ companyInfo, navigationData }) {
             <span className="header-divider">|</span>
             <a href="/about/careers">인재채용</a>
             <span className="header-divider">|</span>
-            <a href="/en">ENGLISH</a>
+            {session ? (
+              <>
+                <span style={{ color: '#d1d5db' }}>{session.user.name}님</span>
+                <span className="header-divider">|</span>
+                <a href="#" onClick={(e) => { e.preventDefault(); signOut({ callbackUrl: '/' }); }}>로그아웃</a>
+              </>
+            ) : (
+              <>
+                <a href="/login">로그인</a>
+                <span className="header-divider">|</span>
+                <a href="/register">회원가입</a>
+              </>
+            )}
           </div>
         </div>
       </div>
