@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import '../styles/globals.css';
@@ -10,11 +10,13 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [welcomeName, setWelcomeName] = useState('');
+  const loginInProgress = useRef(false);
   const router = useRouter();
   const { data: session } = useSession();
-  const [welcomeName, setWelcomeName] = useState('');
 
-  if (session && !welcomeName) {
+  // 로그인 진행 중이거나 환영 팝업 표시 중에는 리다이렉트하지 않음
+  if (session && !welcomeName && !loginInProgress.current) {
     router.push('/');
     return null;
   }
@@ -23,6 +25,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
+    loginInProgress.current = true;
 
     const result = await signIn('credentials', {
       email,
@@ -32,15 +35,21 @@ export default function LoginPage() {
 
     if (result?.error) {
       setError(result.error);
+      loginInProgress.current = false;
     } else {
-      const res = await fetch('/api/me');
-      const me = await res.json();
-      setWelcomeName(me.name || '회원');
+      try {
+        const res = await fetch('/api/me');
+        const me = await res.json();
+        setWelcomeName(me.name || '회원');
+      } catch {
+        setWelcomeName('회원');
+      }
     }
     setLoading(false);
   };
 
   const handleWelcomeClose = () => {
+    loginInProgress.current = false;
     setWelcomeName('');
     router.push('/');
     router.refresh();
