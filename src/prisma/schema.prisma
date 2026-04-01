@@ -374,3 +374,23 @@ model LayerPopup {
 
   @@map("layer_popups")
 }
+
+// ========================================
+// 네비게이션 메뉴 관리
+// ========================================
+
+model MenuItem {
+  id        String     @id @default(cuid())
+  label     String
+  url       String
+  type      String     @default("link")
+  parentId  String?
+  parent    MenuItem?  @relation("MenuHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children  MenuItem[] @relation("MenuHierarchy")
+  order     Int        @default(0)
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("menu_items")
+}

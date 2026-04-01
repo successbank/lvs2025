@@ -6,7 +6,7 @@ import SiteFooter from './SiteFooter';
 import PageTracker from './PageTracker';
 import LayerPopupManager from './LayerPopupManager';
 
-export default function PublicLayout({ companyInfo, children }) {
+export default function PublicLayout({ companyInfo, navigationData, children }) {
   const pathname = usePathname();
 
   if (pathname.startsWith('/admin')) {
@@ -15,7 +15,7 @@ export default function PublicLayout({ companyInfo, children }) {
 
   return (
     <>
-      <Navigation companyInfo={companyInfo} />
+      <Navigation companyInfo={companyInfo} navigationData={navigationData} />
       <PageTracker />
       <LayerPopupManager />
       {children}
