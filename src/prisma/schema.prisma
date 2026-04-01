@@ -81,6 +81,7 @@ model Product {
   viewCount       Int            @default(0)
   relatedProducts String[]       @default([])
   seriesData      Json?
+  productOptions  Json?
   viewLogs        ProductViewLog[]
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
@@ -270,7 +271,7 @@ model CompanyInfo {
   phone          String   @default("032-461-1800")
   fax            String   @default("032-461-1001")
   email          String?
-  address        String   @default("인천광역시 연수구 송도미래로 30 (송도동 214번지) 스마트밸리 B동 801~803호")
+  address        String   @default("인천광역시 연수구 송도미래로 30 B동 801~803호")
   workingHours   String   @default("평일 09:00~18:00")
   lunchTime      String   @default("12:00~13:00")
   closedDays     String   @default("일요일, 공휴일")
@@ -338,4 +339,38 @@ model ProductViewLog {
   @@index([productId, createdAt])
   @@index([createdAt])
   @@map("product_view_logs")
+}
+
+// ========================================
+// 레이어 팝업
+// ========================================
+
+enum PopupPosition {
+  CENTER
+  TOP_LEFT
+  TOP_RIGHT
+  BOTTOM_LEFT
+  BOTTOM_RIGHT
+}
+
+model LayerPopup {
+  id             String        @id @default(cuid())
+  title          String
+  imageUrl       String?
+  mobileImageUrl String?
+  link           String?
+  linkTarget     String        @default("_self")
+  position       PopupPosition @default(CENTER)
+  width          Int           @default(500)
+  height         Int           @default(500)
+  startDate      DateTime?
+  endDate        DateTime?
+  isActive       Boolean       @default(true)
+  order          Int           @default(0)
+  templateId     String?
+  templateData   Json?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@map("layer_popups")
 }

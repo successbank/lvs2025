@@ -5815,3 +5815,19 @@ body {
     margin-bottom: 24px;
   }
 }
+
+/* Toast animations */
+@keyframes toastSlideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+@keyframes toastSlideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+.toast-slide-in {
+  animation: toastSlideIn 0.3s ease forwards;
+}
+.toast-slide-out {
+  animation: toastSlideOut 0.3s ease forwards;
+}

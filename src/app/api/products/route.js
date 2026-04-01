@@ -132,6 +132,7 @@ export async function POST(request) {
         voltageOptions: data.voltageOptions || [],
         isNew: data.isNew || false,
         isFeatured: data.isFeatured || false,
+        productOptions: data.productOptions || null,
         order: newOrder,
       },
       include: {

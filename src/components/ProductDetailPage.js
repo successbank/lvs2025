@@ -184,17 +184,39 @@ export default function ProductDetailPage({ product }) {
                 <span className="label">원산지:</span>
                 <span className="value">{product.origin}</span>
               </div>
-              {product.colorOptions && product.colorOptions.length > 0 && (
-                <div className="meta-item">
-                  <span className="label">색상 옵션:</span>
-                  <span className="value">{product.colorOptions.join(', ')}</span>
-                </div>
-              )}
-              {product.voltageOptions && product.voltageOptions.length > 0 && (
-                <div className="meta-item">
-                  <span className="label">전압 옵션:</span>
-                  <span className="value">{product.voltageOptions.join(', ')}</span>
-                </div>
+              {product.productOptions?.attributes?.length > 0 ? (
+                product.productOptions.attributes.map((attr) => {
+                  let displayValue = '';
+                  if (attr.type === 'range' && attr.values?.length >= 2) {
+                    displayValue = `${attr.values[0]}${attr.unit || ''} ~ ${attr.values[attr.values.length - 1]}${attr.unit || ''}`;
+                  } else if (attr.type === 'text') {
+                    displayValue = (attr.values && attr.values[0]) || '';
+                  } else {
+                    displayValue = (attr.values || []).map(v => `${v}${attr.unit || ''}`).join(', ');
+                  }
+                  if (!displayValue) return null;
+                  return (
+                    <div key={attr.id} className="meta-item">
+                      <span className="label">{attr.name}:</span>
+                      <span className="value">{displayValue}</span>
+                    </div>
+                  );
+                })
+              ) : (
+                <>
+                  {product.colorOptions && product.colorOptions.length > 0 && (
+                    <div className="meta-item">
+                      <span className="label">색상 옵션:</span>
+                      <span className="value">{product.colorOptions.join(', ')}</span>
+                    </div>
+                  )}
+                  {product.voltageOptions && product.voltageOptions.length > 0 && (
+                    <div className="meta-item">
+                      <span className="label">전압 옵션:</span>
+                      <span className="value">{product.voltageOptions.join(', ')}</span>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
