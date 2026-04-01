@@ -16,7 +16,8 @@ export async function GET(request) {
     const limit = parseInt(searchParams.get('limit') || '12');
     const skip = (page - 1) * limit;
 
-    const where = { isActive: true };
+    const includeAll = searchParams.get('includeAll') === 'true';
+    const where = includeAll ? {} : { isActive: true };
 
     if (search && search.trim()) {
       where.OR = [

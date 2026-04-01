@@ -35,7 +35,9 @@ export async function GET(request) {
     }
 
     // 카테고리 목록 조회
-    const where = { isActive: true };
+    const includeAll = searchParams.get('includeAll') === 'true';
+    const where = includeAll ? {} : { isActive: true };
+    const childrenWhere = includeAll ? {} : { isActive: true };
 
     if (parentId === 'null' || parentId === '') {
       where.parentId = null;
@@ -48,7 +50,7 @@ export async function GET(request) {
       include: includeChildren
         ? {
             children: {
-              where: { isActive: true },
+              where: childrenWhere,
               orderBy: { order: 'asc' },
               include: {
                 _count: { select: { products: true } },

@@ -43,7 +43,7 @@ export default function ProductManagementTab() {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      let url = `/api/products?page=${currentPage}&limit=${isFiltered ? 200 : 20}`;
+      let url = `/api/products?page=${currentPage}&limit=${isFiltered ? 200 : 20}&includeAll=true`;
       if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
       if (selectedChildId) {
         url += `&categoryId=${selectedChildId}`;
@@ -63,7 +63,7 @@ export default function ProductManagementTab() {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch('/api/categories?includeChildren=true');
+      const res = await fetch('/api/categories?includeChildren=true&includeAll=true');
       const data = await res.json();
       setCategories(data.categories || []);
     } catch (error) {

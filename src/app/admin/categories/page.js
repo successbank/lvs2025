@@ -66,7 +66,7 @@ function CategoriesTab() {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/categories?includeChildren=true');
+      const res = await fetch('/api/categories?includeChildren=true&includeAll=true');
       const data = await res.json();
       setCategories(data.categories || []);
     } catch (error) {
