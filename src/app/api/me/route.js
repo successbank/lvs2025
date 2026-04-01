@@ -14,7 +14,7 @@ export async function GET() {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { id: true, name: true, email: true, role: true, createdAt: true, updatedAt: true },
+      select: { id: true, name: true, email: true, role: true, phone: true, company: true, createdAt: true, updatedAt: true },
     });
 
     if (!user) return NextResponse.json({ error: '사용자를 찾을 수 없습니다.' }, { status: 404 });
@@ -36,6 +36,8 @@ export async function PUT(request) {
     const updateData = {};
 
     if (data.name !== undefined) updateData.name = data.name;
+    if (data.phone !== undefined) updateData.phone = data.phone || null;
+    if (data.company !== undefined) updateData.company = data.company || null;
 
     // 비밀번호 변경
     if (data.newPassword) {
@@ -62,7 +64,7 @@ export async function PUT(request) {
     const updated = await prisma.user.update({
       where: { id: session.user.id },
       data: updateData,
-      select: { id: true, name: true, email: true, role: true, createdAt: true, updatedAt: true },
+      select: { id: true, name: true, email: true, role: true, phone: true, company: true, createdAt: true, updatedAt: true },
     });
 
     return NextResponse.json({ message: '수정되었습니다.', user: updated });

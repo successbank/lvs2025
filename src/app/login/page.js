@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/ui/ToastProvider';
 import '../styles/globals.css';
 
 export default function LoginPage() {
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
+  const toast = useToast();
 
   if (session) {
     router.push('/');
@@ -32,6 +34,10 @@ export default function LoginPage() {
     if (result?.error) {
       setError(result.error);
     } else {
+      // 세션에서 이름을 가져와 환영 메시지 표시
+      const res = await fetch('/api/me');
+      const me = await res.json();
+      toast.success(`${me.name || '회원'}님 오셨습니까!`);
       router.push('/');
       router.refresh();
     }

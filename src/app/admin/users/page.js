@@ -12,7 +12,7 @@ export default function AdminUsers() {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
   const [editingUser, setEditingUser] = useState(null);
-  const [editForm, setEditForm] = useState({ name: '', email: '', role: '', password: '' });
+  const [editForm, setEditForm] = useState({ name: '', email: '', role: '', password: '', phone: '', company: '' });
 
   useEffect(() => { fetchUsers(); }, [page, roleFilter]);
 
@@ -41,12 +41,12 @@ export default function AdminUsers() {
 
   const handleEdit = (user) => {
     setEditingUser(user);
-    setEditForm({ name: user.name, email: user.email, role: user.role, password: '' });
+    setEditForm({ name: user.name, email: user.email, role: user.role, password: '', phone: user.phone || '', company: user.company || '' });
   };
 
   const handleSave = async () => {
     try {
-      const body = { name: editForm.name, email: editForm.email, role: editForm.role };
+      const body = { name: editForm.name, email: editForm.email, role: editForm.role, phone: editForm.phone, company: editForm.company };
       if (editForm.password) body.password = editForm.password;
       const res = await fetch(`/api/users/${editingUser.id}`, {
         method: 'PUT',
@@ -131,6 +131,16 @@ export default function AdminUsers() {
               </select>
             </div>
             <div>
+              <label style={labelStyle}>연락처</label>
+              <input style={inputStyle} value={editForm.phone} placeholder="010-1234-5678"
+                onChange={e => setEditForm(p => ({ ...p, phone: e.target.value }))} />
+            </div>
+            <div>
+              <label style={labelStyle}>회사이름</label>
+              <input style={inputStyle} value={editForm.company} placeholder="회사명"
+                onChange={e => setEditForm(p => ({ ...p, company: e.target.value }))} />
+            </div>
+            <div>
               <label style={labelStyle}>비밀번호 변경 (빈칸이면 유지)</label>
               <input type="password" style={inputStyle} value={editForm.password} placeholder="새 비밀번호"
                 onChange={e => setEditForm(p => ({ ...p, password: e.target.value }))} />
@@ -150,6 +160,8 @@ export default function AdminUsers() {
             <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
               <th style={thStyle}>이름</th>
               <th style={thStyle}>이메일</th>
+              <th style={thStyle}>연락처</th>
+              <th style={thStyle}>회사</th>
               <th style={{ ...thStyle, width: '100px', textAlign: 'center' }}>역할</th>
               <th style={{ ...thStyle, width: '150px', textAlign: 'center' }}>가입일</th>
               <th style={{ ...thStyle, width: '120px', textAlign: 'center' }}>관리</th>
@@ -157,13 +169,15 @@ export default function AdminUsers() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={5} style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>로딩 중...</td></tr>
+              <tr><td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>로딩 중...</td></tr>
             ) : users.length === 0 ? (
-              <tr><td colSpan={5} style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>회원이 없습니다.</td></tr>
+              <tr><td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>회원이 없습니다.</td></tr>
             ) : users.map(user => (
               <tr key={user.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
                 <td style={tdStyle}><span style={{ fontWeight: '500', color: '#111827' }}>{user.name}</span></td>
                 <td style={{ ...tdStyle, color: '#6b7280', fontSize: '0.85rem' }}>{user.email}</td>
+                <td style={{ ...tdStyle, color: '#6b7280', fontSize: '0.85rem' }}>{user.phone || '-'}</td>
+                <td style={{ ...tdStyle, color: '#6b7280', fontSize: '0.85rem' }}>{user.company || '-'}</td>
                 <td style={{ ...tdStyle, textAlign: 'center' }}>
                   <span style={{
                     display: 'inline-block', padding: '0.15rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem',

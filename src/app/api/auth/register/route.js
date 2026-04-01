@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 
 export async function POST(request) {
   try {
-    const { name, email, password } = await request.json();
+    const { name, email, password, phone, company } = await request.json();
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: '모든 필드를 입력해주세요.' }, { status: 400 });
@@ -22,7 +22,7 @@ export async function POST(request) {
     const hashedPassword = await hash(password, 12);
 
     const user = await prisma.user.create({
-      data: { name, email, password: hashedPassword, role: 'USER' },
+      data: { name, email, password: hashedPassword, role: 'USER', phone: phone || null, company: company || null },
       select: { id: true, name: true, email: true, role: true, createdAt: true },
     });
 

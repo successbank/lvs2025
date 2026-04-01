@@ -12,10 +12,12 @@ export default function MyPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('profile');
 
-  // 이름 수정
+  // 프로필 수정
   const [name, setName] = useState('');
-  const [nameMsg, setNameMsg] = useState('');
-  const [nameSaving, setNameSaving] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [company, setCompany] = useState('');
+  const [profileMsg, setProfileMsg] = useState('');
+  const [profileSaving, setProfileSaving] = useState(false);
 
   // 비밀번호 변경
   const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '', newPasswordConfirm: '' });
@@ -38,29 +40,31 @@ export default function MyPage() {
       const data = await res.json();
       setUser(data);
       setName(data.name);
+      setPhone(data.phone || '');
+      setCompany(data.company || '');
     } catch {}
     setLoading(false);
   };
 
-  const handleNameSave = async () => {
+  const handleProfileSave = async () => {
     if (!name.trim()) return;
-    setNameSaving(true);
-    setNameMsg('');
+    setProfileSaving(true);
+    setProfileMsg('');
     try {
       const res = await fetch('/api/me', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim() }),
+        body: JSON.stringify({ name: name.trim(), phone: phone.trim(), company: company.trim() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setUser(data.user);
-      setNameMsg('이름이 변경되었습니다.');
+      setProfileMsg('저장되었습니다.');
       await updateSession({ name: name.trim() });
     } catch (error) {
-      setNameMsg(error.message || '수정에 실패했습니다.');
+      setProfileMsg(error.message || '수정에 실패했습니다.');
     }
-    setNameSaving(false);
+    setProfileSaving(false);
   };
 
   const handlePasswordChange = async (e) => {
@@ -153,15 +157,28 @@ export default function MyPage() {
 
             <div style={{ marginBottom: '1.5rem' }}>
               <label style={labelStyle}>이름</label>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <input value={name} onChange={e => setName(e.target.value)}
-                  style={{ flex: 1, padding: '0.625rem 0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.95rem' }} />
-                <button onClick={handleNameSave} disabled={nameSaving || name === user.name}
-                  style={{ ...btnPrimary, opacity: nameSaving || name === user.name ? 0.5 : 1 }}>
-                  {nameSaving ? '저장 중...' : '변경'}
-                </button>
-              </div>
-              {nameMsg && <p style={{ fontSize: '0.85rem', marginTop: '0.5rem', color: nameMsg.includes('실패') ? '#dc2626' : '#059669' }}>{nameMsg}</p>}
+              <input value={name} onChange={e => setName(e.target.value)}
+                style={inputStyle} />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={labelStyle}>연락처</label>
+              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="010-1234-5678"
+                style={inputStyle} />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={labelStyle}>회사이름</label>
+              <input value={company} onChange={e => setCompany(e.target.value)} placeholder="회사명"
+                style={inputStyle} />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <button onClick={handleProfileSave} disabled={profileSaving}
+                style={{ ...btnPrimary, opacity: profileSaving ? 0.5 : 1 }}>
+                {profileSaving ? '저장 중...' : '저장'}
+              </button>
+              {profileMsg && <span style={{ fontSize: '0.85rem', marginLeft: '0.75rem', color: profileMsg.includes('실패') ? '#dc2626' : '#059669' }}>{profileMsg}</span>}
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>

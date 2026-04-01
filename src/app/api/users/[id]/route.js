@@ -14,7 +14,7 @@ export async function GET(request, { params }) {
 
     const user = await prisma.user.findUnique({
       where: { id: params.id },
-      select: { id: true, name: true, email: true, role: true, createdAt: true, updatedAt: true },
+      select: { id: true, name: true, email: true, role: true, phone: true, company: true, createdAt: true, updatedAt: true },
     });
 
     if (!user) return NextResponse.json({ error: '사용자를 찾을 수 없습니다.' }, { status: 404 });
@@ -38,6 +38,8 @@ export async function PUT(request, { params }) {
     if (data.name !== undefined) updateData.name = data.name;
     if (data.email !== undefined) updateData.email = data.email;
     if (data.role !== undefined) updateData.role = data.role;
+    if (data.phone !== undefined) updateData.phone = data.phone || null;
+    if (data.company !== undefined) updateData.company = data.company || null;
     if (data.password && data.password.length >= 6) {
       updateData.password = await hash(data.password, 12);
     }
@@ -45,7 +47,7 @@ export async function PUT(request, { params }) {
     const user = await prisma.user.update({
       where: { id: params.id },
       data: updateData,
-      select: { id: true, name: true, email: true, role: true, createdAt: true, updatedAt: true },
+      select: { id: true, name: true, email: true, role: true, phone: true, company: true, createdAt: true, updatedAt: true },
     });
 
     return NextResponse.json(user);

@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import '../styles/globals.css';
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', passwordConfirm: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', passwordConfirm: '', phone: '', company: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -35,7 +35,7 @@ export default function RegisterPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: formData.name, email: formData.email, password: formData.password }),
+        body: JSON.stringify({ name: formData.name, email: formData.email, password: formData.password, phone: formData.phone, company: formData.company }),
       });
       const data = await res.json();
 
@@ -78,6 +78,18 @@ export default function RegisterPage() {
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '500', marginBottom: '0.375rem', color: '#374151' }}>이메일</label>
               <input type="email" value={formData.email} onChange={e => update('email', e.target.value)} required
                 placeholder="example@email.com"
+                style={{ width: '100%', padding: '0.625rem 0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.95rem', outline: 'none' }} />
+            </div>
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '500', marginBottom: '0.375rem', color: '#374151' }}>연락처 <span style={{ color: '#9ca3af', fontWeight: '400' }}>(선택)</span></label>
+              <input type="tel" value={formData.phone} onChange={e => update('phone', e.target.value)}
+                placeholder="010-1234-5678"
+                style={{ width: '100%', padding: '0.625rem 0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.95rem', outline: 'none' }} />
+            </div>
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '500', marginBottom: '0.375rem', color: '#374151' }}>회사이름 <span style={{ color: '#9ca3af', fontWeight: '400' }}>(선택)</span></label>
+              <input type="text" value={formData.company} onChange={e => update('company', e.target.value)}
+                placeholder="회사명"
                 style={{ width: '100%', padding: '0.625rem 0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.95rem', outline: 'none' }} />
             </div>
             <div style={{ marginBottom: '1rem' }}>
