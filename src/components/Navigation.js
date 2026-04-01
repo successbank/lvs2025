@@ -95,7 +95,7 @@ export default function Navigation({ companyInfo, navigationData }) {
             <span className="header-divider">|</span>
             {session ? (
               <>
-                <span style={{ color: '#d1d5db' }}>{session.user.name}님</span>
+                <a href="/mypage">{session.user.name}님</a>
                 <span className="header-divider">|</span>
                 <a href="#" onClick={(e) => { e.preventDefault(); signOut({ callbackUrl: '/' }); }}>로그아웃</a>
               </>
