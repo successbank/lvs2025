@@ -143,6 +143,18 @@ export default function ProductManagementTab() {
     setShowForm(true);
   };
 
+  const handleToggleActive = async (product) => {
+    try {
+      const res = await fetch(`/api/products/${product.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: !product.isActive }),
+      });
+      if (!res.ok) throw new Error('상태 변경에 실패했습니다.');
+      setProducts(prev => prev.map(p => p.id === product.id ? { ...p, isActive: !p.isActive } : p));
+    } catch (error) { alert(error.message); }
+  };
+
   const handleDelete = async (id) => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
@@ -167,7 +179,7 @@ export default function ProductManagementTab() {
   const filterText = selectedChildId
     ? `${selectedParent?.name} > ${selectedParent?.children?.find(c => c.id === selectedChildId)?.name}`
     : selectedParent?.name || '';
-  const colCount = isFiltered ? 7 : 8;
+  const colCount = isFiltered ? 8 : 9;
   const totalProductCount = categories.reduce((sum, cat) => sum + sumChildProducts(cat), 0);
 
   return (
@@ -322,6 +334,7 @@ export default function ProductManagementTab() {
                   <th style={thStyle}>제품명</th>
                   {!isFiltered && <th style={thStyle}>카테고리</th>}
                   <th style={{ ...thStyle, width: '100px' }}>상태</th>
+                  <th style={{ ...thStyle, width: '60px', textAlign: 'center' }}>활성</th>
                   <th style={{ ...thStyle, width: '60px', textAlign: 'center' }}>조회수</th>
                   <th style={{ ...thStyle, width: '110px', textAlign: 'center' }}>관리</th>
                 </tr>
@@ -337,7 +350,7 @@ export default function ProductManagementTab() {
                   const insertAbove = isDragOver && dragIndex > index;
                   const insertBelow = isDragOver && dragIndex < index;
                   return (
-                    <tr key={product.id} draggable onDragStart={(e) => handleDragStart(e, index)} onDragOver={(e) => handleDragOver(e, index)} onDrop={(e) => handleDrop(e, index)} onDragEnd={handleDragEnd} style={{ borderBottom: insertBelow ? '2px solid #3b82f6' : '1px solid #e5e7eb', borderTop: insertAbove ? '2px solid #3b82f6' : 'none', opacity: isDragging ? 0.4 : 1, background: isDragOver ? '#eff6ff' : 'transparent', transition: 'background 0.15s ease' }}>
+                    <tr key={product.id} draggable onDragStart={(e) => handleDragStart(e, index)} onDragOver={(e) => handleDragOver(e, index)} onDrop={(e) => handleDrop(e, index)} onDragEnd={handleDragEnd} style={{ borderBottom: insertBelow ? '2px solid #3b82f6' : '1px solid #e5e7eb', borderTop: insertAbove ? '2px solid #3b82f6' : 'none', opacity: isDragging ? 0.4 : product.isActive === false ? 0.5 : 1, background: isDragOver ? '#eff6ff' : product.isActive === false ? '#fafafa' : 'transparent', transition: 'background 0.15s ease' }}>
                       <td style={{ ...tdStyle, textAlign: 'center', cursor: 'grab', color: '#9ca3af', userSelect: 'none', fontSize: '1.1rem' }}>⠿</td>
                       <td style={{ ...tdStyle, padding: '0.4rem 0.5rem' }}>
                         <a href={`/products/${product.slug}`} target="_blank" rel="noopener noreferrer" draggable={false} onClick={(e) => e.stopPropagation()} title="소비자 페이지 보기">
@@ -356,6 +369,20 @@ export default function ProductManagementTab() {
                         {product.isFeatured && <span style={badgeStyle('#f59e0b')}>추천</span>}
                         {product.seriesData?.series?.length > 0 && <span style={badgeStyle('#8b5cf6')}>시리즈</span>}
                         {!product.isNew && !product.isFeatured && !(product.seriesData?.series?.length > 0) && <span style={{ color: '#d1d5db' }}>-</span>}
+                      </td>
+                      <td style={{ ...tdStyle, textAlign: 'center' }}>
+                        <div onClick={() => handleToggleActive(product)} style={{
+                          display: 'inline-block', width: '36px', height: '20px', borderRadius: '10px',
+                          background: product.isActive ? '#3b82f6' : '#d1d5db', cursor: 'pointer',
+                          position: 'relative', transition: 'background 0.2s ease',
+                        }}>
+                          <div style={{
+                            width: '16px', height: '16px', borderRadius: '50%', background: 'white',
+                            position: 'absolute', top: '2px', transition: 'transform 0.2s ease',
+                            transform: product.isActive ? 'translateX(16px)' : 'translateX(2px)',
+                            boxShadow: '0 1px 2px rgba(0,0,0,0.2)',
+                          }} />
+                        </div>
                       </td>
                       <td style={{ ...tdStyle, textAlign: 'center', color: '#6b7280' }}>{product.viewCount}</td>
                       <td style={{ ...tdStyle, textAlign: 'center' }}>
