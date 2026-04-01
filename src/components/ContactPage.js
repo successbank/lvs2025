@@ -42,7 +42,7 @@ export default function ContactPage({ companyInfo }) {
         {/* Map */}
         <div className="contact-map-section">
           <iframe
-              src="https://map.kakao.com/link/map/엘브이에스,37.3658,126.6472"
+              src="https://map.kakao.com/link/map/엘브이에스,37.3658,126.6478"
               className="kakao-map"
               title="엘브이에스 위치"
               allowFullScreen
