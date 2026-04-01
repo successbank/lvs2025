@@ -42,7 +42,7 @@ export default function ContactPage({ companyInfo }) {
         {/* Map */}
         <div className="contact-map-section">
           <iframe
-              src="https://map.kakao.com/link/map/엘브이에스,37.3872,126.6560"
+              src="https://map.kakao.com/link/map/엘브이에스,37.3666,126.6473"
               className="kakao-map"
               title="엘브이에스 위치"
               allowFullScreen
@@ -92,13 +92,12 @@ export default function ContactPage({ companyInfo }) {
           <div className="transportation-grid">
             <div className="transportation-card">
               <h4>🚇 지하철</h4>
-              <p>인천 1호선 <strong>캠퍼스타운역</strong> 2번 출구에서 도보 약 10분</p>
+              <p>인천 1호선 <strong>지식정보단지역</strong> 1번 출구</p>
             </div>
             <div className="transportation-card">
               <h4>🚌 버스</h4>
               <p>
-                <strong>간선:</strong> 16-1, 24, 24-1<br />
-                <strong>지선:</strong> 908
+                16번, 6번
               </p>
             </div>
             <div className="transportation-card">
