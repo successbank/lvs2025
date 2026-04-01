@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import Navigation from './Navigation';
 import SiteFooter from './SiteFooter';
 import PageTracker from './PageTracker';
+import LayerPopupManager from './LayerPopupManager';
 
 export default function PublicLayout({ companyInfo, children }) {
   const pathname = usePathname();
@@ -16,6 +17,7 @@ export default function PublicLayout({ companyInfo, children }) {
     <>
       <Navigation companyInfo={companyInfo} />
       <PageTracker />
+      <LayerPopupManager />
       {children}
       <SiteFooter companyInfo={companyInfo} />
     </>
