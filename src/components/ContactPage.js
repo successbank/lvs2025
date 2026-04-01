@@ -61,8 +61,7 @@ export default function ContactPage({ companyInfo }) {
               <div className="contact-info-item">
                 <div className="contact-info-label">주소</div>
                 <div className="contact-info-value">
-                  인천광역시 연수구 송도미래로 30<br />
-                  스마트밸리 B동 801~803호
+                  인천광역시 연수구 송도미래로 30 B동 801~803호
                 </div>
               </div>
               <div className="contact-info-item">

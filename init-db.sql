@@ -189,7 +189,7 @@ CREATE TABLE "company_info" (
     "phone" TEXT NOT NULL DEFAULT '032-461-1800',
     "fax" TEXT NOT NULL DEFAULT '032-461-1001',
     "email" TEXT,
-    "address" TEXT NOT NULL DEFAULT '인천광역시 연수구 송도미래로 30 (송도동 214번지) 스마트밸리 B동 801~803호',
+    "address" TEXT NOT NULL DEFAULT '인천광역시 연수구 송도미래로 30 B동 801~803호',
     "workingHours" TEXT NOT NULL DEFAULT '평일 09:00~18:00',
     "lunchTime" TEXT NOT NULL DEFAULT '12:00~13:00',
     "closedDays" TEXT NOT NULL DEFAULT '일요일, 공휴일',

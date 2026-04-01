@@ -56,7 +56,7 @@ export default function OrganizationPage({ companyInfo }) {
                 <div className="ovw-keyfact-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
                 </div>
-                <span className="ovw-keyfact-value">2005</span>
+                <span className="ovw-keyfact-value">2006</span>
                 <span className="ovw-keyfact-label">설립연도</span>
               </div>
               <div className="ovw-keyfact-divider" />
@@ -97,7 +97,7 @@ export default function OrganizationPage({ companyInfo }) {
               </div>
               <div className="ovw-details-row">
                 <div className="ovw-details-label">본사 주소</div>
-                <div className="ovw-details-value">{companyInfo?.address || '인천광역시 연수구 송도미래로 30'}</div>
+                <div className="ovw-details-value">{companyInfo?.address || '인천광역시 연수구 송도미래로 30 B동 801~803호'}</div>
               </div>
               <div className="ovw-details-row">
                 <div className="ovw-details-label">연락처</div>

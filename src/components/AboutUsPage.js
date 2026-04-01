@@ -89,7 +89,7 @@ export default function AboutUsPage({ companyInfo, history = [] }) {
             </div>
             <div className="info-card">
               <div className="info-label">주소</div>
-              <div className="info-value">{companyInfo?.address || '인천광역시 연수구 송도미래로 30'}</div>
+              <div className="info-value">{companyInfo?.address || '인천광역시 연수구 송도미래로 30 B동 801~803호'}</div>
             </div>
             <div className="info-card">
               <div className="info-label">전화</div>

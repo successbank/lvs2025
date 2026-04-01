@@ -33,7 +33,7 @@ async function main() {
       phone: '032-461-1800',
       fax: '032-461-1001',
       email: 'info@lvs.co.kr',
-      address: '인천광역시 연수구 송도미래로 30 (송도동 214번지) 스마트밸리 B동 801~803호',
+      address: '인천광역시 연수구 송도미래로 30 B동 801~803호',
       workingHours: '평일 09:00~18:00',
       lunchTime: '12:00~13:00',
       closedDays: '일요일, 공휴일',
