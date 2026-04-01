@@ -45,7 +45,7 @@ export default function OrganizationPage({ companyInfo }) {
 
             {/* Profile Header */}
             <div className="ovw-profile-header">
-              <span className="ovw-profile-badge">Since 2005</span>
+              <span className="ovw-profile-badge">Since 2006</span>
               <h3 className="ovw-company-name">{companyInfo?.name || '(주)엘브이에스'}</h3>
               <p className="ovw-company-subtitle">산업용 LED 조명 전문 기업</p>
             </div>
