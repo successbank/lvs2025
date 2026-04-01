@@ -14,7 +14,7 @@ export default function LoginPage() {
   const { data: session } = useSession();
   const [welcomeName, setWelcomeName] = useState('');
 
-  if (session) {
+  if (session && !welcomeName) {
     router.push('/');
     return null;
   }
