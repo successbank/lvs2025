@@ -100,6 +100,18 @@ function CategoriesTab() {
     }
   };
 
+  const handleToggleActive = async (cat) => {
+    try {
+      const res = await fetch(`/api/categories/${cat.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: !cat.isActive }),
+      });
+      if (!res.ok) throw new Error('상태 변경에 실패했습니다.');
+      fetchCategories();
+    } catch (error) { alert(error.message); }
+  };
+
   const handleEdit = (cat) => {
     setEditingCategory(cat);
     setFormData({
@@ -281,15 +293,16 @@ function CategoriesTab() {
               <th style={thStyle}>카테고리명</th>
               <th style={thStyle}>슬러그</th>
               <th style={{ ...thStyle, width: '80px', textAlign: 'center' }}>제품수</th>
+              <th style={{ ...thStyle, width: '70px', textAlign: 'center' }}>활성</th>
               <th style={{ ...thStyle, width: '70px', textAlign: 'center' }}>순서</th>
               <th style={{ ...thStyle, width: '120px', textAlign: 'center' }}>관리</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6} style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>로딩 중...</td></tr>
+              <tr><td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>로딩 중...</td></tr>
             ) : parentCategories.length === 0 ? (
-              <tr><td colSpan={6} style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>카테고리가 없습니다.</td></tr>
+              <tr><td colSpan={7} style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>카테고리가 없습니다.</td></tr>
             ) : parentCategories.map((category, pIndex) => {
               const isPDragging = dragLevel === 'parent' && dragIndex === pIndex;
               const isPDragOver = dragLevel === 'parent' && dragOverIndex === pIndex && dragIndex !== null;
@@ -298,12 +311,17 @@ function CategoriesTab() {
               return (
                 <CategoryGroup key={category.id}>
                   <tr draggable onDragStart={(e) => handleParentDragStart(e, pIndex)} onDragOver={(e) => handleParentDragOver(e, pIndex)} onDrop={(e) => handleParentDrop(e, pIndex)} onDragEnd={handleDragEnd}
-                    style={{ background: isPDragOver ? '#eff6ff' : '#f9fafb', borderTop: pInsertAbove ? '2px solid #3b82f6' : 'none', borderBottom: pInsertBelow ? '2px solid #3b82f6' : '1px solid #e5e7eb', opacity: isPDragging ? 0.4 : 1, transition: 'background 0.15s ease' }}>
+                    style={{ background: isPDragOver ? '#eff6ff' : category.isActive === false ? '#fafafa' : '#f9fafb', borderTop: pInsertAbove ? '2px solid #3b82f6' : 'none', borderBottom: pInsertBelow ? '2px solid #3b82f6' : '1px solid #e5e7eb', opacity: isPDragging ? 0.4 : category.isActive === false ? 0.5 : 1, transition: 'background 0.15s ease' }}>
                     <td style={{ ...tdStyle, textAlign: 'center', cursor: 'grab', color: '#9ca3af', userSelect: 'none', fontSize: '1.1rem' }}>⠿</td>
                     <td style={tdStyle}><span style={{ fontWeight: '600', color: '#111827' }}>{category.name}</span></td>
                     <td style={{ ...tdStyle, color: '#6b7280', fontSize: '0.85rem' }}>/{category.slug}</td>
                     <td style={{ ...tdStyle, textAlign: 'center' }}>
                       <span style={countBadgeStyle}>{(category._count?.products || 0) + (category.children || []).reduce((s, c) => s + (c._count?.products || 0), 0)}</span>
+                    </td>
+                    <td style={{ ...tdStyle, textAlign: 'center' }}>
+                      <div onClick={() => handleToggleActive(category)} style={{ ...toggleStyle, background: category.isActive !== false ? '#3b82f6' : '#d1d5db', cursor: 'pointer' }}>
+                        <div style={{ ...toggleKnobStyle, transform: category.isActive !== false ? 'translateX(16px)' : 'translateX(2px)' }} />
+                      </div>
                     </td>
                     <td style={{ ...tdStyle, textAlign: 'center', color: '#6b7280', fontSize: '0.85rem' }}>{category.order}</td>
                     <td style={{ ...tdStyle, textAlign: 'center' }}>
@@ -318,11 +336,16 @@ function CategoriesTab() {
                     const cInsertBelow = isCDragOver && dragIndex < cIndex;
                     return (
                       <tr key={child.id} draggable onDragStart={(e) => handleChildDragStart(e, category.id, cIndex)} onDragOver={(e) => handleChildDragOver(e, category.id, cIndex)} onDrop={(e) => handleChildDrop(e, category.id, cIndex)} onDragEnd={handleDragEnd}
-                        style={{ borderTop: cInsertAbove ? '2px solid #3b82f6' : 'none', borderBottom: cInsertBelow ? '2px solid #3b82f6' : '1px solid #f3f4f6', opacity: isCDragging ? 0.4 : 1, background: isCDragOver ? '#eff6ff' : 'white', transition: 'background 0.15s ease' }}>
+                        style={{ borderTop: cInsertAbove ? '2px solid #3b82f6' : 'none', borderBottom: cInsertBelow ? '2px solid #3b82f6' : '1px solid #f3f4f6', opacity: isCDragging ? 0.4 : child.isActive === false ? 0.5 : 1, background: isCDragOver ? '#eff6ff' : child.isActive === false ? '#fafafa' : 'white', transition: 'background 0.15s ease' }}>
                         <td style={{ ...tdStyle, textAlign: 'center', cursor: 'grab', color: '#d1d5db', userSelect: 'none', fontSize: '1rem' }}>⠿</td>
                         <td style={{ ...tdStyle, paddingLeft: '2.5rem' }}><span style={{ color: '#6b7280' }}>└</span> <span style={{ color: '#374151' }}>{child.name}</span></td>
                         <td style={{ ...tdStyle, color: '#9ca3af', fontSize: '0.85rem' }}>/{child.slug}</td>
                         <td style={{ ...tdStyle, textAlign: 'center' }}><span style={countBadgeStyle}>{child._count?.products || 0}</span></td>
+                        <td style={{ ...tdStyle, textAlign: 'center' }}>
+                          <div onClick={() => handleToggleActive(child)} style={{ ...toggleStyle, background: child.isActive !== false ? '#3b82f6' : '#d1d5db', cursor: 'pointer' }}>
+                            <div style={{ ...toggleKnobStyle, transform: child.isActive !== false ? 'translateX(16px)' : 'translateX(2px)' }} />
+                          </div>
+                        </td>
                         <td style={{ ...tdStyle, textAlign: 'center', color: '#9ca3af', fontSize: '0.85rem' }}>{child.order}</td>
                         <td style={{ ...tdStyle, textAlign: 'center' }}>
                           <button onClick={() => handleEdit(child)} style={actionBtn('#3b82f6')}>수정</button>
