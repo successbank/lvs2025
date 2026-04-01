@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/ui/ToastProvider';
 import '../styles/globals.css';
 
 export default function LoginPage() {
@@ -13,7 +12,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
-  const toast = useToast();
+  const [welcomeName, setWelcomeName] = useState('');
 
   if (session) {
     router.push('/');
@@ -34,17 +33,46 @@ export default function LoginPage() {
     if (result?.error) {
       setError(result.error);
     } else {
-      // 세션에서 이름을 가져와 환영 메시지 표시
       const res = await fetch('/api/me');
       const me = await res.json();
-      toast.success(`${me.name || '회원'}님 오셨습니까!`);
-      router.push('/');
-      router.refresh();
+      setWelcomeName(me.name || '회원');
     }
     setLoading(false);
   };
 
+  const handleWelcomeClose = () => {
+    setWelcomeName('');
+    router.push('/');
+    router.refresh();
+  };
+
   return (
+    <>
+    {/* 환영 레이어 팝업 */}
+    {welcomeName && (
+      <div style={{ position: 'fixed', inset: 0, zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div onClick={handleWelcomeClose} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)' }} />
+        <div style={{
+          position: 'relative', background: 'white', borderRadius: '16px', padding: '2.5rem 2rem',
+          textAlign: 'center', maxWidth: '380px', width: '90%',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.2)', animation: 'fadeInUp 0.3s ease',
+        }}>
+          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👋</div>
+          <h2 style={{ fontSize: '1.4rem', fontWeight: '700', color: '#111827', marginBottom: '0.5rem' }}>
+            {welcomeName}님 오셨습니까!
+          </h2>
+          <p style={{ color: '#6b7280', fontSize: '0.95rem', marginBottom: '1.5rem' }}>
+            엘브이에스에 오신 것을 환영합니다.
+          </p>
+          <button onClick={handleWelcomeClose}
+            style={{ padding: '0.75rem 2.5rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.95rem', fontWeight: '600', cursor: 'pointer' }}>
+            확인
+          </button>
+        </div>
+        <style>{`@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+      </div>
+    )}
+
     <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
       <div style={{ width: '100%', maxWidth: '420px' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
@@ -84,5 +112,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
