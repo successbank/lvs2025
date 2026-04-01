@@ -28,9 +28,23 @@ const fallbackMenus = [
 export default function Navigation({ companyInfo, navigationData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [liveMenus, setLiveMenus] = useState(null);
   const pathname = usePathname();
 
-  const menus = navigationData && navigationData.length > 0 ? navigationData : fallbackMenus;
+  // 클라이언트에서 최신 메뉴 데이터 fetch (캐시 우회)
+  useEffect(() => {
+    fetch('/api/menu-items')
+      .then(res => res.json())
+      .then(data => {
+        if (data.menuItems && data.menuItems.length > 0) {
+          setLiveMenus(data.menuItems);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // 우선순위: 클라이언트 fetch > 서버 prop > 폴백
+  const menus = liveMenus || (navigationData && navigationData.length > 0 ? navigationData : fallbackMenus);
 
   // 모바일 메뉴용 그룹 분류: 제품 메뉴와 나머지 분리
   const productMenus = menus.filter(m => m.url.startsWith('/products'));
