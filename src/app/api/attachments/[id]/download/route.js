@@ -57,13 +57,19 @@ export async function GET(request, { params }) {
     // 파일 읽기
     const fileBuffer = fs.readFileSync(filePath);
 
+    // Content-Disposition: RFC 5987 filename*= 문법으로 한글 파일명 복원 지원
+    const encodedFilename = encodeURIComponent(attachment.original_filename);
+
     // 파일 다운로드 응답
+    // NOTE: Content-Length는 DB의 file_size가 아닌 실제 버퍼 길이로 계산.
+    // DB 값은 마이그레이션 시 하드코딩된 경우가 있어 실제 파일과 불일치 시
+    // HTTP/2 스트림이 INTERNAL_ERROR로 끊긴다.
     return new NextResponse(fileBuffer, {
       status: 200,
       headers: {
         'Content-Type': attachment.mime_type || 'application/octet-stream',
-        'Content-Disposition': `attachment; filename="${encodeURIComponent(attachment.original_filename)}"`,
-        'Content-Length': attachment.file_size.toString(),
+        'Content-Disposition': `attachment; filename="${encodedFilename}"; filename*=UTF-8''${encodedFilename}`,
+        'Content-Length': fileBuffer.length.toString(),
       },
     });
   } catch (error) {
