@@ -12,6 +12,14 @@ async function getData() {
           children: {
             where: { isActive: true },
             orderBy: { order: 'asc' },
+            include: {
+              products: {
+                where: { isActive: true },
+                orderBy: { order: 'asc' },
+                take: 1,
+                select: { slug: true },
+              },
+            },
           },
         },
         orderBy: { order: 'asc' },

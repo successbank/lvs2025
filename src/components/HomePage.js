@@ -262,8 +262,13 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
                 ))}
               </div>
               <div className="product-cards-grid">
-                {productCategories[activeCategory]?.children?.map((subcat) => (
-                  <a href={`/products/${productCategories[activeCategory].slug}?sub=${subcat.slug}`} key={subcat.id} className="product-lineup-card">
+                {productCategories[activeCategory]?.children?.map((subcat) => {
+                  const firstProductSlug = subcat.products?.[0]?.slug;
+                  const href = firstProductSlug
+                    ? `/products/${firstProductSlug}`
+                    : `/products/${productCategories[activeCategory].slug}?sub=${subcat.slug}`;
+                  return (
+                  <a href={href} key={subcat.id} className="product-lineup-card">
                     <div className="product-lineup-icon">
                       {subcat.iconUrl ? (
                         <img src={subcat.iconUrl} alt={subcat.name} />
@@ -278,7 +283,8 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
                     {subcat.description && <p>{subcat.description}</p>}
                     <span className="product-lineup-link">자세히 보기 →</span>
                   </a>
-                ))}
+                  );
+                })}
               </div>
             </>
           )}
