@@ -237,7 +237,7 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
             </div>
             <div className="contact-strip-text">
               <span className="contact-strip-label">오시는 길</span>
-              <span className="contact-strip-value">인천 연수구 송도미래로30</span>
+              <span className="contact-strip-value">인천광역시 연수구 송도미래로 30 B동 801~803호</span>
             </div>
           </div>
         </div>
