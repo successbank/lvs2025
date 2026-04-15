@@ -5,9 +5,15 @@ import '../app/styles/globals.css';
 
 const CERT_DATA = [
   { id: 1,  title: 'DB,DBS 인증서',              image: 'ce-db-dbs.jpg',           category: 'system' },
-  { id: 2,  title: 'EN04 인증서',                image: '5b0f53694aa8b.jpg',        category: 'system' },
-  { id: 3,  title: 'EN02 인증서',                image: '5b0f4f02269de.jpg',        category: 'system' },
-  { id: 4,  title: 'EN-08 Series CE Certificates', image: 'thumb_5afbd2637efed.jpg', category: 'system' },
+  { id: 2,  title: 'EN-04xx CE 인증서',          image: '5b0f53694aa8b.jpg',        category: 'system' },
+  { id: 3,  title: 'EN-02xx CE 인증서',          image: '5b0f4f02269de.jpg',        category: 'system' },
+  { id: 4,  title: 'EN-08xx CE 인증서',          image: 'thumb_5afbd2637efed.jpg', category: 'system' },
+  { id: 47, title: 'LVS-ES-0224 LVD DoC',        image: 'ce-lvs-es-0224.jpg',       category: 'product' },
+  { id: 48, title: 'LVS-ES-0424 LVD DoC',        image: 'ce-lvs-es-0424.jpg',       category: 'product' },
+  { id: 49, title: 'LVS-ES-0824 LVD DoC',        image: 'ce-lvs-es-0824.jpg',       category: 'product' },
+  { id: 50, title: 'LVS-ET-0205 LVD DoC',        image: 'ce-lvs-et-0205.jpg',       category: 'product' },
+  { id: 51, title: 'LVS-ET-0405 LVD DoC',        image: 'ce-lvs-et-0405.jpg',       category: 'product' },
+  { id: 52, title: 'LVS-ET-0424 LVD DoC',        image: 'ce-lvs-et-0424.jpg',       category: 'product' },
   { id: 5,  title: 'SHL 인증서',                 image: 'ce-shl.jpg',              category: 'system' },
   { id: 6,  title: 'PT08-N04_LVD 인증서',        image: 'ce-pt.jpg',               category: 'product' },
   { id: 7,  title: 'PT08-N04 인증서',            image: 'ce-pt.jpg',               category: 'product' },
@@ -35,8 +41,8 @@ const CERT_DATA = [
 const CERT_IMAGE_BASE = '/images/certifications/';
 
 const FILTERS = [
-  { key: 'all', label: '전체', count: 26 },
-  { key: 'product', label: '제품 인증', count: 21 },
+  { key: 'all', label: '전체', count: 32 },
+  { key: 'product', label: '제품 인증', count: 27 },
   { key: 'system', label: '시스템 인증', count: 5 },
 ];
 
