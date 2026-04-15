@@ -69,7 +69,10 @@ export async function GET(request) {
             take: 1,
           },
         },
-        orderBy: { order: 'asc' },
+        orderBy: [
+          { category: { order: 'asc' } },
+          { order: 'asc' },
+        ],
         skip,
         take: limit,
       }),
