@@ -14,7 +14,13 @@ export async function GET(request, { params }) {
 
     const user = await prisma.user.findUnique({
       where: { id: params.id },
-      select: { id: true, name: true, email: true, role: true, phone: true, company: true, createdAt: true, updatedAt: true },
+      select: {
+        id: true, name: true, email: true, role: true, status: true,
+        phone: true, company: true,
+        suspendedAt: true, suspendedReason: true, deletedAt: true,
+        signupIp: true, suspicionFlags: true,
+        createdAt: true, updatedAt: true,
+      },
     });
 
     if (!user) return NextResponse.json({ error: '사용자를 찾을 수 없습니다.' }, { status: 404 });
@@ -47,7 +53,17 @@ export async function PUT(request, { params }) {
     const user = await prisma.user.update({
       where: { id: params.id },
       data: updateData,
-      select: { id: true, name: true, email: true, role: true, phone: true, company: true, createdAt: true, updatedAt: true },
+      select: { id: true, name: true, email: true, role: true, status: true, phone: true, company: true, createdAt: true, updatedAt: true },
+    });
+
+    await prisma.userAuditLog.create({
+      data: {
+        userId: params.id,
+        adminId: session.user.id,
+        action: 'UPDATE',
+        reason: null,
+        metadata: { fields: Object.keys(updateData) },
+      },
     });
 
     return NextResponse.json(user);
@@ -57,7 +73,9 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE /api/users/[id] — 사용자 삭제 (관리자 전용)
+// DELETE /api/users/[id]
+// 기본: 소프트 삭제 (status=DELETED, deletedAt=now)
+// ?hard=true: 영구 삭제(+감사 로그는 user cascade로 사라지므로 pre-log)
 export async function DELETE(request, { params }) {
   try {
     const session = await getServerSession(authOptions);
@@ -65,14 +83,61 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: '권한이 없습니다.' }, { status: 401 });
     }
 
-    // 자기 자신 삭제 방지
     if (params.id === session.user.id) {
       return NextResponse.json({ error: '자기 자신은 삭제할 수 없습니다.' }, { status: 400 });
     }
 
-    await prisma.user.delete({ where: { id: params.id } });
+    const url = new URL(request.url);
+    const hardDelete = url.searchParams.get('hard') === 'true';
+    const reason = url.searchParams.get('reason') || null;
+
+    const target = await prisma.user.findUnique({
+      where: { id: params.id },
+      select: { id: true, email: true, name: true, status: true },
+    });
+    if (!target) {
+      return NextResponse.json({ error: '사용자를 찾을 수 없습니다.' }, { status: 404 });
+    }
+
+    if (hardDelete) {
+      // 감사 로그는 user cascade로 지워지므로 별도 로그 전용 행을 관리자 본인 ID로 남긴다.
+      await prisma.userAuditLog.create({
+        data: {
+          userId: session.user.id,
+          adminId: session.user.id,
+          action: 'HARD_DELETE',
+          previousStatus: target.status,
+          newStatus: null,
+          reason,
+          metadata: { targetId: target.id, targetEmail: target.email, targetName: target.name },
+        },
+      });
+      await prisma.user.delete({ where: { id: params.id } });
+      return NextResponse.json({ message: '영구 삭제되었습니다.' });
+    }
+
+    // 소프트 삭제
+    await prisma.user.update({
+      where: { id: params.id },
+      data: {
+        status: 'DELETED',
+        deletedAt: new Date(),
+      },
+    });
+    await prisma.userAuditLog.create({
+      data: {
+        userId: params.id,
+        adminId: session.user.id,
+        action: 'SOFT_DELETE',
+        previousStatus: target.status,
+        newStatus: 'DELETED',
+        reason,
+      },
+    });
+
     return NextResponse.json({ message: '삭제되었습니다.' });
   } catch (error) {
+    console.error('User DELETE Error:', error);
     return NextResponse.json({ error: '삭제에 실패했습니다.' }, { status: 500 });
   }
 }

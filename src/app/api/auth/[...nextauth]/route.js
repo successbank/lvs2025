@@ -21,6 +21,13 @@ export const authOptions = {
           throw new Error('사용자를 찾을 수 없습니다.');
         }
 
+        if (user.status === 'SUSPENDED') {
+          throw new Error('이 계정은 관리자에 의해 정지되었습니다.');
+        }
+        if (user.status === 'DELETED') {
+          throw new Error('이 계정은 삭제되었습니다.');
+        }
+
         const isValid = await verifyPassword(credentials.password, user.password);
 
         if (!isValid) {

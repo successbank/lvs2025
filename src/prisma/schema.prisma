@@ -16,22 +16,58 @@ datasource db {
 // ========================================
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String
-  role      UserRole @default(USER)
-  phone     String?
-  company   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String      @id @default(cuid())
+  email            String      @unique
+  password         String
+  name             String
+  role             UserRole    @default(USER)
+  status           UserStatus  @default(ACTIVE)
+  phone            String?
+  company          String?
+  suspendedAt      DateTime?
+  suspendedReason  String?
+  deletedAt        DateTime?
+  signupIp         String?
+  signupUserAgent  String?
+  suspicionFlags   String[]    @default([])
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
 
+  auditLogs        UserAuditLog[] @relation("UserAuditTarget")
+  auditActions     UserAuditLog[] @relation("UserAuditActor")
+
+  @@index([status])
   @@map("users")
 }
 
 enum UserRole {
   ADMIN
   USER
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+model UserAuditLog {
+  id             String   @id @default(cuid())
+  userId         String
+  adminId        String?
+  action         String
+  previousStatus UserStatus?
+  newStatus      UserStatus?
+  reason         String?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+
+  user           User     @relation("UserAuditTarget", fields: [userId], references: [id], onDelete: Cascade)
+  admin          User?    @relation("UserAuditActor", fields: [adminId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("user_audit_logs")
 }
 
 // ========================================

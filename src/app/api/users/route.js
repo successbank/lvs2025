@@ -16,6 +16,7 @@ export async function GET(request) {
     const limit = parseInt(searchParams.get('limit') || '20');
     const search = searchParams.get('search') || '';
     const role = searchParams.get('role') || '';
+    const status = searchParams.get('status') || '';
 
     const where = {};
     if (search) {
@@ -25,19 +26,41 @@ export async function GET(request) {
       ];
     }
     if (role) where.role = role;
+    if (status) where.status = status;
 
-    const [users, total] = await Promise.all([
+    const [users, total, counts] = await Promise.all([
       prisma.user.findMany({
         where,
-        select: { id: true, name: true, email: true, role: true, phone: true, company: true, createdAt: true, updatedAt: true },
+        select: {
+          id: true, name: true, email: true, role: true, status: true,
+          phone: true, company: true,
+          suspendedAt: true, suspendedReason: true, deletedAt: true,
+          signupIp: true, suspicionFlags: true,
+          createdAt: true, updatedAt: true,
+        },
         orderBy: { createdAt: 'desc' },
         skip: (page - 1) * limit,
         take: limit,
       }),
       prisma.user.count({ where }),
+      prisma.user.groupBy({
+        by: ['status'],
+        _count: { status: true },
+      }),
     ]);
 
-    return NextResponse.json({ users, total, page, totalPages: Math.ceil(total / limit) });
+    const statusCounts = counts.reduce((acc, c) => {
+      acc[c.status] = c._count.status;
+      return acc;
+    }, { ACTIVE: 0, SUSPENDED: 0, DELETED: 0 });
+
+    return NextResponse.json({
+      users,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      statusCounts,
+    });
   } catch (error) {
     console.error('Users API Error:', error);
     return NextResponse.json({ error: '회원 목록을 불러오는데 실패했습니다.' }, { status: 500 });
