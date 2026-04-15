@@ -120,6 +120,23 @@ export default function ProductDetailPage({ product }) {
         </div>
       </div>
 
+      {/* Parent Category Sub Navigation */}
+      {product.category?.parent?.children?.length > 0 && (
+        <div className="sub-nav">
+          <div className="sub-nav-container">
+            <a href={`/products/${product.category.parent.slug}`} className="active">전체보기</a>
+            {product.category.parent.children.map((subcat) => (
+              <a
+                key={subcat.id}
+                href={`/products/${product.category.parent.slug}/${subcat.slug}`}
+              >
+                {subcat.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Page Header */}
       <section className="page-header">
         <div className="page-header-content">
