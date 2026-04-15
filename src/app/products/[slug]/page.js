@@ -22,14 +22,7 @@ async function getProduct(slug) {
       include: {
         category: {
           include: {
-            parent: {
-              include: {
-                children: {
-                  where: { isActive: true },
-                  orderBy: { order: 'asc' },
-                },
-              },
-            },
+            parent: true,
           },
         },
         images: {
