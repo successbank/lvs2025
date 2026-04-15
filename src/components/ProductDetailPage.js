@@ -120,8 +120,34 @@ export default function ProductDetailPage({ product }) {
         </div>
       </div>
 
-      {/* Page Header */}
-      <section className="page-header">
+      {/* Parent Category Header + Sub Navigation */}
+      {product.category?.parent && (
+        <>
+          <section className="page-header">
+            <div className="page-header-content">
+              <h1>{product.category.parent.name}</h1>
+              <p>{product.category.parent.description || '엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.'}</p>
+            </div>
+          </section>
+          <div className="sub-nav">
+            <div className="sub-nav-container">
+              <a href={`/products/${product.category.parent.slug}`}>전체보기</a>
+              {(product.category.parent.children || []).map((subcat) => (
+                <a
+                  key={subcat.id}
+                  href={`/products/${product.category.parent.slug}/${subcat.slug}`}
+                  className={subcat.id === product.category.id ? 'active' : ''}
+                >
+                  {subcat.name}
+                </a>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Product Page Header */}
+      <section className="page-header product-page-header">
         <div className="page-header-content">
           <h1>{product.name}</h1>
           <p>{product.summary || '엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.'}</p>
