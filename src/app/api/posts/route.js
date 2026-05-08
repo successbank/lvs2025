@@ -2,6 +2,15 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { Pool } from 'pg';
+import {
+  ATTACHMENT_LIMITS,
+  validateAttachments,
+  saveAttachmentsToDisk,
+  generateAttachmentId,
+} from '@/lib/uploadAttachments';
+
+export const runtime = 'nodejs';
+export const maxDuration = 60;
 
 // GET /api/posts - 게시물 목록 조회
 export async function GET(request) {
@@ -122,40 +131,130 @@ export async function GET(request) {
   }
 }
 
-// POST /api/posts - 게시물 등록
+function readPostFields(source, isFormData) {
+  const get = (key) => {
+    if (!isFormData) return source[key];
+    const v = source.get(key);
+    return v == null ? undefined : v;
+  };
+  const getBool = (key) => {
+    const raw = get(key);
+    if (typeof raw === 'boolean') return raw;
+    if (typeof raw === 'string') return raw === 'true' || raw === '1' || raw === 'on';
+    return false;
+  };
+  return {
+    boardId: get('boardId'),
+    title: get('title'),
+    content: get('content'),
+    author: get('author'),
+    authorEmail: get('authorEmail'),
+    isNotice: getBool('isNotice'),
+    isSecret: getBool('isSecret'),
+    password: get('password'),
+    company: get('company'),
+    contactName: get('contactName'),
+    contactEmail: get('contactEmail'),
+    contactPhone: get('contactPhone'),
+  };
+}
+
+// POST /api/posts - 게시물 등록 (JSON 또는 multipart/form-data)
 export async function POST(request) {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const contentType = request.headers.get('content-type') || '';
+  const isMultipart = contentType.includes('multipart/form-data');
+
+  let data;
+  let files = [];
+  let boardSlug = null;
 
   try {
-    const data = await request.json();
+    if (isMultipart) {
+      const formData = await request.formData();
+      data = readPostFields(formData, true);
+      boardSlug = formData.get('boardSlug') || null;
+      files = formData.getAll('files').filter(
+        (f) => f && typeof f !== 'string' && typeof f.arrayBuffer === 'function'
+      );
+    } else {
+      data = readPostFields(await request.json(), false);
+    }
+  } catch (err) {
+    console.error('Post POST parse error:', err);
+    return NextResponse.json(
+      { error: '요청 형식이 올바르지 않습니다.' },
+      { status: 400 }
+    );
+  }
 
-    if (!data.boardId || !data.title || !data.content) {
+  const validation = validateAttachments(files);
+  if (!validation.ok) {
+    return NextResponse.json({ error: validation.error }, { status: 400 });
+  }
+
+  if (!data.title || !data.content) {
+    return NextResponse.json(
+      { error: '제목, 내용은 필수 항목입니다.' },
+      { status: 400 }
+    );
+  }
+
+  if (data.password && !/^\d{4}$/.test(data.password)) {
+    return NextResponse.json(
+      { error: '비밀번호는 4자리 숫자여야 합니다.' },
+      { status: 400 }
+    );
+  }
+
+  const session = await getServerSession(authOptions);
+  const isAdmin = session && session.user.role === 'ADMIN';
+
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const client = await pool.connect();
+
+  let boardId = data.boardId;
+  let boardSlugForUpload = null;
+  let cleanupSavedFiles = async () => {};
+
+  try {
+    if (!boardId && boardSlug) {
+      const boardResult = await client.query(
+        'SELECT id, slug FROM boards WHERE slug = $1 AND is_active = true',
+        [boardSlug]
+      );
+      if (boardResult.rows.length === 0) {
+        return NextResponse.json(
+          { error: '게시판을 찾을 수 없습니다.' },
+          { status: 404 }
+        );
+      }
+      boardId = boardResult.rows[0].id;
+      boardSlugForUpload = boardResult.rows[0].slug;
+    } else if (boardId && files.length > 0) {
+      const boardResult = await client.query(
+        'SELECT slug FROM boards WHERE id = $1',
+        [boardId]
+      );
+      boardSlugForUpload = boardResult.rows[0]?.slug || 'misc';
+    }
+
+    if (!boardId) {
       return NextResponse.json(
-        { error: '게시판, 제목, 내용은 필수 항목입니다.' },
+        { error: '게시판 정보가 필요합니다.' },
         { status: 400 }
       );
     }
 
-    // 비밀번호 형식 검증 (4자리 숫자)
-    if (data.password && !/^\d{4}$/.test(data.password)) {
-      return NextResponse.json(
-        { error: '비밀번호는 4자리 숫자여야 합니다.' },
-        { status: 400 }
-      );
-    }
+    await client.query('BEGIN');
 
-    // 관리자 글 작성 시 세션 확인
-    const session = await getServerSession(authOptions);
-    const isAdmin = session && session.user.role === 'ADMIN';
-
-    const id = `post_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const result = await pool.query(
+    const postId = `post_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const postResult = await client.query(
       `INSERT INTO posts (id, board_id, title, content, author, author_email, is_notice, is_secret, password, company, contact_name, contact_email, contact_phone, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
        RETURNING *`,
       [
-        id,
-        data.boardId,
+        postId,
+        boardId,
         data.title,
         data.content,
         data.author || (isAdmin ? '관리자' : '익명'),
@@ -170,14 +269,63 @@ export async function POST(request) {
       ]
     );
 
-    return NextResponse.json({ post: result.rows[0] }, { status: 201 });
+    let attachmentRows = [];
+    if (files.length > 0) {
+      const subDir = boardSlugForUpload || 'misc';
+      const { saved, cleanup } = await saveAttachmentsToDisk(files, subDir);
+      cleanupSavedFiles = cleanup;
+
+      const insertValues = [];
+      const insertParams = [];
+      let paramIdx = 1;
+      for (const f of saved) {
+        const attId = generateAttachmentId();
+        insertValues.push(
+          `($${paramIdx++}, $${paramIdx++}, $${paramIdx++}, $${paramIdx++}, $${paramIdx++}, $${paramIdx++}, $${paramIdx++})`
+        );
+        insertParams.push(
+          attId,
+          postId,
+          f.filename,
+          f.original_filename,
+          f.file_path,
+          f.file_size,
+          f.mime_type
+        );
+      }
+
+      const attResult = await client.query(
+        `INSERT INTO post_attachments (id, post_id, filename, original_filename, file_path, file_size, mime_type)
+         VALUES ${insertValues.join(', ')}
+         RETURNING *`,
+        insertParams
+      );
+      attachmentRows = attResult.rows;
+    }
+
+    await client.query('COMMIT');
+
+    return NextResponse.json(
+      {
+        post: postResult.rows[0],
+        attachments: attachmentRows,
+      },
+      { status: 201 }
+    );
   } catch (error) {
+    try {
+      await client.query('ROLLBACK');
+    } catch (rollbackErr) {
+      console.error('ROLLBACK failed:', rollbackErr);
+    }
+    await cleanupSavedFiles();
     console.error('Post Create Error:', error);
     return NextResponse.json(
       { error: '게시물 등록에 실패했습니다.' },
       { status: 500 }
     );
   } finally {
+    client.release();
     await pool.end();
   }
 }

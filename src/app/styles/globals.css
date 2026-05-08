@@ -5832,3 +5832,139 @@ body {
 .toast-slide-out {
   animation: toastSlideOut 0.3s ease forwards;
 }
+
+/* Consultation write — attachment dropzone */
+.consult-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 20px;
+  border: 1px dashed #ced4da;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+  outline: none;
+}
+
+.consult-dropzone:hover,
+.consult-dropzone:focus-visible {
+  border-color: #1976d2;
+  background-color: #f1f7fd;
+}
+
+.consult-dropzone:focus-visible {
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.18);
+}
+
+.consult-dropzone.is-dragover {
+  border-color: #1976d2;
+  border-style: solid;
+  background-color: #e7f1fb;
+}
+
+.consult-dropzone-title {
+  margin: 0 0 6px;
+  color: #495057;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.consult-dropzone-link {
+  color: #1976d2;
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.consult-dropzone-hint {
+  margin: 0;
+  color: #868e96;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.consult-attachment-error {
+  margin: 10px 0 0;
+  color: #dc3545;
+  font-size: 13px;
+}
+
+.consult-attachment-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.consult-attachment-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background-color: #ffffff;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #212529;
+}
+
+.consult-attachment-icon {
+  flex: 0 0 auto;
+  color: #495057;
+}
+
+.consult-attachment-name {
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #212529;
+}
+
+.consult-attachment-size {
+  flex: 0 0 auto;
+  color: #6c757d;
+  font-size: 12px;
+}
+
+.consult-attachment-remove {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #6c757d;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.consult-attachment-remove:hover,
+.consult-attachment-remove:focus-visible {
+  background-color: #f1f3f5;
+  color: #dc3545;
+  outline: none;
+}
+
+@media (max-width: 768px) {
+  .consult-dropzone {
+    padding: 22px 14px;
+  }
+  .consult-dropzone-title {
+    font-size: 13px;
+  }
+  .consult-dropzone-hint {
+    font-size: 11px;
+  }
+  .consult-attachment-item {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+}
+
