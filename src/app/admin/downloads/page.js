@@ -258,7 +258,8 @@ function WriteModal({ onClose, onSuccess }) {
 }
 
 // =============================================
-// 수정 모달 (제목/내용/공지 + 기존 첨부 관리 + 신규 첨부 추가)
+// 수정 모달 — 「저장」 통합: PATCH(제목/내용/공지) + 미업로드 신규 첨부 자동 업로드
+// + Broken 첨부 정정 옵션 + 강화된 삭제 경고
 // =============================================
 function EditModal({ post, onClose, onSuccess, onRefresh }) {
   const [form, setForm] = useState({
@@ -269,6 +270,7 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
   const [submitting, setSubmitting] = useState(false);
   const [newFiles, setNewFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [pathFixingId, setPathFixingId] = useState(null); // 경로 정정 모달 대상 첨부 id
 
   const refresh = async () => {
     const res = await fetch(`/api/posts/${post.id}?incrementView=false`);
@@ -276,17 +278,39 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
     if (data.post) onRefresh({ ...data.post, attachments: data.attachments || [] });
   };
 
+  // 「저장」 통합: 제목/내용/공지 PATCH + 미업로드 신규 첨부 자동 업로드
   const handleSave = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const res = await fetch(`/api/posts/${post.id}`, {
+      // 1. PATCH 본문
+      const patchRes = await fetch(`/api/posts/${post.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: form.title, content: form.content, isNotice: form.isNotice }),
       });
-      if (!res.ok) throw new Error('수정 실패');
-      alert('수정되었습니다.');
+      if (!patchRes.ok) throw new Error('수정 실패');
+
+      // 2. 신규 첨부가 input에 선택돼 있으면 함께 업로드 (사용자 누락 방지)
+      let uploadedCount = 0;
+      if (newFiles.length > 0) {
+        const fd = new FormData();
+        for (const f of newFiles) fd.append('files', f, f.name);
+        const upRes = await fetch(`/api/admin/posts/${post.id}/attachments`, {
+          method: 'POST', body: fd,
+        });
+        if (!upRes.ok) {
+          const err = await upRes.json().catch(() => ({}));
+          throw new Error(err.error || '첨부 업로드 실패');
+        }
+        const upData = await upRes.json();
+        uploadedCount = (upData.attachments || []).length;
+        setNewFiles([]);
+      }
+
+      alert(uploadedCount > 0
+        ? `수정되었습니다. (첨부 ${uploadedCount}개 추가)`
+        : '수정되었습니다.');
       onSuccess();
     } catch (err) {
       alert(err.message);
@@ -294,10 +318,14 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
     setSubmitting(false);
   };
 
-  const handleDeleteAttachment = async (attId, name) => {
-    if (!confirm(`첨부파일 "${name}"을 삭제할까요? 디스크 파일도 함께 제거됩니다.`)) return;
+  const handleDeleteAttachment = async (att) => {
+    const baseMsg = `첨부파일 "${att.original_filename}"을 삭제할까요?`;
+    const brokenWarn = !att.is_available
+      ? '\n\n⚠ 이 첨부는 디스크 파일이 누락 상태입니다. 삭제하면 DB 기록까지 사라져 복구 단서가 사라집니다.\n💡 디스크에 다른 이름으로 살아 있을 수 있으니 "경로 정정" 옵션을 먼저 시도해보세요.\n\n그래도 삭제할까요?'
+      : '\n디스크 파일도 함께 제거됩니다.';
+    if (!confirm(baseMsg + brokenWarn)) return;
     try {
-      const res = await fetch(`/api/admin/attachments/${attId}`, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/attachments/${att.id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('첨부 삭제 실패');
       await refresh();
     } catch (err) {
@@ -305,7 +333,8 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
     }
   };
 
-  const handleAddAttachments = async () => {
+  // 즉시 업로드(보조용 — 저장 통합과 별도로 즉시 추가하고 싶을 때)
+  const handleAddAttachmentsImmediate = async () => {
     if (newFiles.length === 0) return;
     setUploading(true);
     try {
@@ -346,12 +375,15 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
             onChange={e => setForm(p => ({ ...p, isNotice: e.target.checked }))} />
           공지로 상단 고정
         </label>
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem' }}>
           <button type="submit" style={primaryBtnStyle} disabled={submitting}>
             {submitting ? '저장 중...' : '저장'}
           </button>
           <button type="button" onClick={onClose} style={secondaryBtnStyle}>닫기</button>
         </div>
+        <p style={{ margin: '0 0 1.25rem', fontSize: '0.8rem', color: '#6b7280' }}>
+          💡 「저장」을 누르면 제목/내용/공지 변경과 함께 아래에서 선택해둔 신규 첨부파일도 한 번에 업로드됩니다.
+        </p>
       </form>
 
       <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
@@ -377,13 +409,31 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
                     </span>
                   )}
                 </div>
-                <button onClick={() => handleDeleteAttachment(att.id, att.original_filename)}
-                  style={{ background: 'transparent', color: '#dc2626', border: 'none', cursor: 'pointer', fontSize: '0.85rem', textDecoration: 'underline' }}>
-                  삭제
-                </button>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  {!att.is_available && (
+                    <button onClick={() => setPathFixingId(att.id)}
+                      style={{ background: 'transparent', color: '#2563eb', border: 'none', cursor: 'pointer', fontSize: '0.85rem', textDecoration: 'underline', fontWeight: 500 }}>
+                      경로 정정
+                    </button>
+                  )}
+                  <button onClick={() => handleDeleteAttachment(att)}
+                    style={{ background: 'transparent', color: '#dc2626', border: 'none', cursor: 'pointer', fontSize: '0.85rem', textDecoration: 'underline' }}>
+                    삭제
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
+        )}
+
+        {pathFixingId && (
+          <PathFixModal
+            attachmentId={pathFixingId}
+            attachment={post.attachments.find(a => a.id === pathFixingId)}
+            subDir="downloads"
+            onClose={() => setPathFixingId(null)}
+            onSuccess={async () => { setPathFixingId(null); await refresh(); }}
+          />
         )}
 
         <div style={{ marginTop: '1rem', padding: '0.75rem', background: '#f9fafb', borderRadius: '6px' }}>
@@ -395,11 +445,105 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
               {newFiles.map((f, i) => <li key={i}>📎 {f.name} ({formatSize(f.size)})</li>)}
             </ul>
           )}
-          <button type="button" onClick={handleAddAttachments} disabled={uploading || newFiles.length === 0}
-            style={{ ...primaryBtnStyle, marginTop: '0.5rem', opacity: (uploading || newFiles.length === 0) ? 0.6 : 1 }}>
-            {uploading ? '업로드 중...' : '추가 업로드'}
+          <button type="button" onClick={handleAddAttachmentsImmediate} disabled={uploading || newFiles.length === 0}
+            style={{ ...secondaryBtnStyle, marginTop: '0.5rem', opacity: (uploading || newFiles.length === 0) ? 0.6 : 1 }}
+            title="즉시 첨부만 추가합니다 (저장 버튼이 한 번에 처리해주므로 보통은 저장만 누르면 됩니다)">
+            {uploading ? '업로드 중...' : '즉시 업로드만'}
           </button>
         </div>
+      </div>
+    </ModalShell>
+  );
+}
+
+// =============================================
+// Broken 첨부 경로 정정 모달
+// 디스크 후보 파일 목록에서 선택 → file_path UPDATE
+// =============================================
+function PathFixModal({ attachmentId, attachment, subDir, onClose, onSuccess }) {
+  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [q, setQ] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({ subDir });
+        if (q) params.set('q', q);
+        const res = await fetch(`/api/admin/uploads-list?${params}`);
+        const data = await res.json();
+        setFiles(data.files || []);
+      } catch (err) {
+        console.error('uploads-list fetch failed:', err);
+      }
+      setLoading(false);
+    };
+    load();
+  }, [subDir, q]);
+
+  const handlePick = async (filePath) => {
+    if (!confirm(`이 첨부의 file_path를 "${filePath}"로 정정합니다.\n원래 파일명("${attachment?.original_filename}")은 그대로 유지됩니다. 계속할까요?`)) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch(`/api/admin/attachments/${attachmentId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file_path: filePath }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '경로 정정 실패');
+      }
+      alert('경로가 정정되었습니다.');
+      onSuccess();
+    } catch (err) {
+      alert(err.message);
+    }
+    setSubmitting(false);
+  };
+
+  const formatSize = (b) => b < 1024 ? `${b}B` : b < 1048576 ? `${(b/1024).toFixed(1)}KB` : `${(b/1048576).toFixed(2)}MB`;
+
+  return (
+    <ModalShell title="첨부 경로 정정" onClose={onClose} width="640px">
+      <p style={{ margin: '0 0 0.75rem', color: '#374151', fontSize: '0.9rem' }}>
+        디스크에 살아 있는 파일을 선택하면 이 첨부의 <code>file_path</code>가 새 파일을 가리키도록 업데이트됩니다.
+      </p>
+      <p style={{ margin: '0 0 1rem', color: '#6b7280', fontSize: '0.8rem' }}>
+        대상 첨부: <strong>{attachment?.original_filename}</strong> · 현재 경로 <code>{attachment?.file_path}</code>
+      </p>
+      <input type="text" value={q} onChange={e => setQ(e.target.value)}
+        placeholder="파일명으로 검색 (예: IFSM)"
+        style={{ ...inputStyle, marginBottom: '0.75rem' }} />
+      <div style={{ maxHeight: '420px', overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: '6px' }}>
+        {loading ? (
+          <p style={{ padding: '1rem', textAlign: 'center', color: '#6b7280' }}>로딩 중...</p>
+        ) : files.length === 0 ? (
+          <p style={{ padding: '1rem', textAlign: 'center', color: '#6b7280' }}>일치하는 파일이 없습니다.</p>
+        ) : (
+          <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+            {files.map(f => (
+              <li key={f.file_path} style={{
+                padding: '0.5rem 0.75rem', borderBottom: '1px solid #f3f4f6',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              }}>
+                <div>
+                  <div style={{ fontSize: '0.9rem' }}>📄 {f.name}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{formatSize(f.file_size)}</div>
+                </div>
+                <button onClick={() => handlePick(f.file_path)} disabled={submitting}
+                  style={{ ...primaryBtnStyle, padding: '0.3rem 0.75rem', fontSize: '0.85rem', opacity: submitting ? 0.6 : 1 }}>
+                  이 파일로 정정
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <div style={{ marginTop: '1rem', textAlign: 'right' }}>
+        <button onClick={onClose} style={secondaryBtnStyle}>닫기</button>
       </div>
     </ModalShell>
   );
