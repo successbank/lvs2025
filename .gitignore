@@ -34,3 +34,4 @@ migrate-data.py
 
 # 인증서/다운로드 자료 등 운영 작업 자산 (git 비추적)
 work/
+.superpowers/
