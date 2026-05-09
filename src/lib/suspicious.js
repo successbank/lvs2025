@@ -2,10 +2,21 @@
 // 탐지된 플래그 배열을 반환하며, 비어 있으면 정상으로 간주한다.
 
 const DISPOSABLE_DOMAINS = new Set([
+  // 기본 (기존)
   'mailinator.com', 'tempmail.com', 'temp-mail.org', '10minutemail.com',
   'guerrillamail.com', 'throwawaymail.com', 'yopmail.com', 'trashmail.com',
   'sharklasers.com', 'maildrop.cc', 'dispostable.com', 'getnada.com',
   'emailondeck.com', 'fakeinbox.com', 'tempr.email',
+  // 확장 (2026-05-09 추가)
+  'guerrillamail.net', 'guerrillamail.org', 'guerrillamail.biz', 'grr.la',
+  '0-mail.com', '33mail.com', 'getairmail.com', 'inbox.lv',
+  'temp-mail.io', 'temp-mail.ru', 'mohmal.com', 'mintemail.com',
+  'vovan.de', 'harakirimail.com', 'mailcatch.com', 'meltmail.com',
+  'mt2014.com', 'notmailinator.com', 'spam4.me', 'spamgourmet.com',
+  'tempinbox.com', 'tempemail.com', 'tempmailaddress.com', 'tempemail.net',
+  'discard.email', 'mail-temp.com', 'mvrht.net', 'nada.email',
+  'wegwerfmail.de', 'incognitomail.org', 'instant-mail.de', 'quick-mail.org',
+  'mytemp.email', 'mailnesia.com', 'sogetthis.com', 'spamex.com',
 ]);
 
 const HANGUL_REGEX = /[\uAC00-\uD7AF]/;

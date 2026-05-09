@@ -2,10 +2,38 @@ import { NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { detectSuspicion } from '@/lib/suspicious';
+import { rateLimit } from '@/lib/rate-limit';
 
 export async function POST(request) {
   try {
-    const { name, email, password, phone, company } = await request.json();
+    // ① IP / User-Agent 추출 (가장 먼저)
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('x-real-ip')
+      || 'unknown';
+    const userAgent = request.headers.get('user-agent') || null;
+
+    // ② Rate limit: IP당 1분 3회 (Redis fail-open)
+    const limit = await rateLimit({
+      key: `signup:${ip}`,
+      max: 3,
+      windowSec: 60,
+    });
+    if (!limit.ok) {
+      return NextResponse.json(
+        { error: '잠시 후 다시 시도해주세요.' },
+        { status: 429, headers: { 'Retry-After': '60' } }
+      );
+    }
+
+    const body = await request.json();
+    const { name, email, password, phone, company, website } = body;
+
+    // ③ Honeypot: hidden 'website' 필드에 값이 있으면 봇으로 판단
+    //    DB에 row를 만들지 않고 200 위장 응답을 보내 봇이 "성공"으로 인식하도록 유도
+    if (typeof website === 'string' && website.trim().length > 0) {
+      console.warn('[register] honeypot triggered', { ip, userAgent, website });
+      return NextResponse.json({ message: '회원가입이 완료되었습니다.' }, { status: 200 });
+    }
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: '모든 필드를 입력해주세요.' }, { status: 400 });
@@ -24,11 +52,6 @@ export async function POST(request) {
     const isSuspicious = flags.length > 0;
 
     const hashedPassword = await hash(password, 12);
-
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-      || request.headers.get('x-real-ip')
-      || null;
-    const userAgent = request.headers.get('user-agent') || null;
 
     const user = await prisma.user.create({
       data: {

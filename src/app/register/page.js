@@ -7,6 +7,7 @@ import '../styles/globals.css';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({ name: '', email: '', password: '', passwordConfirm: '', phone: '', company: '' });
+  const [website, setWebsite] = useState(''); // honeypot — 봇만 채우는 hidden 필드
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -35,7 +36,7 @@ export default function RegisterPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: formData.name, email: formData.email, password: formData.password, phone: formData.phone, company: formData.company }),
+        body: JSON.stringify({ name: formData.name, email: formData.email, password: formData.password, phone: formData.phone, company: formData.company, website }),
       });
       const data = await res.json();
 
@@ -68,6 +69,19 @@ export default function RegisterPage() {
           )}
 
           <form onSubmit={handleSubmit}>
+            {/* Honeypot — 봇만 채움. 시각/스크린리더 모두에서 숨김 */}
+            <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', height: 0, width: 0, overflow: 'hidden' }}>
+              <label htmlFor="website-hp">Website</label>
+              <input
+                id="website-hp"
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+              />
+            </div>
             <div style={{ marginBottom: '1rem' }}>
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '500', marginBottom: '0.375rem', color: '#374151' }}>이름</label>
               <input type="text" value={formData.name} onChange={e => update('name', e.target.value)} required
