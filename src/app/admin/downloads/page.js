@@ -529,9 +529,14 @@ function PathFixModal({ attachmentId, attachment, subDir, onClose, onSuccess }) 
                 padding: '0.5rem 0.75rem', borderBottom: '1px solid #f3f4f6',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               }}>
-                <div>
-                  <div style={{ fontSize: '0.9rem' }}>📄 {f.name}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{formatSize(f.file_size)}</div>
+                <div style={{ minWidth: 0, flex: 1, marginRight: '0.75rem' }}>
+                  <div style={{ fontSize: '0.9rem', wordBreak: 'break-all' }}>📄 {f.name}</div>
+                  {f.raw_name && (
+                    <div style={{ fontSize: '0.7rem', color: '#9ca3af', wordBreak: 'break-all', marginTop: '0.15rem' }} title="디스크에 저장된 원본 파일명 (인코딩 깨짐)">
+                      raw: {f.raw_name}
+                    </div>
+                  )}
+                  <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.15rem' }}>{formatSize(f.file_size)}</div>
                 </div>
                 <button onClick={() => handlePick(f.file_path)} disabled={submitting}
                   style={{ ...primaryBtnStyle, padding: '0.3rem 0.75rem', fontSize: '0.85rem', opacity: submitting ? 0.6 : 1 }}>
