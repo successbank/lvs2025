@@ -24,12 +24,22 @@ export async function GET(request, { params }) {
     if (res.rows.length === 0) {
       return NextResponse.json({ error: '문의를 찾을 수 없습니다.' }, { status: 404 });
     }
+    // 첨부파일 (1:N)
+    const attRes = await pool.query(
+      `SELECT id, original_filename, file_size, mime_type, download_count, created_at
+         FROM post_attachments
+        WHERE post_id = $1
+        ORDER BY created_at ASC, id ASC`,
+      [params.id]
+    );
+    const post = res.rows[0];
+    post.attachments = attRes.rows;
     // 최초 열람 기록
-    if (!res.rows[0].admin_read_at) {
+    if (!post.admin_read_at) {
       await pool.query('UPDATE posts SET admin_read_at = NOW() WHERE id = $1', [params.id]);
-      res.rows[0].admin_read_at = new Date();
+      post.admin_read_at = new Date();
     }
-    return NextResponse.json(res.rows[0]);
+    return NextResponse.json(post);
   } catch (error) {
     console.error('support-inquiries detail error:', error);
     return NextResponse.json({ error: '조회에 실패했습니다.' }, { status: 500 });
