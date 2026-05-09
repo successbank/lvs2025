@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import LoginModal from './LoginModal';
 import '../app/styles/globals.css';
 
 export default function BoardListPage({ boardSlug, section = 'support' }) {
@@ -26,6 +27,26 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
   const [passwordTarget, setPasswordTarget] = useState(null);
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
+
+  // 회원 전용 다운로드 — 인라인 로그인 모달 + 보류 중인 첨부
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [pendingAttachment, setPendingAttachment] = useState(null);
+
+  const triggerAttachmentDownload = (attId) => {
+    // 브라우저 기본 다운로드 동작 보존 (Content-Disposition: attachment)
+    window.location.href = `/api/attachments/${attId}/download`;
+  };
+
+  const handleAttachmentClick = (e, file) => {
+    // /support/downloads 게시판은 회원 전용 — 비로그인이면 LoginModal 표시
+    if (boardSlug === 'downloads' && !session) {
+      e.preventDefault();
+      setPendingAttachment(file);
+      setLoginModalOpen(true);
+      return;
+    }
+    // 로그인 상태면 <a>의 href 기본 동작 그대로 다운로드 진행
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -502,11 +523,17 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
                         <a
                           href={`/api/attachments/${file.id}/download`}
                           className="modal-attachment-link"
+                          onClick={(e) => handleAttachmentClick(e, file)}
                         >
                           📎 {file.original_filename}
                           <span className="modal-file-size">
                             ({formatFileSize(file.file_size)})
                           </span>
+                          {boardSlug === 'downloads' && !session && (
+                            <span style={{ marginLeft: 8, color: '#2563eb', fontSize: '0.8em' }}>
+                              · 🔒 회원 전용
+                            </span>
+                          )}
                         </a>
                       </li>
                     );
@@ -553,6 +580,19 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
           </div>
         </div>
       )}
+
+      {/* 회원 전용 다운로드 — 인라인 로그인 모달 */}
+      <LoginModal
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+        onSuccess={() => {
+          if (pendingAttachment) {
+            triggerAttachmentDownload(pendingAttachment.id);
+            setPendingAttachment(null);
+          }
+        }}
+        message="이 자료는 회원 전용입니다. 로그인 후 다운로드할 수 있습니다."
+      />
     </>
   );
 }

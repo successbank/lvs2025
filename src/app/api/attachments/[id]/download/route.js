@@ -2,8 +2,11 @@ import { NextResponse } from 'next/server';
 import { Pool } from 'pg';
 import fs from 'fs';
 import path from 'path';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 // GET /api/attachments/[id]/download - 첨부파일 다운로드
+// downloads 게시판 첨부는 회원 로그인 필수 (board_slug 분기)
 export async function GET(request, { params }) {
   const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -12,9 +15,13 @@ export async function GET(request, { params }) {
   try {
     const { id } = params;
 
-    // 첨부파일 정보 조회
+    // 첨부파일 + 게시판 정보 함께 조회 (board_slug 추출)
     const result = await pool.query(
-      'SELECT * FROM post_attachments WHERE id = $1',
+      `SELECT pa.*, b.slug AS board_slug
+         FROM post_attachments pa
+         JOIN posts p ON pa.post_id = p.id
+         JOIN boards b ON p.board_id = b.id
+        WHERE pa.id = $1`,
       [id]
     );
 
@@ -26,6 +33,20 @@ export async function GET(request, { params }) {
     }
 
     const attachment = result.rows[0];
+
+    // /support/downloads 게시판 첨부는 회원 전용
+    if (attachment.board_slug === 'downloads') {
+      const session = await getServerSession(authOptions);
+      if (!session) {
+        return NextResponse.json(
+          {
+            error: '회원 전용 자료입니다. 로그인 후 다운로드 가능합니다.',
+            requiresAuth: true,
+          },
+          { status: 401 }
+        );
+      }
+    }
 
     // 다운로드 카운트 증가
     await pool.query(
