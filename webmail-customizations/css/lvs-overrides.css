@@ -1,0 +1,58 @@
+/* LVS webmail customizations
+ * Applies to webmail.lvs.co.kr login page only.
+ * Loaded via Mailcow Customize panel → Custom CSS field.
+ */
+
+/* 메인 로고: 와이드 컴포지트 SVG에 맞춰 max-width 확장 */
+.mailcow-logo .main-logo,
+.mailcow-logo .main-logo-dark {
+  max-width: 360px;
+  width: 100%;
+  height: auto;
+}
+
+/* 로그인 버튼: Mailcow 기본 success 녹색 → LVS 브랜드 옐로우 */
+.btn.btn-success {
+  background-color: #F7C600 !important;
+  border-color: #E0B300 !important;
+  color: #000000 !important;
+  font-weight: 800;
+}
+.btn.btn-success:hover,
+.btn.btn-success:focus,
+.btn.btn-success:active {
+  background-color: #E0B300 !important;
+  border-color: #C99E00 !important;
+  color: #000000 !important;
+}
+
+/* 안내 문구(예: "비밀번호를 잊으셨나요?") 링크 색상 — LVS 톤 */
+.card-body a {
+  color: #1565C0;
+}
+.card-body a:hover {
+  color: #0D47A1;
+}
+
+/* 다크 모드 보정 */
+body.dark .card-body a {
+  color: #5BA8E5;
+}
+body.dark .card-body a:hover {
+  color: #82BFEE;
+}
+body.dark .btn.btn-success {
+  box-shadow: 0 0 0 1px rgba(247, 198, 0, 0.2);
+}
+
+/* legend 텍스트(임직원 메일 서비스) 강조 */
+.card-body legend {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  color: #1565C0;
+  margin-bottom: 0.5rem;
+}
+body.dark .card-body legend {
+  color: #5BA8E5;
+}
