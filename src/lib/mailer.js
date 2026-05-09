@@ -109,6 +109,7 @@ function buildHtml({ post, boardSlug, attachmentCount, baseUrl }) {
           <tr><td style="padding:8px 0;color:#666;">제목</td><td style="padding:8px 0;font-weight:600;">${escapeHtml(post.title)}</td></tr>
           <tr><td style="padding:8px 0;color:#666;">작성자</td><td style="padding:8px 0;">${escapeHtml(post.author || '-')}${post.company ? ` (${escapeHtml(post.company)})` : ''}</td></tr>
           ${post.contact_name ? `<tr><td style="padding:8px 0;color:#666;">담당자</td><td style="padding:8px 0;">${escapeHtml(post.contact_name)}</td></tr>` : ''}
+          ${post.contact_position ? `<tr><td style="padding:8px 0;color:#666;">직함</td><td style="padding:8px 0;">${escapeHtml(post.contact_position)}</td></tr>` : ''}
           ${post.contact_email ? `<tr><td style="padding:8px 0;color:#666;">이메일</td><td style="padding:8px 0;">${escapeHtml(post.contact_email)}</td></tr>` : ''}
           ${post.contact_phone ? `<tr><td style="padding:8px 0;color:#666;">연락처</td><td style="padding:8px 0;">${escapeHtml(post.contact_phone)}</td></tr>` : ''}
           <tr><td style="padding:8px 0;color:#666;">작성일시</td><td style="padding:8px 0;">${escapeHtml(formatKstDateTime(post.created_at))}</td></tr>
@@ -140,6 +141,7 @@ function buildText({ post, boardSlug, attachmentCount, baseUrl }) {
     `작성자:     ${post.author || '-'}${post.company ? ` (${post.company})` : ''}`,
   ];
   if (post.contact_name) lines.push(`담당자:     ${post.contact_name}`);
+  if (post.contact_position) lines.push(`직함:       ${post.contact_position}`);
   if (post.contact_email) lines.push(`이메일:     ${post.contact_email}`);
   if (post.contact_phone) lines.push(`연락처:     ${post.contact_phone}`);
   lines.push(`작성일시:   ${formatKstDateTime(post.created_at)}`);

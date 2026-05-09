@@ -45,7 +45,7 @@ export async function GET(request) {
 
     const listSql = `
       SELECT p.id, p.title, p.content, p.author, p.author_email, p.company,
-             p.contact_name, p.contact_email, p.contact_phone,
+             p.contact_name, p.contact_position, p.contact_email, p.contact_phone,
              p.is_secret, p.view_count, p.created_at,
              p.admin_status, p.admin_reply, p.admin_reply_at, p.admin_reply_by,
              p.admin_note, p.admin_read_at,

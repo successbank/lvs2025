@@ -225,13 +225,16 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
                   <strong>조회수:</strong> {formatNumber(post.view_count)}
                 </span>
               </div>
-              {boardSlug === 'consultation' && (post.company || post.contact_name || post.contact_email || post.contact_phone) && (
+              {boardSlug === 'consultation' && (post.company || post.contact_name || post.contact_position || post.contact_email || post.contact_phone) && (
                 <div className="board-view-meta consultation-meta">
                   {post.company && (
                     <span className="board-meta-item"><strong>업체명:</strong> {post.company}</span>
                   )}
                   {post.contact_name && (
                     <span className="board-meta-item"><strong>담당자:</strong> {post.contact_name}</span>
+                  )}
+                  {post.contact_position && (
+                    <span className="board-meta-item"><strong>직함:</strong> {post.contact_position}</span>
                   )}
                   {post.contact_email && (
                     <span className="board-meta-item"><strong>이메일:</strong> {post.contact_email}</span>

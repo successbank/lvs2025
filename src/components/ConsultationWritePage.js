@@ -31,6 +31,7 @@ export default function ConsultationWritePage() {
     password: '',
     company: '',
     contactName: '',
+    contactPosition: '',
     contactEmail: '',
     contactPhone: '',
     title: '',
@@ -149,6 +150,7 @@ export default function ConsultationWritePage() {
       fd.append('isSecret', String(formData.isSecret));
       fd.append('company', formData.company || '');
       fd.append('contactName', formData.contactName || '');
+      fd.append('contactPosition', formData.contactPosition || '');
       fd.append('contactEmail', formData.contactEmail || '');
       fd.append('contactPhone', formData.contactPhone || '');
       for (const file of attachments) {
@@ -265,6 +267,17 @@ export default function ConsultationWritePage() {
                 </td>
               </tr>
               <tr>
+                <th>직함</th>
+                <td>
+                  <input
+                    type="text"
+                    name="contactPosition"
+                    value={formData.contactPosition}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="예: 과장, 팀장, 대표"
+                  />
+                </td>
                 <th>이메일</th>
                 <td>
                   <input
@@ -276,14 +289,16 @@ export default function ConsultationWritePage() {
                     placeholder="이메일을 입력해주세요"
                   />
                 </td>
+              </tr>
+              <tr>
                 <th>연락처</th>
-                <td>
+                <td colSpan="3">
                   <input
                     type="tel"
                     name="contactPhone"
                     value={formData.contactPhone}
                     onChange={handleInputChange}
-                    className="form-input"
+                    className="form-input-full"
                     placeholder="연락처를 입력해주세요"
                   />
                 </td>

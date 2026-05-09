@@ -156,6 +156,7 @@ function readPostFields(source, isFormData) {
     password: get('password'),
     company: get('company'),
     contactName: get('contactName'),
+    contactPosition: get('contactPosition'),
     contactEmail: get('contactEmail'),
     contactPhone: get('contactPhone'),
   };
@@ -251,8 +252,8 @@ export async function POST(request) {
 
     const postId = `post_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const postResult = await client.query(
-      `INSERT INTO posts (id, board_id, title, content, author, author_email, is_notice, is_secret, password, company, contact_name, contact_email, contact_phone, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+      `INSERT INTO posts (id, board_id, title, content, author, author_email, is_notice, is_secret, password, company, contact_name, contact_position, contact_email, contact_phone, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
        RETURNING *`,
       [
         postId,
@@ -266,6 +267,7 @@ export async function POST(request) {
         data.password || null,
         data.company || null,
         data.contactName || null,
+        data.contactPosition || null,
         data.contactEmail || null,
         data.contactPhone || null,
       ]
