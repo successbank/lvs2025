@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { Pool } from 'pg';
+import fs from 'fs';
+import path from 'path';
 
 // GET /api/posts/[id] - 게시물 상세 조회 및 조회수 증가
 export async function GET(request, { params }) {
@@ -51,11 +53,15 @@ export async function GET(request, { params }) {
       }
     }
 
-    // 첨부파일 조회
+    // 첨부파일 조회 + 실파일 존재 여부(is_available) 부착
     const attachmentsResult = await pool.query(
       'SELECT * FROM post_attachments WHERE post_id = $1 ORDER BY created_at ASC',
       [id]
     );
+    const attachmentsWithAvailability = attachmentsResult.rows.map((att) => ({
+      ...att,
+      is_available: att.file_path ? fs.existsSync(path.join('/app', att.file_path)) : false,
+    }));
 
     // 조회수 증가
     if (incrementView) {
@@ -90,7 +96,7 @@ export async function GET(request, { params }) {
 
     return NextResponse.json({
       post: safePost,
-      attachments: attachmentsResult.rows,
+      attachments: attachmentsWithAvailability,
       prevPost: prevResult.rows[0] || null,
       nextPost: nextResult.rows[0] || null,
     });

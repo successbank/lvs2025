@@ -248,14 +248,54 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
               <div className="board-view-attachments">
                 <strong>첨부파일:</strong>
                 <ul className="attachment-list">
-                  {attachments.map((file) => (
-                    <li key={file.id}>
-                      <a href={`/api/attachments/${file.id}/download`} className="attachment-link">
-                        📎 {file.original_filename}
-                        <span className="file-size">({formatFileSize(file.file_size)})</span>
-                      </a>
-                    </li>
-                  ))}
+                  {attachments.map((file) => {
+                    const unavailable = file.is_available === false;
+                    if (unavailable) {
+                      return (
+                        <li key={file.id}>
+                          <button
+                            type="button"
+                            className="attachment-link"
+                            style={{
+                              color: '#999',
+                              cursor: 'not-allowed',
+                              background: 'none',
+                              border: 'none',
+                              padding: 0,
+                              font: 'inherit',
+                              textAlign: 'left',
+                            }}
+                            onClick={() =>
+                              alert(
+                                '해당 파일은 현재 준비 중입니다.\n빠른 시일 내에 다운로드 가능하도록 조치하겠습니다.'
+                              )
+                            }
+                          >
+                            📎 {file.original_filename}
+                            <span className="file-size">
+                              ({formatFileSize(file.file_size)})
+                            </span>
+                            <span style={{ marginLeft: 8, color: '#c00', fontSize: '0.85em' }}>
+                              · 준비 중
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    }
+                    return (
+                      <li key={file.id}>
+                        <a
+                          href={`/api/attachments/${file.id}/download`}
+                          className="attachment-link"
+                        >
+                          📎 {file.original_filename}
+                          <span className="file-size">
+                            ({formatFileSize(file.file_size)})
+                          </span>
+                        </a>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             )}
