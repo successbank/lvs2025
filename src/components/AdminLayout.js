@@ -12,6 +12,7 @@ const menuItems = [
   { href: '/admin/inquiries', label: '문의 관리', icon: '💬' },
   { href: '/admin/catalog-requests', label: '카탈로그 신청', icon: '📋' },
   { href: '/admin/notices', label: '공지사항 관리', icon: '📢' },
+  { href: '/admin/downloads', label: '다운로드 관리', icon: '📥' },
   { href: '/admin/sliders', label: '슬라이더 관리', icon: '🖼' },
   { href: '/admin/certifications', label: '인증 관리', icon: '🏆' },
   { href: '/admin/popups', label: '레이어 팝업', icon: '🪟' },
