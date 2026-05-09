@@ -1,59 +1,30 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import '../app/styles/globals.css';
-
-const CERT_DATA = [
-  { id: 1,  title: 'DB,DBS 인증서',              image: 'ce-db-dbs.jpg',           category: 'system' },
-  { id: 2,  title: 'EN-04xx CE 인증서',          image: '5b0f53694aa8b.jpg',        category: 'system' },
-  { id: 3,  title: 'EN-02xx CE 인증서',          image: '5b0f4f02269de.jpg',        category: 'system' },
-  { id: 4,  title: 'EN-08xx CE 인증서',          image: 'thumb_5afbd2637efed.jpg', category: 'system' },
-  { id: 47, title: 'LVS-ES-0224 LVD DoC',        image: 'ce-lvs-es-0224.jpg',       category: 'product' },
-  { id: 48, title: 'LVS-ES-0424 LVD DoC',        image: 'ce-lvs-es-0424.jpg',       category: 'product' },
-  { id: 49, title: 'LVS-ES-0824 LVD DoC',        image: 'ce-lvs-es-0824.jpg',       category: 'product' },
-  { id: 50, title: 'LVS-ET-0205 LVD DoC',        image: 'ce-lvs-et-0205.jpg',       category: 'product' },
-  { id: 51, title: 'LVS-ET-0405 LVD DoC',        image: 'ce-lvs-et-0405.jpg',       category: 'product' },
-  { id: 52, title: 'LVS-ET-0424 LVD DoC',        image: 'ce-lvs-et-0424.jpg',       category: 'product' },
-  { id: 5,  title: 'SHL 인증서',                 image: 'ce-shl.jpg',              category: 'system' },
-  { id: 6,  title: 'PT08-N04_LVD 인증서',        image: 'ce-pt.jpg',               category: 'product' },
-  { id: 7,  title: 'PT08-N04 인증서',            image: 'ce-pt.jpg',               category: 'product' },
-  { id: 8,  title: 'PT 인증서',                  image: 'ce-pt.jpg',               category: 'product' },
-  { id: 9,  title: 'PS-21 인증서',               image: 'ce-ps21.jpg',             category: 'product' },
-  { id: 10, title: 'PS 인증서',                  image: 'ce-ps.jpg',               category: 'product' },
-  { id: 11, title: 'PN 인증서',                  image: 'ce-pn.jpg',               category: 'product' },
-  { id: 46, title: 'PN-abxx-yy 인증서',          image: 'ce-pn-abxx-yy.jpg',       category: 'product' },
-  { id: 12, title: 'PA10 인증서',                image: 'thumb_5a66c81f54b11.JPG', category: 'product' },
-  { id: 13, title: 'PA 인증서',                  image: 'thumb_5a66c808dd7c6.JPG', category: 'product' },
-  { id: 14, title: 'ILA-R, ILA-S 인증서',        image: 'ce-ila-r-ila-s.jpg',     category: 'product' },
-  { id: 15, title: 'IFS, IFSM 인증서',           image: 'ce-ifs-ifsm.jpg',        category: 'product' },
-  { id: 16, title: 'IFRK 인증서',                image: 'ce-ifrk.jpg',             category: 'product' },
-  { id: 17, title: 'IFD 인증서',                 image: 'ce-ifd.jpg',              category: 'product' },
-  { id: 18, title: 'IDM 인증서',                 image: 'ce-idm.jpg',              category: 'product' },
-  { id: 19, title: 'ICFV 인증서',                image: 'ce-icfv.jpg',             category: 'product' },
-  { id: 20, title: 'HLS 인증서',                 image: 'ce-hls.jpg',              category: 'product' },
-  { id: 21, title: 'DS 인증서',                  image: 'ce-ds.jpg',               category: 'product' },
-  { id: 22, title: 'DRT, DRF 인증서',            image: 'ce-drt-drf.jpg',          category: 'product' },
-  { id: 23, title: 'DR4 인증서',                 image: 'ce-dr4.jpg',              category: 'product' },
-  { id: 24, title: 'DN 인증서',                  image: 'ce-dn.jpg',               category: 'product' },
-  { id: 25, title: 'DL, DLA2 인증서',            image: 'ce-dl-dla2.jpg',          category: 'product' },
-];
 
 const CERT_IMAGE_BASE = '/images/certifications/';
 
-const FILTERS = [
-  { key: 'all', label: '전체', count: 32 },
-  { key: 'product', label: '제품 인증', count: 27 },
-  { key: 'system', label: '시스템 인증', count: 5 },
-];
-
-export default function CertificationsPage() {
+export default function CertificationsPage({ certifications = [], categories = [] }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
   const [activeFilter, setActiveFilter] = useState('all');
 
-  const filteredCerts = activeFilter === 'all'
-    ? CERT_DATA
-    : CERT_DATA.filter((c) => c.category === activeFilter);
+  const filters = useMemo(() => {
+    const all = { key: 'all', label: '전체', count: certifications.length };
+    const byCat = categories.map((cat) => ({
+      key: cat.key,
+      label: cat.label,
+      count: certifications.filter((c) => c.categoryId === cat.id).length,
+    }));
+    return [all, ...byCat];
+  }, [certifications, categories]);
+
+  const filteredCerts = useMemo(() => (
+    activeFilter === 'all'
+      ? certifications
+      : certifications.filter((c) => c.category?.key === activeFilter)
+  ), [certifications, activeFilter]);
 
   const openLightbox = (filteredIdx) => {
     setLightboxIndex(filteredIdx);
@@ -153,7 +124,7 @@ export default function CertificationsPage() {
         <div className="container">
           {/* Filter Tabs */}
           <div className="cert-filter">
-            {FILTERS.map((f) => (
+            {filters.map((f) => (
               <button
                 key={f.key}
                 className={`cert-filter-btn${activeFilter === f.key ? ' active' : ''}`}
@@ -176,7 +147,7 @@ export default function CertificationsPage() {
                   {String(idx + 1).padStart(2, '0')}
                 </span>
                 <span className="cert-card-tag">
-                  {cert.category === 'system' ? '시스템' : '제품'}
+                  {cert.category?.label || ''}
                 </span>
                 <div className="cert-image">
                   <img

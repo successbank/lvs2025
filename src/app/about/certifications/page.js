@@ -1,36 +1,30 @@
 import CertificationsPage from '@/components/CertificationsPage';
-import { Pool } from 'pg';
+import prisma from '@/lib/prisma';
 
 export const dynamic = 'force-dynamic';
 
 async function getData() {
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-  });
-
   try {
-    const [companyInfoResult, certificationsResult] = await Promise.all([
-      pool.query('SELECT * FROM company_info LIMIT 1'),
-      pool.query('SELECT * FROM certifications WHERE is_active = true ORDER BY "order" ASC'),
+    const [companyInfo, categories, certifications] = await Promise.all([
+      prisma.companyInfo.findFirst(),
+      prisma.certificationCategory.findMany({
+        where: { isActive: true },
+        orderBy: { order: 'asc' },
+      }),
+      prisma.certification.findMany({
+        where: { isActive: true },
+        include: { category: true },
+        orderBy: [{ category: { order: 'asc' } }, { order: 'asc' }],
+      }),
     ]);
-
-    return {
-      companyInfo: companyInfoResult.rows[0] || null,
-      certifications: certificationsResult.rows || [],
-    };
+    return { companyInfo, categories, certifications };
   } catch (error) {
-    console.error('Data fetch error:', error);
-    return {
-      companyInfo: null,
-      certifications: [],
-    };
-  } finally {
-    await pool.end();
+    console.error('Certifications data fetch error:', error);
+    return { companyInfo: null, categories: [], certifications: [] };
   }
 }
 
 export default async function Page() {
   const data = await getData();
-
   return <CertificationsPage {...data} />;
 }

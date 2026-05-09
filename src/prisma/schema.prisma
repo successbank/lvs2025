@@ -435,3 +435,37 @@ model MenuItem {
 
   @@map("menu_items")
 }
+
+// ========================================
+// 인증서 카테고리 / 인증현황
+// ========================================
+
+model CertificationCategory {
+  id             String          @id @default(cuid())
+  key            String          @unique
+  label          String
+  order          Int             @default(0)
+  isActive       Boolean         @default(true)
+  certifications Certification[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([order])
+  @@map("certification_categories")
+}
+
+model Certification {
+  id         String                @id @default(cuid())
+  title      String
+  image      String
+  categoryId String
+  category   CertificationCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  order      Int                   @default(0)
+  isActive   Boolean               @default(true)
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+
+  @@index([categoryId])
+  @@index([order])
+  @@map("certifications")
+}
