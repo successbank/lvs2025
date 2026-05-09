@@ -403,7 +403,7 @@ export default function DealersPage({ companyInfo }) {
               </div>
               <div className="dealer-cta-item">
                 <div className="dealer-cta-label">이메일 문의</div>
-                <div className="dealer-cta-value">{companyInfo?.email || 'info@lvs.co.kr'}</div>
+                <div className="dealer-cta-value">{companyInfo?.email || 'chris@lvs.co.kr'}</div>
               </div>
             </div>
           </div>

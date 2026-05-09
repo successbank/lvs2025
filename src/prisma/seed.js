@@ -32,7 +32,7 @@ async function main() {
       businessNumber: '131-86-14914',
       phone: '032-461-1800',
       fax: '032-461-1001',
-      email: 'info@lvs.co.kr',
+      email: 'chris@lvs.co.kr',
       address: '인천광역시 연수구 송도미래로 30 B동 801~803호',
       workingHours: '평일 09:00~18:00',
       lunchTime: '12:00~13:00',
