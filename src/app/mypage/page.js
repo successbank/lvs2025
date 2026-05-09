@@ -24,6 +24,11 @@ export default function MyPage() {
   const [pwMsg, setPwMsg] = useState('');
   const [pwSaving, setPwSaving] = useState(false);
 
+  // 관심제품
+  const [wishlists, setWishlists] = useState([]);
+  const [wishlistsLoading, setWishlistsLoading] = useState(false);
+  const [removingId, setRemovingId] = useState(null);
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
@@ -33,6 +38,40 @@ export default function MyPage() {
   useEffect(() => {
     if (session) fetchMe();
   }, [session]);
+
+  useEffect(() => {
+    if (session && activeTab === 'wishlist') {
+      fetchWishlists();
+    }
+  }, [session, activeTab]);
+
+  const fetchWishlists = async () => {
+    setWishlistsLoading(true);
+    try {
+      const res = await fetch('/api/wishlist?limit=100', { cache: 'no-store' });
+      const data = await res.json();
+      if (res.ok) setWishlists(data.data || []);
+    } catch (err) {
+      console.error('wishlist fetch error:', err);
+    }
+    setWishlistsLoading(false);
+  };
+
+  const handleRemoveWishlist = async (productId) => {
+    setRemovingId(productId);
+    try {
+      const res = await fetch(`/api/wishlist?productId=${encodeURIComponent(productId)}`, { method: 'DELETE' });
+      if (res.ok) {
+        setWishlists((prev) => prev.filter((w) => w.product?.id !== productId));
+      } else {
+        alert('해제에 실패했습니다.');
+      }
+    } catch (err) {
+      console.error('wishlist remove error:', err);
+      alert('서버 오류가 발생했습니다.');
+    }
+    setRemovingId(null);
+  };
 
   const fetchMe = async () => {
     try {
@@ -133,7 +172,7 @@ export default function MyPage() {
       <div style={{ maxWidth: '720px', margin: '2rem auto', padding: '0 1rem' }}>
         {/* 탭 */}
         <div style={{ display: 'flex', borderBottom: '2px solid #e5e7eb', marginBottom: '1.5rem' }}>
-          {[{ key: 'profile', label: '내 정보' }, { key: 'password', label: '비밀번호 변경' }].map(tab => (
+          {[{ key: 'profile', label: '내 정보' }, { key: 'wishlist', label: '관심제품' }, { key: 'password', label: '비밀번호 변경' }].map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               style={{
                 padding: '0.75rem 1.5rem', border: 'none', background: 'none', cursor: 'pointer',
@@ -192,6 +231,60 @@ export default function MyPage() {
                 회원 탈퇴
               </button>
             </div>
+          </div>
+        )}
+
+        {/* 관심제품 탭 */}
+        {activeTab === 'wishlist' && (
+          <div style={{ background: 'white', borderRadius: '12px', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', padding: '1.5rem' }}>
+            {wishlistsLoading ? (
+              <div style={{ padding: '2rem', textAlign: 'center', color: '#9ca3af' }}>불러오는 중...</div>
+            ) : wishlists.length === 0 ? (
+              <div className="mypage-wishlist-empty">
+                <p>아직 등록한 관심제품이 없습니다.</p>
+                <a href="/products">제품 둘러보기</a>
+              </div>
+            ) : (
+              <div className="mypage-wishlist-grid">
+                {wishlists.map((w) => {
+                  const p = w.product;
+                  if (!p) return null;
+                  const thumb = p.images?.[0]?.url || '/images/placeholder-product.jpg';
+                  return (
+                    <div
+                      key={w.id}
+                      className={`mypage-wishlist-card${p.isActive === false ? ' is-inactive' : ''}`}
+                    >
+                      <a href={`/products/${p.slug}`}>
+                        <img
+                          className="mypage-wishlist-card-thumb"
+                          src={thumb}
+                          alt={p.images?.[0]?.alt || p.name}
+                          onError={(e) => { e.target.src = '/images/placeholder-product.jpg'; }}
+                        />
+                      </a>
+                      <div className="mypage-wishlist-card-body">
+                        {p.category?.name && (
+                          <div className="mypage-wishlist-card-category">{p.category.name}</div>
+                        )}
+                        <h3 className="mypage-wishlist-card-name">{p.name}</h3>
+                        <div className="mypage-wishlist-card-actions">
+                          <a href={`/products/${p.slug}`}>상세보기</a>
+                          <button
+                            type="button"
+                            className="mypage-wishlist-remove"
+                            onClick={() => handleRemoveWishlist(p.id)}
+                            disabled={removingId === p.id}
+                          >
+                            {removingId === p.id ? '해제 중...' : '해제'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 

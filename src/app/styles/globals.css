@@ -6104,15 +6104,234 @@ body {
   color: #6b7280;
 }
 .login-modal-register-link {
+  display: inline;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
   color: #2563eb;
   font-weight: 600;
   text-decoration: none;
   margin-left: 0.25rem;
 }
 .login-modal-register-link:hover { text-decoration: underline; }
+.login-modal-register-link:disabled { opacity: 0.5; cursor: not-allowed; }
 
 @media (max-width: 480px) {
   .login-modal-content {
     padding: 1.5rem 1.25rem 1.25rem;
+  }
+}
+
+/* ==========================================================================
+   관심제품 (Wishlist)
+   ========================================================================== */
+
+/* detail variant — 제품 상세 페이지의 라벨형 버튼 (.btn .btn-secondary 톤) */
+.wishlist-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #ffffff;
+  color: #0066cc;
+  border: 2px solid #0066cc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.wishlist-btn:hover:not(:disabled) {
+  background: #f0f7ff;
+}
+.wishlist-btn.is-active {
+  background: #0066cc;
+  color: #ffffff;
+  border-color: #0066cc;
+}
+.wishlist-btn.is-active:hover:not(:disabled) {
+  background: #0052a3;
+  border-color: #0052a3;
+}
+.wishlist-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.wishlist-btn .wishlist-heart {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+.wishlist-btn.is-active .wishlist-heart {
+  color: #ffffff;
+}
+
+/* card variant — 카드 우상단 absolute 하트 아이콘 */
+.wishlist-card-icon {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 5;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.92);
+  color: #9ca3af;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.125rem;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.15s ease, background 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.wishlist-card-icon:hover:not(:disabled) {
+  color: #ef4444;
+  background: #ffffff;
+  transform: scale(1.06);
+}
+.wishlist-card-icon.is-active {
+  color: #ef4444;
+  background: #fff;
+  border-color: #ef4444;
+}
+.wishlist-card-icon:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.wishlist-card-icon .wishlist-heart {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+/* 카드 안에서 하트가 absolute로 동작하려면 카드 컨테이너가 position: relative여야 함.
+   기존 .product-card는 대부분 relative지만, 만약 누락된 곳이 있다면 wrapper로 감쌀 것. */
+
+/* 마이페이지 〈관심제품〉 탭 */
+.mypage-wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+.mypage-wishlist-card {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.mypage-wishlist-card:hover {
+  border-color: #0066cc;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.mypage-wishlist-card-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #f9fafb;
+  object-fit: contain;
+}
+.mypage-wishlist-card-body {
+  padding: 0.875rem 1rem 1rem;
+}
+.mypage-wishlist-card-category {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.25rem;
+}
+.mypage-wishlist-card-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.625rem;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.mypage-wishlist-card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+.mypage-wishlist-card-actions a,
+.mypage-wishlist-card-actions button {
+  flex: 1;
+  padding: 0.4rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #374151;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+}
+.mypage-wishlist-card-actions a:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+.mypage-wishlist-card-actions .mypage-wishlist-remove {
+  color: #b91c1c;
+  border-color: #fca5a5;
+}
+.mypage-wishlist-card-actions .mypage-wishlist-remove:hover:not(:disabled) {
+  background: #fef2f2;
+}
+.mypage-wishlist-card-actions .mypage-wishlist-remove:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.mypage-wishlist-empty {
+  padding: 3rem 1rem;
+  text-align: center;
+  color: #6b7280;
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 6px;
+}
+.mypage-wishlist-empty p {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+}
+.mypage-wishlist-empty a {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  background: #0066cc;
+  color: #ffffff;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.mypage-wishlist-empty a:hover {
+  background: #0052a3;
+}
+
+/* 비활성 제품(관리자가 비활성화한 경우) 표시 */
+.mypage-wishlist-card.is-inactive {
+  opacity: 0.6;
+}
+.mypage-wishlist-card.is-inactive .mypage-wishlist-card-name::after {
+  content: ' (판매 중지)';
+  color: #b91c1c;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .mypage-wishlist-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  .wishlist-btn {
+    padding: 0.625rem 1rem;
+    font-size: 0.9375rem;
   }
 }

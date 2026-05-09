@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { pickProductSummary } from '@/lib/textUtils';
 import '../app/styles/globals.css';
+import WishlistButton from '@/components/WishlistButton';
 
 export default function LedLightsourcePage() {
   const [categories, setCategories] = useState([]);
@@ -89,6 +90,7 @@ export default function LedLightsourcePage() {
           <div className="products-grid">
             {products.map((product) => (
               <div key={product.id} className="product-card">
+                <WishlistButton productId={product.id} variant="card" />
                 <div className="product-image">
                   <img
                     src={product.mainImage || '/images/placeholder-product.jpg'}

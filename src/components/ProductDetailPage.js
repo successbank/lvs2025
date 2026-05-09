@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import '../app/styles/globals.css';
+import WishlistButton from '@/components/WishlistButton';
 
 export default function ProductDetailPage({ product }) {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -240,6 +241,7 @@ export default function ProductDetailPage({ product }) {
             <div className="product-actions">
               <button onClick={openInquiry} className="btn btn-primary">문의하기</button>
               <a href="/support/downloads" className="btn btn-secondary">자료 다운로드</a>
+              <WishlistButton productId={product.id} variant="detail" />
             </div>
 
             {seriesList.length > 0 && (
@@ -291,6 +293,7 @@ export default function ProductDetailPage({ product }) {
             <div className="related-products-grid">
               {product.relatedProducts.map((related) => (
                 <div key={related.id} className="product-card">
+                  <WishlistButton productId={related.id} variant="card" />
                   <a href={`/products/${related.slug}`}>
                     <div className="product-image">
                       <img

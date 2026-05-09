@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import '../app/styles/globals.css';
+import WishlistButton from '@/components/WishlistButton';
 
 export default function SubcategoryPage({ categorySlug, subcategorySlug }) {
   const [category, setCategory] = useState(null);
@@ -101,6 +102,7 @@ export default function SubcategoryPage({ categorySlug, subcategorySlug }) {
           <div className="products-grid">
             {products.map((product) => (
               <div key={product.id} className="product-card">
+                <WishlistButton productId={product.id} variant="card" />
                 <div className="product-image">
                   <img
                     src={product.mainImage || '/images/placeholder-product.jpg'}

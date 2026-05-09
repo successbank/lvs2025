@@ -35,6 +35,7 @@ model User {
 
   auditLogs        UserAuditLog[] @relation("UserAuditTarget")
   auditActions     UserAuditLog[] @relation("UserAuditActor")
+  wishlists        Wishlist[]
 
   @@index([status])
   @@map("users")
@@ -121,6 +122,7 @@ model Product {
   seriesData      Json?
   productOptions  Json?
   viewLogs        ProductViewLog[]
+  wishlists       Wishlist[]
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 
@@ -380,6 +382,25 @@ model ProductViewLog {
   @@index([productId, createdAt])
   @@index([createdAt])
   @@map("product_view_logs")
+}
+
+// ========================================
+// 관심제품(위시리스트)
+// ========================================
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+  @@map("wishlists")
 }
 
 // ========================================
