@@ -254,6 +254,27 @@ export default function AdminInquiries() {
               </div>
             </div>
 
+            {Array.isArray(selected.attachments) && selected.attachments.length > 0 && (
+              <div style={{ marginBottom: '0.75rem' }}>
+                <label style={labelStyle}>첨부파일 ({selected.attachments.length}개)</label>
+                <div style={{ background: '#f9fafb', padding: '0.6rem 0.9rem', borderRadius: '6px', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                  {selected.attachments.map(att => (
+                    <a
+                      key={att.id}
+                      href={`/api/attachments/${att.id}/download`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.4rem 0.6rem', background: '#fff', border: '1px solid #e5e7eb', borderRadius: '4px', fontSize: '0.85rem', color: '#1f2937', textDecoration: 'none' }}
+                    >
+                      <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>📎 {att.original_filename}</span>
+                      <span style={{ color: '#6b7280', fontSize: '0.78rem' }}>{formatFileSize(att.file_size)}</span>
+                      <span style={{ color: '#3b82f6', fontSize: '0.78rem', fontWeight: 600 }}>다운로드</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div style={{ marginBottom: '0.75rem' }}>
               <label style={labelStyle}>답변 {selected.admin_reply_at && <span style={{ color: '#6b7280', fontWeight: 400 }}>(마지막 수정 {fmt(selected.admin_reply_at)})</span>}</label>
               <textarea value={replyText} onChange={e => setReplyText(e.target.value)} rows={5}
@@ -294,3 +315,12 @@ const labelStyle = { display: 'block', fontSize: '0.8rem', fontWeight: 600, marg
 const thStyle = { padding: '0.75rem 1rem', textAlign: 'left', fontSize: '0.75rem', fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em' };
 const tdStyle = { padding: '0.75rem 1rem', fontSize: '0.85rem' };
 const actionBtn = (color) => ({ background: 'transparent', color, border: 'none', cursor: 'pointer', fontSize: '0.78rem', marginRight: '0.35rem', textDecoration: 'underline' });
+
+function formatFileSize(bytes) {
+  const n = Number(bytes);
+  if (!n || n <= 0) return '-';
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  if (n < 1024 * 1024 * 1024) return `${(n / 1024 / 1024).toFixed(1)} MB`;
+  return `${(n / 1024 / 1024 / 1024).toFixed(2)} GB`;
+}
