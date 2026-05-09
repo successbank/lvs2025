@@ -51,7 +51,8 @@ USER nextjs
 
 EXPOSE 3000
 
-# 컨테이너 시작 시 prisma db push 로 schema 동기화 후 서버 실행.
-# - migrations 폴더 미사용 (db push 패턴)
-# - 데이터 손실 위험이 없는 add column 등은 자동 적용
-CMD ["sh", "-c", "npx prisma db push --skip-generate --accept-data-loss && node server.js"]
+# ⚠️ prisma db push 자동 실행을 사용하지 않음.
+# 본 프로젝트는 Prisma + raw SQL(pg Pool, database/*.sql) 하이브리드.
+# db push 는 schema.prisma 외부 테이블(boards/posts/post_attachments)을
+# DROP 시도하므로 절대 자동 실행 금지. schema 변경은 수동으로 적용한다.
+CMD ["node", "server.js"]
