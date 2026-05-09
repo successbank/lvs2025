@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { pickProductSummary } from '@/lib/textUtils';
 import '../app/styles/globals.css';
 
 export default function LedLightsourcePage() {
@@ -100,7 +101,7 @@ export default function LedLightsourcePage() {
                 <div className="product-info">
                   <h3>{product.name}</h3>
                   <p className="product-model">{product.modelName}</p>
-                  <p className="product-description">{product.summary || product.description || '-'}</p>
+                  <p className="product-description">{pickProductSummary(product)}</p>
                   <a href={`/products/${product.slug}`} className="product-detail-link">
                     상세보기 →
                   </a>
