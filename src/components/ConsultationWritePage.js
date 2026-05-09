@@ -129,7 +129,11 @@ export default function ConsultationWritePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.password || !formData.title || !formData.content) {
+    if (
+      !formData.name || !formData.password || !formData.title || !formData.content ||
+      !formData.company || !formData.contactName || !formData.contactPosition ||
+      !formData.contactEmail || !formData.contactPhone
+    ) {
       alert('모든 필수 항목을 입력해주세요.');
       return;
     }
@@ -243,61 +247,66 @@ export default function ConsultationWritePage() {
                 </td>
               </tr>
               <tr>
-                <th>업체명</th>
+                <th>업체명 <span className="required">*</span></th>
                 <td>
                   <input
                     type="text"
                     name="company"
                     value={formData.company}
                     onChange={handleInputChange}
+                    required
                     className="form-input"
                     placeholder="업체명을 입력해주세요"
                   />
                 </td>
-                <th>담당자</th>
+                <th>담당자 <span className="required">*</span></th>
                 <td>
                   <input
                     type="text"
                     name="contactName"
                     value={formData.contactName}
                     onChange={handleInputChange}
+                    required
                     className="form-input"
                     placeholder="담당자명을 입력해주세요"
                   />
                 </td>
               </tr>
               <tr>
-                <th>직함</th>
+                <th>직함 <span className="required">*</span></th>
                 <td>
                   <input
                     type="text"
                     name="contactPosition"
                     value={formData.contactPosition}
                     onChange={handleInputChange}
+                    required
                     className="form-input"
                     placeholder="예: 과장, 팀장, 대표"
                   />
                 </td>
-                <th>이메일</th>
+                <th>이메일 <span className="required">*</span></th>
                 <td>
                   <input
                     type="email"
                     name="contactEmail"
                     value={formData.contactEmail}
                     onChange={handleInputChange}
+                    required
                     className="form-input"
                     placeholder="이메일을 입력해주세요"
                   />
                 </td>
               </tr>
               <tr>
-                <th>연락처</th>
+                <th>연락처 <span className="required">*</span></th>
                 <td colSpan="3">
                   <input
                     type="tel"
                     name="contactPhone"
                     value={formData.contactPhone}
                     onChange={handleInputChange}
+                    required
                     className="form-input-full"
                     placeholder="연락처를 입력해주세요"
                   />

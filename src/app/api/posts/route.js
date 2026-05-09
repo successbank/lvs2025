@@ -248,6 +248,16 @@ export async function POST(request) {
       );
     }
 
+    // 상담 게시판은 비즈니스 식별 필드를 모두 강제 (다른 게시판 영향 없음)
+    if (boardSlugForUpload === 'consultation') {
+      if (!data.company || !data.contactName || !data.contactPosition || !data.contactEmail || !data.contactPhone) {
+        return NextResponse.json(
+          { error: '업체명, 담당자, 직함, 이메일, 연락처는 필수 항목입니다.' },
+          { status: 400 }
+        );
+      }
+    }
+
     await client.query('BEGIN');
 
     const postId = `post_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
