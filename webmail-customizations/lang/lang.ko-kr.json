@@ -680,7 +680,7 @@
         "username": "사용자 이름",
         "login_user": "사용자 로그인",
         "email": "이메일 주소",
-        "forgot_password": "&gt; 비밀번호를 잊으셨나요?",
+        "forgot_password": "> 비밀번호를 잊으셨나요?",
         "fido2_webauthn": "FIDO2 / WebAuthn 로그인",
         "other_logins": "또는 다른 방법으로 로그인"
     },
