@@ -302,18 +302,21 @@ model Partner {
 // ========================================
 
 model CompanyInfo {
-  id             String   @id @default(cuid())
-  name           String   @default("(주)엘브이에스")
-  ceo            String   @default("김태화")
-  businessNumber String   @default("131-86-14914")
-  phone          String   @default("032-461-1800")
-  fax            String   @default("032-461-1001")
-  email          String?
-  address        String   @default("인천광역시 연수구 송도미래로 30 B동 801~803호")
-  workingHours   String   @default("평일 09:00~18:00")
-  lunchTime      String   @default("12:00~13:00")
-  closedDays     String   @default("일요일, 공휴일")
-  updatedAt      DateTime @updatedAt
+  id                 String   @id @default(cuid())
+  name               String   @default("(주)엘브이에스")
+  ceo                String   @default("김태화")
+  businessNumber     String   @default("131-86-14914")
+  phone              String   @default("032-461-1800")
+  fax                String   @default("032-461-1001")
+  email              String?
+  address            String   @default("인천광역시 연수구 송도미래로 30 B동 801~803호")
+  workingHours       String   @default("평일 09:00~18:00")
+  lunchTime          String   @default("12:00~13:00")
+  closedDays         String   @default("일요일, 공휴일")
+  notificationEmail1 String?  @map("notification_email_1")
+  notificationEmail2 String?  @map("notification_email_2")
+  notificationEmail3 String?  @map("notification_email_3")
+  updatedAt          DateTime @updatedAt
 
   @@map("company_info")
 }

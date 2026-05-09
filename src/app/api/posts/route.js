@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { Pool } from 'pg';
+import prisma from '@/lib/prisma';
+import { sendInquiryNotification } from '@/lib/mailer';
 import {
   ATTACHMENT_LIMITS,
   validateAttachments,
@@ -304,6 +306,31 @@ export async function POST(request) {
     }
 
     await client.query('COMMIT');
+
+    // 알림 이메일 발송 (consultation/catalog 만, fire-and-forget)
+    if (boardSlugForUpload === 'consultation' || boardSlugForUpload === 'catalog') {
+      try {
+        const ci = await prisma.companyInfo.findFirst().catch(() => null);
+        const recipients = [
+          ci?.notificationEmail1,
+          ci?.notificationEmail2,
+          ci?.notificationEmail3,
+        ].filter(Boolean);
+        if (recipients.length > 0) {
+          // 비동기 호출 — 응답 지연 방지 (await 안 함)
+          sendInquiryNotification({
+            post: postResult.rows[0],
+            boardSlug: boardSlugForUpload,
+            recipients,
+            attachmentCount: attachmentRows.length,
+            baseUrl: process.env.NEXTAUTH_URL,
+          }).catch((err) => console.error('[mailer] dispatch failed', err));
+        }
+      } catch (mailErr) {
+        // 메일 디스패치 자체가 실패해도 사용자 응답엔 영향 없음
+        console.error('[mailer] dispatch error', mailErr);
+      }
+    }
 
     return NextResponse.json(
       {

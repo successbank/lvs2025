@@ -7,9 +7,11 @@ export default function AdminSettings() {
   const [settings, setSettings] = useState({
     name: '', ceo: '', businessNumber: '', phone: '', fax: '',
     email: '', address: '', workingHours: '', lunchTime: '', closedDays: '',
+    notificationEmail1: '', notificationEmail2: '', notificationEmail3: '',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [errorField, setErrorField] = useState(null);
 
   useEffect(() => { fetchSettings(); }, []);
 
@@ -29,6 +31,9 @@ export default function AdminSettings() {
           workingHours: data.workingHours || '',
           lunchTime: data.lunchTime || '',
           closedDays: data.closedDays || '',
+          notificationEmail1: data.notificationEmail1 || '',
+          notificationEmail2: data.notificationEmail2 || '',
+          notificationEmail3: data.notificationEmail3 || '',
         });
       }
     } catch (error) {
@@ -40,13 +45,18 @@ export default function AdminSettings() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
+    setErrorField(null);
     try {
       const res = await fetch('/api/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings),
       });
-      if (!res.ok) throw new Error('저장에 실패했습니다.');
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        if (errBody.field) setErrorField(errBody.field);
+        throw new Error(errBody.error || '저장에 실패했습니다.');
+      }
       alert('설정이 저장되었습니다.');
     } catch (error) {
       alert(error.message);
@@ -117,6 +127,39 @@ export default function AdminSettings() {
                 onChange={e => setSettings(p => ({ ...p, closedDays: e.target.value }))} />
             </div>
           </div>
+
+          <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb' }}>
+            <h3 style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '0.5rem', color: '#111827' }}>
+              문의 알림 이메일
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '1rem' }}>
+              온라인 문의(상담·카탈로그)가 접수되면 아래 주소로 자동 메일이 발송됩니다.
+              비워두면 해당 슬롯은 발송되지 않습니다.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+              {['notificationEmail1', 'notificationEmail2', 'notificationEmail3'].map((key, idx) => (
+                <div key={key}>
+                  <label style={labelStyle}>알림 이메일 {idx + 1}</label>
+                  <input
+                    type="email"
+                    style={{
+                      ...inputStyle,
+                      borderColor: errorField === key ? '#ef4444' : '#d1d5db',
+                    }}
+                    value={settings[key]}
+                    placeholder="비워두면 미발송"
+                    onChange={e => setSettings(p => ({ ...p, [key]: e.target.value }))}
+                  />
+                  {errorField === key && (
+                    <div style={{ color: '#ef4444', fontSize: '0.78rem', marginTop: '0.25rem' }}>
+                      이메일 형식이 올바르지 않습니다.
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div style={{ marginTop: '1.5rem' }}>
             <button type="submit" disabled={saving} style={{
               background: '#3b82f6', color: 'white', padding: '0.75rem 2rem',
