@@ -385,6 +385,37 @@ model ProductViewLog {
 }
 
 // ========================================
+// 대리점
+// ========================================
+
+enum DealerType {
+  DOMESTIC
+  INTERNATIONAL
+}
+
+model Dealer {
+  id        String     @id @default(cuid())
+  type      DealerType
+  name      String
+  address   String?
+  tel       String?
+  fax       String?
+  email     String?
+  website   String?
+  country   String?
+  flag      String?
+  image     String?
+  isActive  Boolean    @default(true)
+  order     Int        @default(0)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([type, order])
+  @@index([isActive])
+  @@map("dealers")
+}
+
+// ========================================
 // 관심제품(위시리스트)
 // ========================================
 

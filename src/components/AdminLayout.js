@@ -15,6 +15,7 @@ const menuItems = [
   { href: '/admin/downloads', label: '다운로드 관리', icon: '📥' },
   { href: '/admin/sliders', label: '슬라이더 관리', icon: '🖼' },
   { href: '/admin/certifications', label: '인증 관리', icon: '🏆' },
+  { href: '/admin/dealers', label: '대리점 관리', icon: '🏢' },
   { href: '/admin/popups', label: '레이어 팝업', icon: '🪟' },
   { href: '/admin/users', label: '회원 관리', icon: '👥' },
   { href: '/admin/analytics', label: '접속 통계', icon: '📈' },
