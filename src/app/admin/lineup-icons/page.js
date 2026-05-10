@@ -12,6 +12,15 @@ export default function AdminLineupIcons() {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef(null);
 
+  // 순서 변경 드래그앤드롭 상태 (admin/categories 패턴 복제)
+  const [dragLevel, setDragLevel] = useState(null);     // 'parent' | 'child' | null
+  const [dragParentId, setDragParentId] = useState(null);
+  const [dragIndex, setDragIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+  const [orderChanged, setOrderChanged] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
+  const [pendingOrderIds, setPendingOrderIds] = useState([]);
+
   useEffect(() => { fetchCategories(); }, []);
 
   const fetchCategories = async () => {
@@ -115,15 +124,15 @@ export default function AdminLineupIcons() {
     }
   };
 
-  // 드래그 앤 드롭
-  const handleDrag = (e) => {
+  // 업로드 모달용 파일 드래그 (기존 그대로)
+  const handleFileDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === 'dragenter' || e.type === 'dragover') setDragActive(true);
     if (e.type === 'dragleave') setDragActive(false);
   };
 
-  const handleDrop = (e) => {
+  const handleFileDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
@@ -132,9 +141,91 @@ export default function AdminLineupIcons() {
     }
   };
 
-  // 카테고리 카드 렌더링
+  // ─────────────────────────────────────────────
+  // 순서 변경 드래그앤드롭 (admin/categories 패턴)
+  // ─────────────────────────────────────────────
+
+  const handleParentDragStart = (e, index) => {
+    setDragLevel('parent'); setDragParentId(null); setDragIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+  };
+  const handleParentDragOver = (e, index) => {
+    e.preventDefault();
+    if (dragLevel !== 'parent') return;
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverIndex !== index) setDragOverIndex(index);
+  };
+  const handleParentDrop = (e, dropIndex) => {
+    e.preventDefault();
+    if (dragLevel !== 'parent' || dragIndex === null || dragIndex === dropIndex) { resetDragState(); return; }
+    const reordered = [...categories];
+    const [dragged] = reordered.splice(dragIndex, 1);
+    reordered.splice(dropIndex, 0, dragged);
+    setCategories(reordered.map((c, i) => ({ ...c, order: i })));
+    setPendingOrderIds(reordered.map(c => c.id));
+    setOrderChanged(true);
+    resetDragState();
+  };
+
+  const handleChildDragStart = (e, parentId, index) => {
+    setDragLevel('child'); setDragParentId(parentId); setDragIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', index.toString());
+    e.stopPropagation(); // 부모 wrapper로 이벤트 버블 방지
+  };
+  const handleChildDragOver = (e, parentId, index) => {
+    e.preventDefault();
+    if (dragLevel !== 'child' || dragParentId !== parentId) return;
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverIndex !== index) setDragOverIndex(index);
+    e.stopPropagation();
+  };
+  const handleChildDrop = (e, parentId, dropIndex) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (dragLevel !== 'child' || dragParentId !== parentId || dragIndex === null || dragIndex === dropIndex) { resetDragState(); return; }
+    const parent = categories.find(c => c.id === parentId);
+    if (!parent || !parent.children) { resetDragState(); return; }
+    const reordered = [...parent.children];
+    const [dragged] = reordered.splice(dragIndex, 1);
+    reordered.splice(dropIndex, 0, dragged);
+    const newCategories = categories.map(c => {
+      if (c.id === parentId) {
+        return { ...c, children: reordered.map((child, i) => ({ ...child, order: i })) };
+      }
+      return c;
+    });
+    setCategories(newCategories);
+    setPendingOrderIds(reordered.map(c => c.id));
+    setOrderChanged(true);
+    resetDragState();
+  };
+
+  const handleDragEnd = () => { resetDragState(); };
+  const resetDragState = () => {
+    setDragIndex(null); setDragOverIndex(null); setDragLevel(null); setDragParentId(null);
+  };
+
+  const saveOrder = async () => {
+    setSavingOrder(true);
+    try {
+      const res = await fetch('/api/categories', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds: pendingOrderIds }),
+      });
+      if (!res.ok) throw new Error('순서 저장에 실패했습니다.');
+      setOrderChanged(false); setPendingOrderIds([]);
+      await fetchCategories();
+    } catch (error) { alert(error.message); }
+    setSavingOrder(false);
+  };
+  const cancelOrder = () => { setOrderChanged(false); setPendingOrderIds([]); fetchCategories(); };
+
+  // 카테고리 카드 렌더링 (드래그 대상 X — 부모/자식 카드 모두 동일하게 렌더링하되 wrapper에서 draggable 처리)
   const renderCategoryCard = (cat) => (
-    <div key={cat.id} style={cardStyle}>
+    <div style={cardStyle}>
       <div style={cardIconArea}>
         {cat.iconUrl ? (
           <img
@@ -188,14 +279,28 @@ export default function AdminLineupIcons() {
   return (
     <AdminLayout title="라인업 아이콘 관리">
       {/* 헤더 */}
-      <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <p style={{ color: '#6b7280' }}>
-          각 카테고리의 아이콘을 관리합니다. 제품 썸네일에서 자동 생성하거나 직접 업로드할 수 있습니다.
+      <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+        <p style={{ color: '#6b7280', fontSize: '0.9rem', margin: 0, lineHeight: 1.5 }}>
+          각 카테고리의 아이콘을 관리합니다. 제품 썸네일에서 자동 생성하거나 직접 업로드할 수 있습니다.<br />
+          <strong style={{ color: '#374151' }}>⠿ 카테고리 헤더</strong>를 잡으면 <strong>부모 순서</strong>, <strong>자식 카드</strong>를 잡으면 <strong>같은 부모 안 자식 순서</strong>를 드래그로 변경할 수 있습니다.
         </p>
         <button onClick={handleGenerateAll} style={generateAllBtnStyle}>
           전체 자동 생성
         </button>
       </div>
+
+      {/* 순서 변경 안내 배너 */}
+      {orderChanged && (
+        <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ color: '#92400e', fontSize: '0.9rem' }}>순서가 변경되었습니다. 저장하지 않으면 사라집니다.</span>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button onClick={cancelOrder} style={{ background: 'white', color: '#374151', padding: '0.4rem 1rem', borderRadius: '6px', border: '1px solid #d1d5db', cursor: 'pointer', fontSize: '0.85rem' }}>취소</button>
+            <button onClick={saveOrder} disabled={savingOrder} style={{ background: '#3b82f6', color: 'white', padding: '0.4rem 1rem', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '0.85rem', fontWeight: '500', opacity: savingOrder ? 0.6 : 1 }}>
+              {savingOrder ? '저장 중...' : '순서 저장'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div style={{ padding: '2rem', textAlign: 'center', background: 'white', borderRadius: '8px' }}>
@@ -206,21 +311,69 @@ export default function AdminLineupIcons() {
           카테고리가 없습니다.
         </div>
       ) : (
-        categories.map((parent) => (
-          <div key={parent.id} style={{ marginBottom: '2rem' }}>
-            <h3 style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '1rem', color: '#1f2937' }}>
-              {parent.name}
-            </h3>
+        categories.map((parent, pIndex) => {
+          const isParentDragOver = dragOverIndex === pIndex && dragLevel === 'parent';
+          const isParentDragging = dragIndex === pIndex && dragLevel === 'parent';
+          return (
+            <div key={parent.id} style={{ marginBottom: '2rem' }}>
+              {/* 부모 헤더 — 드래그 핸들 */}
+              <h3
+                draggable
+                onDragStart={(e) => handleParentDragStart(e, pIndex)}
+                onDragOver={(e) => handleParentDragOver(e, pIndex)}
+                onDrop={(e) => handleParentDrop(e, pIndex)}
+                onDragEnd={handleDragEnd}
+                style={{
+                  fontSize: '1.1rem', fontWeight: '700', color: '#1f2937',
+                  cursor: 'move',
+                  background: isParentDragOver ? '#dbeafe' : '#f9fafb',
+                  border: isParentDragOver ? '2px dashed #3b82f6' : '1px solid #e5e7eb',
+                  opacity: isParentDragging ? 0.5 : 1,
+                  padding: '0.6rem 0.9rem',
+                  borderRadius: '8px',
+                  marginBottom: '0.85rem',
+                  transition: 'background 0.15s, border-color 0.15s',
+                  userSelect: 'none',
+                }}
+              >
+                <span style={{ color: '#9ca3af', marginRight: '0.5rem', fontSize: '1rem' }}>⠿</span>
+                {parent.name}
+              </h3>
 
-            {/* 부모 카테고리 카드 */}
-            <div style={gridStyle}>
-              {renderCategoryCard(parent)}
+              {/* 카드 그리드 */}
+              <div style={gridStyle}>
+                {/* 부모 자체 카드 — 드래그 안 됨 (헤더에서 부모 드래그) */}
+                {renderCategoryCard(parent)}
 
-              {/* 자식 카테고리 카드 */}
-              {parent.children && parent.children.map((child) => renderCategoryCard(child))}
+                {/* 자식 카드 — 각각 드래그 가능 */}
+                {parent.children && parent.children.map((child, cIndex) => {
+                  const isChildDragOver = dragOverIndex === cIndex && dragLevel === 'child' && dragParentId === parent.id;
+                  const isChildDragging = dragIndex === cIndex && dragLevel === 'child' && dragParentId === parent.id;
+                  return (
+                    <div
+                      key={child.id}
+                      draggable
+                      onDragStart={(e) => handleChildDragStart(e, parent.id, cIndex)}
+                      onDragOver={(e) => handleChildDragOver(e, parent.id, cIndex)}
+                      onDrop={(e) => handleChildDrop(e, parent.id, cIndex)}
+                      onDragEnd={handleDragEnd}
+                      style={{
+                        cursor: 'move',
+                        outline: isChildDragOver ? '2px solid #3b82f6' : 'none',
+                        outlineOffset: '-2px',
+                        opacity: isChildDragging ? 0.5 : 1,
+                        borderRadius: '8px',
+                        transition: 'outline 0.15s, opacity 0.15s',
+                      }}
+                    >
+                      {renderCategoryCard(child)}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))
+          );
+        })
       )}
 
       {/* 업로드 모달 */}
@@ -232,10 +385,10 @@ export default function AdminLineupIcons() {
           <div style={modalStyle}>
             <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem' }}>아이콘 이미지 업로드</h3>
             <div
-              onDragEnter={handleDrag}
-              onDragOver={handleDrag}
-              onDragLeave={handleDrag}
-              onDrop={handleDrop}
+              onDragEnter={handleFileDrag}
+              onDragOver={handleFileDrag}
+              onDragLeave={handleFileDrag}
+              onDrop={handleFileDrop}
               onClick={() => fileInputRef.current?.click()}
               style={{
                 border: `2px dashed ${dragActive ? '#3b82f6' : '#d1d5db'}`,
