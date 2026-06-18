@@ -1,7 +1,35 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { getTemplateFields } from '@/lib/popupTemplates';
+import 'react-quill/dist/quill.snow.css';
+
+// Quill은 document에 접근하므로 SSR 비활성으로 동적 로드 (App Router 클라이언트 컴포넌트 필수)
+const ReactQuill = dynamic(() => import('react-quill'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ height: '160px', border: '1px solid #d1d5db', borderRadius: '4px', background: '#f9fafb' }} />
+  ),
+});
+
+// 안내 내용(body) 리치텍스트 툴바 — B2B 공지에 필요한 서식만 노출
+const RICHTEXT_MODULES = {
+  toolbar: [
+    [{ header: [false, 2, 3] }],
+    ['bold', 'italic', 'underline'],
+    [{ color: [] }, { background: [] }],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    [{ align: [] }],
+    ['link'],
+    ['clean'],
+  ],
+};
+
+const RICHTEXT_FORMATS = [
+  'header', 'bold', 'italic', 'underline',
+  'color', 'background', 'list', 'bullet', 'align', 'link',
+];
 
 /**
  * 동적 템플릿 데이터 입력 폼
@@ -78,6 +106,17 @@ function FieldRenderer({ field, value, onChange }) {
         </div>
       );
 
+    case 'richtext':
+      return (
+        <RichTextField
+          label={label}
+          required={required}
+          placeholder={placeholder}
+          value={value || ''}
+          onChange={onChange}
+        />
+      );
+
     case 'url':
       return (
         <div>
@@ -130,6 +169,30 @@ function FieldRenderer({ field, value, onChange }) {
     default:
       return null;
   }
+}
+
+function RichTextField({ label, required, placeholder, value, onChange }) {
+  return (
+    <div className="popup-richtext-field">
+      <label style={{
+        display: 'block', fontSize: '0.82rem', fontWeight: '500',
+        marginBottom: '0.2rem', color: '#374151',
+      }}>
+        {label} {required && <span style={{ color: '#ef4444' }}>*</span>}
+      </label>
+      <ReactQuill
+        theme="snow"
+        value={value || ''}
+        onChange={(html) => {
+          // Quill은 빈 값일 때 '<p><br></p>'를 반환 — 빈 문자열로 정규화
+          onChange(html === '<p><br></p>' ? '' : html);
+        }}
+        placeholder={placeholder}
+        modules={RICHTEXT_MODULES}
+        formats={RICHTEXT_FORMATS}
+      />
+    </div>
+  );
 }
 
 function ImageField({ label, required, value, onChange }) {

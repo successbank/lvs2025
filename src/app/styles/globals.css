@@ -6336,3 +6336,39 @@ body {
     font-size: 0.9375rem;
   }
 }
+
+/* ============================================
+   레이어 팝업 안내 내용(리치텍스트) 표시 보정
+   ─ Quill 정렬/리스트는 클래스로 출력되므로, quill.snow.css가 없는
+     홈 팝업(LayerPopupManager)에서도 동일하게 보이도록 최소 보정한다.
+   ============================================ */
+.popup-body-html .ql-align-center { text-align: center; }
+.popup-body-html .ql-align-right  { text-align: right; }
+.popup-body-html .ql-align-justify { text-align: justify; }
+
+.popup-body-html ul,
+.popup-body-html ol {
+  margin: 0.4em 0;
+  padding-left: 1.4em;
+}
+.popup-body-html ul { list-style: disc; }
+.popup-body-html ol { list-style: decimal; }
+.popup-body-html p { margin: 0 0 0.4em; }
+.popup-body-html p:last-child { margin-bottom: 0; }
+.popup-body-html a { color: inherit; text-decoration: underline; }
+.popup-body-html h2 { font-size: 1.15em; font-weight: 700; margin: 0 0 0.3em; }
+.popup-body-html h3 { font-size: 1.05em; font-weight: 700; margin: 0 0 0.3em; }
+.popup-body-html strong { font-weight: 700; }
+.popup-body-html em { font-style: italic; }
+
+/* 어드민 팝업 관리 — Quill 에디터 입력 영역 높이 */
+.popup-richtext-field .ql-container {
+  min-height: 120px;
+  font-size: 0.9rem;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.popup-richtext-field .ql-toolbar {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}

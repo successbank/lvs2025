@@ -6,7 +6,7 @@
  * render()는 React createElement 호출용 — TemplateRenderer에서 사용
  */
 
-// ── 필드 타입: text, textarea, url, listItems, image ──
+// ── 필드 타입: text, textarea, richtext, url, select, listItems, image ──
 
 const TEMPLATES = [
   // ═══════════════════════════════════════════
@@ -25,7 +25,7 @@ const TEMPLATES = [
       { key: 'headline', label: '제목', type: 'text', placeholder: '신제품 출시 안내', required: true },
       { key: 'subHeadline', label: '부제목', type: 'text', placeholder: '제품 시리즈명', required: false },
       { key: 'imageUrl', label: '제품 이미지', type: 'image', required: false },
-      { key: 'body', label: '본문', type: 'textarea', placeholder: '제품 설명을 입력하세요', required: false },
+      { key: 'body', label: '본문', type: 'richtext', placeholder: '제품 설명을 입력하세요', required: false },
       { key: 'ctaText', label: '버튼 텍스트', type: 'text', placeholder: '자세히 보기', required: false },
       { key: 'ctaLink', label: '버튼 링크', type: 'url', placeholder: '/products/...', required: false },
       { key: 'ctaLinkTarget', label: '링크 타겟', type: 'select', options: [{ value: '_self', label: '현재 창' }, { value: '_blank', label: '새 창' }], required: false },
@@ -96,7 +96,7 @@ const TEMPLATES = [
       { key: 'headline', label: '제목', type: 'text', placeholder: '2026 국제 LED 조명 박람회', required: true },
       { key: 'subHeadline', label: '부제목', type: 'text', placeholder: 'LVS가 함께합니다', required: false },
       { key: 'imageUrl', label: '전시회 이미지', type: 'image', required: false },
-      { key: 'body', label: '안내 문구', type: 'textarea', placeholder: '전시회 안내 내용', required: false },
+      { key: 'body', label: '안내 문구', type: 'richtext', placeholder: '전시회 안내 내용', required: false },
       { key: 'eventDate', label: '행사 일정', type: 'text', placeholder: '2026.04.15 ~ 18', required: false },
       { key: 'eventLocation', label: '장소', type: 'text', placeholder: 'COEX 1관 B112', required: false },
       { key: 'eventTime', label: '시간', type: 'text', placeholder: '10:00 ~ 17:00', required: false },
@@ -185,7 +185,7 @@ const TEMPLATES = [
       { key: 'headline', label: '제목', type: 'text', placeholder: '봄맞이 특별 프로모션', required: true },
       { key: 'subHeadline', label: '부제목', type: 'text', placeholder: '산업용 LED 조명 특가', required: false },
       { key: 'imageUrl', label: '프로모션 이미지', type: 'image', required: false },
-      { key: 'body', label: '프로모션 내용', type: 'textarea', placeholder: '프로모션 상세 내용', required: false },
+      { key: 'body', label: '프로모션 내용', type: 'richtext', placeholder: '프로모션 상세 내용', required: false },
       { key: 'periodText', label: '기간', type: 'text', placeholder: '2026.04.01 ~ 04.30', required: false },
       { key: 'ctaText', label: '버튼 텍스트', type: 'text', placeholder: '프로모션 보기', required: false },
       { key: 'ctaLink', label: '버튼 링크', type: 'url', placeholder: '/products/...', required: false },
@@ -265,7 +265,7 @@ const TEMPLATES = [
     fields: [
       { key: 'headline', label: '세미나 제목', type: 'text', placeholder: 'LED 조명 설계 기술 세미나', required: true },
       { key: 'subHeadline', label: '부제목', type: 'text', placeholder: '제5회 산업 조명 기술 교육', required: false },
-      { key: 'body', label: '세미나 소개', type: 'textarea', placeholder: '세미나 상세 내용', required: false },
+      { key: 'body', label: '세미나 소개', type: 'richtext', placeholder: '세미나 상세 내용', required: false },
       { key: 'eventDate', label: '일정', type: 'text', placeholder: '2026년 4월 20일 (목)', required: false },
       { key: 'eventTime', label: '시간', type: 'text', placeholder: '14:00 ~ 17:00', required: false },
       { key: 'eventLocation', label: '장소', type: 'text', placeholder: '온라인 (Zoom)', required: false },
@@ -328,7 +328,7 @@ const TEMPLATES = [
     fields: [
       { key: 'badgeText', label: '배지', type: 'text', placeholder: '안내', required: false },
       { key: 'headline', label: '제목', type: 'text', placeholder: '시스템 점검 안내', required: true },
-      { key: 'body', label: '안내 내용', type: 'textarea', placeholder: '시스템 점검으로 인해 서비스 이용이 일시적으로 제한됩니다.', required: false },
+      { key: 'body', label: '안내 내용', type: 'richtext', placeholder: '시스템 점검으로 인해 서비스 이용이 일시적으로 제한됩니다.', required: false },
       { key: 'periodText', label: '점검 기간', type: 'text', placeholder: '2026.04.10 02:00 ~ 06:00', required: false },
       { key: 'listItems', label: '영향 서비스', type: 'listItems', placeholder: '영향 받는 서비스명', required: false },
     ],
@@ -382,7 +382,7 @@ const TEMPLATES = [
       { key: 'headline', label: '인증 제목', type: 'text', placeholder: 'ISO 14001 인증 획득', required: true },
       { key: 'subHeadline', label: '부제목', type: 'text', placeholder: '환경경영시스템 국제 인증', required: false },
       { key: 'imageUrl', label: '인증 이미지', type: 'image', required: false },
-      { key: 'body', label: '안내 내용', type: 'textarea', placeholder: '인증 획득 관련 내용', required: false },
+      { key: 'body', label: '안내 내용', type: 'richtext', placeholder: '인증 획득 관련 내용', required: false },
       { key: 'ctaText', label: '버튼 텍스트', type: 'text', placeholder: '인증 현황 보기', required: false },
       { key: 'ctaLink', label: '버튼 링크', type: 'url', placeholder: '/about/certifications', required: false },
       { key: 'ctaLinkTarget', label: '링크 타겟', type: 'select', options: [{ value: '_self', label: '현재 창' }, { value: '_blank', label: '새 창' }], required: false },
@@ -454,7 +454,7 @@ const TEMPLATES = [
     fields: [
       { key: 'headline', label: '제목', type: 'text', placeholder: '2026 제품 카탈로그', required: true },
       { key: 'subHeadline', label: '부제목', type: 'text', placeholder: '최신 제품 라인업을 확인하세요', required: false },
-      { key: 'body', label: '안내 내용', type: 'textarea', placeholder: '카탈로그 안내 내용', required: false },
+      { key: 'body', label: '안내 내용', type: 'richtext', placeholder: '카탈로그 안내 내용', required: false },
       { key: 'ctaText', label: '다운로드 버튼', type: 'text', placeholder: '카탈로그 다운로드', required: false },
       { key: 'ctaLink', label: '다운로드 링크', type: 'url', placeholder: '/support/catalog', required: false },
       { key: 'ctaLinkTarget', label: '링크 타겟', type: 'select', options: [{ value: '_self', label: '현재 창' }, { value: '_blank', label: '새 창' }], required: false },
@@ -513,7 +513,7 @@ const TEMPLATES = [
     fields: [
       { key: 'headline', label: '제목', type: 'text', placeholder: '기술자료 업데이트 안내', required: true },
       { key: 'subHeadline', label: '부제목', type: 'text', placeholder: '머신비전 LED 조명 설계 가이드', required: false },
-      { key: 'body', label: '안내 내용', type: 'textarea', placeholder: '기술자료 안내 내용', required: false },
+      { key: 'body', label: '안내 내용', type: 'richtext', placeholder: '기술자료 안내 내용', required: false },
       { key: 'ctaText', label: '버튼 텍스트', type: 'text', placeholder: '자료 보기', required: false },
       { key: 'ctaLink', label: '버튼 링크', type: 'url', placeholder: '/support/tech-guide', required: false },
       { key: 'ctaLinkTarget', label: '링크 타겟', type: 'select', options: [{ value: '_self', label: '현재 창' }, { value: '_blank', label: '새 창' }], required: false },
@@ -568,7 +568,7 @@ const TEMPLATES = [
     fields: [
       { key: 'headline', label: '제목', type: 'text', placeholder: '제품 상담이 필요하신가요?', required: true },
       { key: 'subHeadline', label: '부제목', type: 'text', placeholder: '전문 엔지니어가 답변드립니다', required: false },
-      { key: 'body', label: '안내 내용', type: 'textarea', placeholder: '상담 안내 내용', required: false },
+      { key: 'body', label: '안내 내용', type: 'richtext', placeholder: '상담 안내 내용', required: false },
       { key: 'contactPhone', label: '연락처', type: 'text', placeholder: '032-461-1800', required: false },
       { key: 'ctaText', label: '상담 버튼', type: 'text', placeholder: '온라인 상담하기', required: false },
       { key: 'ctaLink', label: '상담 링크', type: 'url', placeholder: '/support/consultation', required: false },
@@ -641,7 +641,7 @@ const TEMPLATES = [
     defaultPosition: 'CENTER',
     fields: [
       { key: 'headline', label: '공지 제목', type: 'text', placeholder: '안내사항', required: true },
-      { key: 'body', label: '공지 내용', type: 'textarea', placeholder: '공지 내용을 입력하세요', required: false },
+      { key: 'body', label: '공지 내용', type: 'richtext', placeholder: '공지 내용을 입력하세요', required: false },
       { key: 'ctaText', label: '버튼 텍스트', type: 'text', placeholder: '자세히 보기', required: false },
       { key: 'ctaLink', label: '버튼 링크', type: 'url', placeholder: '/support/notices', required: false },
       { key: 'ctaLinkTarget', label: '링크 타겟', type: 'select', options: [{ value: '_self', label: '현재 창' }, { value: '_blank', label: '새 창' }], required: false },
@@ -660,7 +660,7 @@ const TEMPLATES = [
       },
       body: data.body ? {
         text: data.body,
-        style: { padding: '20px 24px', fontSize: '0.9rem', lineHeight: '1.8', color: '#475569', margin: 0, whiteSpace: 'pre-line' },
+        style: { padding: '20px 24px', fontSize: '0.9rem', lineHeight: '1.8', color: '#475569', margin: 0 },
       } : null,
       cta: data.ctaText ? {
         text: data.ctaText,

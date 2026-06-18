@@ -64,8 +64,14 @@ export default function TemplateRenderer({ templateId, data = {} }) {
       {/* 구분선 (카탈로그) */}
       {r.divider && <div style={r.divider.style} />}
 
-      {/* 본문 */}
-      {r.body && <p style={r.body.style}>{r.body.text}</p>}
+      {/* 본문 — 리치텍스트(HTML). Quill이 블록 요소를 출력하므로 div로 렌더 */}
+      {r.body && (
+        <div
+          className="popup-body-html"
+          style={r.body.style}
+          dangerouslySetInnerHTML={{ __html: r.body.text }}
+        />
+      )}
 
       {/* 기간 (프로모션/점검) */}
       {r.period && <div style={r.period.style}>{r.period.text}</div>}
