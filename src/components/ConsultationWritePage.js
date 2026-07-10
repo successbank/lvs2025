@@ -138,6 +138,11 @@ export default function ConsultationWritePage() {
       return;
     }
 
+    if (!/^\d{4}$/.test(formData.password)) {
+      alert('비밀번호는 4자리 숫자로 입력해주세요.');
+      return;
+    }
+
     if (attachmentError) {
       alert(attachmentError);
       return;
@@ -241,8 +246,11 @@ export default function ConsultationWritePage() {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
+                    inputMode="numeric"
+                    pattern="\d{4}"
+                    maxLength={4}
                     className="form-input"
-                    placeholder="수정/삭제 시 필요합니다"
+                    placeholder="숫자 4자리 (수정/삭제 시 필요)"
                   />
                 </td>
               </tr>
