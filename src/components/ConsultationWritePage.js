@@ -44,6 +44,7 @@ export default function ConsultationWritePage() {
   const [attachmentError, setAttachmentError] = useState('');
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+  const profileRef = useRef(null); // 로그인 시 로드한 회원정보 원본(빈 필드 backfill 판단용)
 
   // 로그인 상태에서만 회원정보로 담당자/이메일/업체명/연락처/직함 자동입력.
   // 로그아웃 상태는 아무것도 하지 않아 기존 동작을 그대로 유지한다.
@@ -57,6 +58,7 @@ export default function ConsultationWritePage() {
         if (!res.ok) return;
         const me = await res.json();
         if (cancelled) return;
+        profileRef.current = me;
 
         // 이미 사용자가 입력한 값은 덮어쓰지 않는다 (빈 필드만 채움).
         setFormData((prev) => ({
@@ -223,13 +225,21 @@ export default function ConsultationWritePage() {
       }
 
       // 로그인 상태면 입력한 직함을 회원정보에 저장(신규 필드).
+      // 연락처·회사이름은 회원정보가 비어 있던 경우에만 채운다(backfill, 기존 값은 덮어쓰지 않음).
       // 상담 등록은 이미 성공했으므로 프로필 저장 실패는 무시한다.
       if (authStatus === 'authenticated') {
         try {
+          const updates = { position: trimmed.contactPosition };
+          // 프로필을 확실히 로드했고 해당 값이 비어 있던 경우에만 채운다.
+          // 로드 실패(prof null) 시엔 기존 값 보호를 위해 backfill하지 않는다.
+          const prof = profileRef.current;
+          if (prof && !prof.phone) updates.phone = trimmed.contactPhone;
+          if (prof && !prof.company) updates.company = trimmed.company;
+
           await fetch('/api/me', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ position: trimmed.contactPosition }),
+            body: JSON.stringify(updates),
           });
         } catch {
           /* 프로필 저장 실패 무시 */
