@@ -24,6 +24,7 @@ model User {
   status           UserStatus  @default(ACTIVE)
   phone            String?
   company          String?
+  position         String?     // 직함 (온라인 상담 작성 시 수집·저장)
   suspendedAt      DateTime?
   suspendedReason  String?
   deletedAt        DateTime?

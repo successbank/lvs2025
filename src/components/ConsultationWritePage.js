@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import '../app/styles/globals.css';
 
 const MAX_FILES = 10;
@@ -25,6 +26,7 @@ function getExt(name) {
 
 export default function ConsultationWritePage() {
   const router = useRouter();
+  const { status: authStatus } = useSession();
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -42,6 +44,37 @@ export default function ConsultationWritePage() {
   const [attachmentError, setAttachmentError] = useState('');
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
+
+  // 로그인 상태에서만 회원정보로 담당자/이메일/업체명/연락처/직함 자동입력.
+  // 로그아웃 상태는 아무것도 하지 않아 기존 동작을 그대로 유지한다.
+  useEffect(() => {
+    if (authStatus !== 'authenticated') return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetch('/api/me', { cache: 'no-store' });
+        if (!res.ok) return;
+        const me = await res.json();
+        if (cancelled) return;
+
+        // 이미 사용자가 입력한 값은 덮어쓰지 않는다 (빈 필드만 채움).
+        setFormData((prev) => ({
+          ...prev,
+          name: prev.name || me.name || '',
+          contactName: prev.contactName || me.name || '',
+          company: prev.company || me.company || '',
+          contactEmail: prev.contactEmail || me.email || '',
+          contactPhone: prev.contactPhone || me.phone || '',
+          contactPosition: prev.contactPosition || me.position || '',
+        }));
+      } catch {
+        /* 자동입력 실패는 무시 — 수동 입력으로 폼은 정상 동작 */
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [authStatus]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -187,6 +220,20 @@ export default function ConsultationWritePage() {
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || '등록에 실패했습니다.');
+      }
+
+      // 로그인 상태면 입력한 직함을 회원정보에 저장(신규 필드).
+      // 상담 등록은 이미 성공했으므로 프로필 저장 실패는 무시한다.
+      if (authStatus === 'authenticated') {
+        try {
+          await fetch('/api/me', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ position: trimmed.contactPosition }),
+          });
+        } catch {
+          /* 프로필 저장 실패 무시 */
+        }
       }
 
       alert('상담이 등록되었습니다.');

@@ -16,6 +16,7 @@ export default function MyPage() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [company, setCompany] = useState('');
+  const [position, setPosition] = useState('');
   const [profileMsg, setProfileMsg] = useState('');
   const [profileSaving, setProfileSaving] = useState(false);
 
@@ -81,6 +82,7 @@ export default function MyPage() {
       setName(data.name);
       setPhone(data.phone || '');
       setCompany(data.company || '');
+      setPosition(data.position || '');
     } catch {}
     setLoading(false);
   };
@@ -93,7 +95,7 @@ export default function MyPage() {
       const res = await fetch('/api/me', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), phone: phone.trim(), company: company.trim() }),
+        body: JSON.stringify({ name: name.trim(), phone: phone.trim(), company: company.trim(), position: position.trim() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -219,6 +221,12 @@ export default function MyPage() {
             <div style={{ marginBottom: '1.5rem' }}>
               <label style={labelStyle}>회사이름</label>
               <input value={company} onChange={e => setCompany(e.target.value)} placeholder="회사명"
+                style={inputStyle} />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={labelStyle}>직함</label>
+              <input value={position} onChange={e => setPosition(e.target.value)} placeholder="예: 과장, 팀장, 대표"
                 style={inputStyle} />
             </div>
 
