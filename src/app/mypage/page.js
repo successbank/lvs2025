@@ -170,6 +170,16 @@ export default function MyPage() {
       </section>
 
       <div style={{ maxWidth: '720px', margin: '2rem auto', padding: '0 1rem' }}>
+        {/* 최고관리자 바로가기 */}
+        {session.user.role === 'ADMIN' && (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '1rem 1.5rem', marginBottom: '1.5rem' }}>
+            <div style={{ fontSize: '0.9rem', color: '#1e40af', fontWeight: '600' }}>최고관리자 계정으로 로그인되어 있습니다.</div>
+            <a href="/admin/dashboard" style={{ ...btnPrimary, textDecoration: 'none', display: 'inline-block' }}>
+              최고관리자 페이지 이동 →
+            </a>
+          </div>
+        )}
+
         {/* 탭 */}
         <div style={{ display: 'flex', borderBottom: '2px solid #e5e7eb', marginBottom: '1.5rem' }}>
           {[{ key: 'profile', label: '내 정보' }, { key: 'wishlist', label: '관심제품' }, { key: 'password', label: '비밀번호 변경' }].map(tab => (
