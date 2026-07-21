@@ -129,16 +129,29 @@ export default function ConsultationWritePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // 공백만 입력된 필드는 미입력으로 간주
+    const trimmed = {
+      name: formData.name.trim(),
+      password: formData.password.trim(),
+      title: formData.title.trim(),
+      content: formData.content.trim(),
+      company: formData.company.trim(),
+      contactName: formData.contactName.trim(),
+      contactPosition: formData.contactPosition.trim(),
+      contactEmail: formData.contactEmail.trim(),
+      contactPhone: formData.contactPhone.trim(),
+    };
+
     if (
-      !formData.name || !formData.password || !formData.title || !formData.content ||
-      !formData.company || !formData.contactName || !formData.contactPosition ||
-      !formData.contactEmail || !formData.contactPhone
+      !trimmed.name || !trimmed.password || !trimmed.title || !trimmed.content ||
+      !trimmed.company || !trimmed.contactName || !trimmed.contactPosition ||
+      !trimmed.contactEmail || !trimmed.contactPhone
     ) {
       alert('모든 필수 항목을 입력해주세요.');
       return;
     }
 
-    if (!/^\d{4}$/.test(formData.password)) {
+    if (!/^\d{4}$/.test(trimmed.password)) {
       alert('비밀번호는 4자리 숫자로 입력해주세요.');
       return;
     }
@@ -152,16 +165,16 @@ export default function ConsultationWritePage() {
     try {
       const fd = new FormData();
       fd.append('boardSlug', 'consultation');
-      fd.append('title', formData.title);
-      fd.append('content', formData.content);
-      fd.append('author', formData.name);
-      fd.append('password', formData.password);
+      fd.append('title', trimmed.title);
+      fd.append('content', trimmed.content);
+      fd.append('author', trimmed.name);
+      fd.append('password', trimmed.password);
       fd.append('isSecret', String(formData.isSecret));
-      fd.append('company', formData.company || '');
-      fd.append('contactName', formData.contactName || '');
-      fd.append('contactPosition', formData.contactPosition || '');
-      fd.append('contactEmail', formData.contactEmail || '');
-      fd.append('contactPhone', formData.contactPhone || '');
+      fd.append('company', trimmed.company);
+      fd.append('contactName', trimmed.contactName);
+      fd.append('contactPosition', trimmed.contactPosition);
+      fd.append('contactEmail', trimmed.contactEmail);
+      fd.append('contactPhone', trimmed.contactPhone);
       for (const file of attachments) {
         fd.append('files', file, file.name);
       }

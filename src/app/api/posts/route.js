@@ -135,9 +135,15 @@ export async function GET(request) {
 
 function readPostFields(source, isFormData) {
   const get = (key) => {
-    if (!isFormData) return source[key];
-    const v = source.get(key);
-    return v == null ? undefined : v;
+    let v;
+    if (!isFormData) {
+      v = source[key];
+    } else {
+      v = source.get(key);
+      if (v == null) v = undefined;
+    }
+    // 공백만 입력된 필드는 미입력으로 간주 (trim 후 저장)
+    return typeof v === 'string' ? v.trim() : v;
   };
   const getBool = (key) => {
     const raw = get(key);
