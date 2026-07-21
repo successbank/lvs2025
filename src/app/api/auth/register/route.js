@@ -26,7 +26,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { name, email, password, phone, company, website } = body;
+    const { name, email, password, phone, company, position, website } = body;
 
     // ③ Honeypot: hidden 'website' 필드에 값이 있으면 봇으로 판단
     //    DB에 row를 만들지 않고 200 위장 응답을 보내 봇이 "성공"으로 인식하도록 유도
@@ -62,6 +62,7 @@ export async function POST(request) {
         status: isSuspicious ? 'SUSPENDED' : 'ACTIVE',
         phone: phone || null,
         company: company || null,
+        position: position || null,
         signupIp: ip,
         signupUserAgent: userAgent,
         suspicionFlags: flags,

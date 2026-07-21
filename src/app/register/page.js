@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import '../styles/globals.css';
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({ name: '', email: '', password: '', passwordConfirm: '', phone: '', company: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', password: '', passwordConfirm: '', phone: '', company: '', position: '' });
   const [website, setWebsite] = useState(''); // honeypot — 봇만 채우는 hidden 필드
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ export default function RegisterPage() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: formData.name, email: formData.email, password: formData.password, phone: formData.phone, company: formData.company, website }),
+        body: JSON.stringify({ name: formData.name, email: formData.email, password: formData.password, phone: formData.phone, company: formData.company, position: formData.position, website }),
       });
       const data = await res.json();
 
@@ -104,6 +104,12 @@ export default function RegisterPage() {
               <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '500', marginBottom: '0.375rem', color: '#374151' }}>회사이름 <span style={{ color: '#9ca3af', fontWeight: '400' }}>(선택)</span></label>
               <input type="text" value={formData.company} onChange={e => update('company', e.target.value)}
                 placeholder="회사명"
+                style={{ width: '100%', padding: '0.625rem 0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.95rem', outline: 'none' }} />
+            </div>
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '500', marginBottom: '0.375rem', color: '#374151' }}>직함 <span style={{ color: '#9ca3af', fontWeight: '400' }}>(선택)</span></label>
+              <input type="text" value={formData.position} onChange={e => update('position', e.target.value)}
+                placeholder="예: 과장, 팀장, 대표"
                 style={{ width: '100%', padding: '0.625rem 0.75rem', border: '1px solid #d1d5db', borderRadius: '6px', fontSize: '0.95rem', outline: 'none' }} />
             </div>
             <div style={{ marginBottom: '1rem' }}>
