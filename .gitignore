@@ -21,6 +21,7 @@ node_modules/
 generate-all-files.sh
 
 # User uploads (바이너리 — Docker 볼륨으로 관리)
+src/public/uploads/
 src/uploads/downloads/
 src/uploads/sliders/
 src/uploads/notices/

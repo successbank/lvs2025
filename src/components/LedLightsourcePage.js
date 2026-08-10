@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { pickProductSummary } from '@/lib/textUtils';
 import '../app/styles/globals.css';
 import WishlistButton from '@/components/WishlistButton';
+import ProductSubNav from '@/components/ui/ProductSubNav';
 
 export default function LedLightsourcePage() {
   const [categories, setCategories] = useState([]);
@@ -48,16 +49,15 @@ export default function LedLightsourcePage() {
       </section>
 
       {/* Sub Navigation */}
-      <div className="sub-nav">
-        <div className="sub-nav-container">
-          <a href="/products/led-lightsource" className="active">전체보기</a>
-          {categories.map((cat) => (
-            <a key={cat.id} href={`/products/led-lightsource/${cat.slug}`}>
-              {cat.name}
-            </a>
-          ))}
-        </div>
-      </div>
+      <ProductSubNav
+        allHref="/products/led-lightsource"
+        allActive
+        items={categories.map((cat) => ({
+          key: cat.id,
+          href: `/products/led-lightsource/${cat.slug}`,
+          label: cat.name,
+        }))}
+      />
 
       {/* Products Grid */}
       <div className="products-container">

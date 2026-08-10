@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import '../app/styles/globals.css';
 import WishlistButton from '@/components/WishlistButton';
+import ProductSubNav from '@/components/ui/ProductSubNav';
 
 export default function CategoryPage({ categorySlug }) {
   const [category, setCategory] = useState(null);
@@ -62,16 +63,15 @@ export default function CategoryPage({ categorySlug }) {
       </section>
 
       {/* Sub Navigation */}
-      <div className="sub-nav">
-        <div className="sub-nav-container">
-          <a href={`/products/${categorySlug}`} className="active">전체보기</a>
-          {subcategories.map((subcat) => (
-            <a key={subcat.id} href={`/products/${categorySlug}/${subcat.slug}`}>
-              {subcat.name}
-            </a>
-          ))}
-        </div>
-      </div>
+      <ProductSubNav
+        allHref={`/products/${categorySlug}`}
+        allActive
+        items={subcategories.map((subcat) => ({
+          key: subcat.id,
+          href: `/products/${categorySlug}/${subcat.slug}`,
+          label: subcat.name,
+        }))}
+      />
 
       {/* Products Grid */}
       <div className="products-container">

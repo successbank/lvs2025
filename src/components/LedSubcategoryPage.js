@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import '../app/styles/globals.css';
 import WishlistButton from '@/components/WishlistButton';
+import ProductSubNav from '@/components/ui/ProductSubNav';
 
 export default function LedSubcategoryPage({ subcategorySlug }) {
   const [subcategory, setSubcategory] = useState(null);
@@ -62,20 +63,15 @@ export default function LedSubcategoryPage({ subcategorySlug }) {
       </section>
 
       {/* Sub Navigation */}
-      <div className="sub-nav">
-        <div className="sub-nav-container">
-          <a href="/products/led-lightsource">전체보기</a>
-          {siblingCategories.map((cat) => (
-            <a
-              key={cat.id}
-              href={`/products/led-lightsource/${cat.slug}`}
-              className={cat.slug === subcategorySlug ? 'active' : ''}
-            >
-              {cat.name}
-            </a>
-          ))}
-        </div>
-      </div>
+      <ProductSubNav
+        allHref="/products/led-lightsource"
+        items={siblingCategories.map((cat) => ({
+          key: cat.id,
+          href: `/products/led-lightsource/${cat.slug}`,
+          label: cat.name,
+          active: cat.slug === subcategorySlug,
+        }))}
+      />
 
       {/* Products Grid */}
       <div className="products-container">

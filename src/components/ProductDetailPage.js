@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import '../app/styles/globals.css';
 import WishlistButton from '@/components/WishlistButton';
+import ProductSubNav from '@/components/ui/ProductSubNav';
 
 export default function ProductDetailPage({ product }) {
   const [selectedImage, setSelectedImage] = useState(0);
@@ -123,19 +124,15 @@ export default function ProductDetailPage({ product }) {
 
       {/* Parent Category Sub Navigation */}
       {product.category?.parent?.children?.length > 0 && (
-        <div className="sub-nav">
-          <div className="sub-nav-container">
-            <a href={`/products/${product.category.parent.slug}`} className="active">전체보기</a>
-            {product.category.parent.children.map((subcat) => (
-              <a
-                key={subcat.id}
-                href={`/products/${product.category.parent.slug}/${subcat.slug}`}
-              >
-                {subcat.name}
-              </a>
-            ))}
-          </div>
-        </div>
+        <ProductSubNav
+          allHref={`/products/${product.category.parent.slug}`}
+          allActive
+          items={product.category.parent.children.map((subcat) => ({
+            key: subcat.id,
+            href: `/products/${product.category.parent.slug}/${subcat.slug}`,
+            label: subcat.name,
+          }))}
+        />
       )}
 
       {/* Page Header */}

@@ -1687,6 +1687,15 @@ body {
   width: 85%;
 }
 
+/* Sub Navigation - 모바일 토글 (PC에서는 미노출 / 레이아웃 영향 없음) */
+.sub-nav-toggle {
+  display: none;
+}
+
+.sub-nav-list {
+  display: contents;
+}
+
 /* Content Section */
 .content-section {
   padding: 60px 0;
@@ -3066,6 +3075,78 @@ body {
     padding: 12px 18px;
     font-size: 14px;
     font-weight: 600;
+  }
+
+  /* 모바일: 카테고리 목록은 기본 접힘 → "전체보기 ▾" 탭 시 펼침
+     주의: .sub-nav 는 회사소개/고객지원/게시판 등에서도 쓰이므로
+     반드시 .sub-nav--collapsible (제품 서브내비) 로만 한정한다. */
+  .sub-nav--collapsible .sub-nav-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .sub-nav--collapsible .sub-nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    min-height: 44px;
+    padding: 12px 16px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+    color: #1976d2;
+    background: rgba(25, 118, 210, 0.08);
+    border: 1px solid rgba(25, 118, 210, 0.25);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .sub-nav--collapsible .sub-nav-toggle-arrow {
+    font-size: 12px;
+    line-height: 1;
+    transition: transform 0.25s ease;
+  }
+
+  .sub-nav--collapsible .sub-nav-toggle.is-open .sub-nav-toggle-arrow {
+    transform: rotate(180deg);
+  }
+
+  .sub-nav--collapsible .sub-nav-list {
+    display: none;
+  }
+
+  .sub-nav--collapsible .sub-nav-list.is-open {
+    display: flex;
+    flex-direction: column;
+    max-height: 60vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 8px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+  }
+
+  .sub-nav--collapsible .sub-nav-list.is-open a {
+    width: 100%;
+    min-height: 44px;
+    padding: 12px 16px;
+    white-space: normal;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    border-radius: 0;
+  }
+
+  .sub-nav--collapsible .sub-nav-list.is-open a:last-child {
+    border-bottom: none;
+  }
+
+  .sub-nav--collapsible .sub-nav-list.is-open a::after {
+    display: none;
   }
 }
 
