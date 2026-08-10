@@ -261,27 +261,32 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
                   </button>
                 ))}
               </div>
-              <div className="product-cards-grid">
+              <div className="category-showcase-grid">
                 {productCategories[activeCategory]?.children?.map((subcat) => {
                   const firstProductSlug = subcat.products?.[0]?.slug;
                   const href = firstProductSlug
                     ? `/products/${firstProductSlug}`
                     : `/products/${productCategories[activeCategory].slug}?sub=${subcat.slug}`;
                   return (
-                  <a href={href} key={subcat.id} className="product-lineup-card">
-                    <div className="product-lineup-icon">
+                  <a href={href} key={subcat.id} className="subcategory-card-v2">
+                    <div className="subcategory-card-v2-image">
                       {subcat.iconUrl ? (
                         <img src={subcat.iconUrl} alt={subcat.name} />
                       ) : (
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          <circle cx="12" cy="12" r="5"/>
-                          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-                        </svg>
+                        <div className="subcategory-card-v2-placeholder">
+                          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
+                            <circle cx="12" cy="12" r="5"/>
+                            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                          </svg>
+                        </div>
                       )}
                     </div>
-                    <h4>{subcat.name}</h4>
-                    {subcat.description && <p>{subcat.description}</p>}
-                    <span className="product-lineup-link">자세히 보기 →</span>
+                    <div className="subcategory-card-v2-info">
+                      <h3 className="subcategory-card-v2-name">{subcat.name}</h3>
+                      {subcat.description && (
+                        <p className="subcategory-card-v2-desc">{subcat.description}</p>
+                      )}
+                    </div>
                   </a>
                   );
                 })}
