@@ -231,15 +231,20 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
               <span className="contact-strip-value">{companyInfo?.workingHours || '평일 09:00~18:00'}</span>
             </div>
           </div>
-          <div className="contact-strip-item">
-            <div className="contact-strip-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <a
+            href="https://www.youtube.com/watch?v=V-NeC7ltzhw"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-strip-item contact-strip-item-link"
+          >
+            <div className="contact-strip-icon contact-strip-icon-video">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
             </div>
             <div className="contact-strip-text">
-              <span className="contact-strip-label">오시는 길</span>
-              <span className="contact-strip-value">인천광역시 연수구 송도미래로 30 B동 801~803호</span>
+              <span className="contact-strip-label">홍보영상</span>
+              <span className="contact-strip-value">LVS 소개 영상 보기 →</span>
             </div>
-          </div>
+          </a>
         </div>
       </section>
 
@@ -336,12 +341,6 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               </div>
               <span>오시는 길</span>
-            </a>
-            <a href="https://www.youtube.com/watch?v=V-NeC7ltzhw" target="_blank" rel="noopener noreferrer" className="service-card service-card-purple">
-              <div className="service-card-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-              </div>
-              <span>홍보영상</span>
             </a>
             <a href="/about/certifications" className="service-card service-card-green">
               <div className="service-card-icon">

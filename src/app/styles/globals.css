@@ -584,6 +584,32 @@ body {
   color: #2563eb;
 }
 
+/* 클릭 가능한 스트립 항목 (홍보영상 등) */
+.contact-strip-item-link {
+  text-decoration: none;
+  color: inherit;
+  border-radius: 10px;
+  padding: 6px 10px;
+  margin: -6px -10px;
+  transition: background 0.2s ease;
+}
+
+.contact-strip-item-link:hover {
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.contact-strip-item-link:hover .contact-strip-value {
+  color: #2563eb;
+}
+
+.contact-strip-icon-video {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+}
+
+.contact-strip-icon-video svg {
+  color: #ef4444;
+}
+
 .contact-strip-text {
   display: flex;
   flex-direction: column;
