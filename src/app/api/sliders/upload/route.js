@@ -6,7 +6,7 @@ import path from 'path';
 import { compressToTarget, needsOptimization, TARGET_BYTES } from '@/lib/imageResize';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_SIZE = 15 * 1024 * 1024; // 15MB (업로드 후 자동 최적화)
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads', 'sliders');
 
 // 통이미지 크기 — PC/모바일
@@ -39,7 +39,7 @@ export async function POST(request) {
     }
 
     if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: '파일 크기는 5MB를 초과할 수 없습니다.' }, { status: 400 });
+      return NextResponse.json({ error: '파일 크기는 15MB를 초과할 수 없습니다.' }, { status: 400 });
     }
 
     await mkdir(UPLOAD_DIR, { recursive: true });

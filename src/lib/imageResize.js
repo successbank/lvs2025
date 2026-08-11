@@ -10,6 +10,9 @@ export const TARGET_BYTES = 600 * 1024;
 /** 화질 하강 단계 — 위에서부터 시도 */
 const QUALITY_STEPS = [85, 78, 70, 62, 54, 46, 38, 30];
 
+/** 가독성이 중요한 이미지(인증서·로고 등)용 — 더 높은 화질에서 시작 */
+export const HIGH_QUALITY_STEPS = [90, 84, 78, 70, 62, 54, 46, 38];
+
 /** 최저 화질로도 목표를 못 맞추면 가로폭을 이 비율로 줄여 재시도 */
 const SHRINK_RATIO = 0.8;
 const SHRINK_TRIES = 3;
@@ -23,8 +26,10 @@ const SHRINK_TRIES = 3;
  * @param {number} [options.height] 고정 리사이즈 세로
  * @param {string} [options.fit]      width/height 지정 시 fit 모드 (기본 cover)
  * @param {string} [options.position] width/height 지정 시 crop 기준점 (기본 center)
+ * @param {boolean} [options.withoutEnlargement] width/height 지정 시 원본보다 확대하지 않음
  * @param {number} [options.maxWidth] 비율 유지 상한 가로폭 (width 미지정 시 사용, 확대 없음)
  * @param {number} [options.targetBytes] 목표 용량 (기본 TARGET_BYTES)
+ * @param {number[]} [options.qualitySteps] 화질 하강 단계 (기본 QUALITY_STEPS)
  * @returns {Promise<{ buffer: Buffer, width: number, height: number, bytes: number, quality: number, withinTarget: boolean }>}
  */
 export async function compressToTarget(input, options = {}) {
@@ -33,8 +38,10 @@ export async function compressToTarget(input, options = {}) {
     height = null,
     fit = 'cover',
     position = 'center',
+    withoutEnlargement = false,
     maxWidth = null,
     targetBytes = TARGET_BYTES,
+    qualitySteps = QUALITY_STEPS,
   } = options;
 
   const metadata = await sharp(input).metadata();
@@ -50,7 +57,7 @@ export async function compressToTarget(input, options = {}) {
       pipeline = pipeline.resize(
         Math.max(1, Math.round(width * scale)),
         height ? Math.max(1, Math.round(height * scale)) : null,
-        { fit, position }
+        { fit, position, withoutEnlargement }
       );
     } else if (maxWidth) {
       const cap = Math.min(maxWidth, metadata.width || maxWidth);
@@ -71,7 +78,7 @@ export async function compressToTarget(input, options = {}) {
   let scale = 1;
 
   for (let attempt = 0; attempt <= SHRINK_TRIES; attempt++) {
-    for (const quality of QUALITY_STEPS) {
+    for (const quality of qualitySteps) {
       const result = await encode(scale, quality);
       if (result.bytes <= targetBytes) {
         return { ...result, withinTarget: true };

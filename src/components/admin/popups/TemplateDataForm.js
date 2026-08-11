@@ -204,7 +204,7 @@ function ImageField({ label, required, value, onChange }) {
     if (!file) return;
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     if (!allowed.includes(file.type)) { alert('허용되지 않는 파일 형식입니다.'); return; }
-    if (file.size > 5 * 1024 * 1024) { alert('5MB를 초과할 수 없습니다.'); return; }
+    if (file.size > 15 * 1024 * 1024) { alert('15MB를 초과할 수 없습니다.'); return; }
 
     setUploading(true);
     try {

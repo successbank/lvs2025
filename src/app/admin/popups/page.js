@@ -105,8 +105,8 @@ export default function AdminPopups() {
       alert('허용되지 않는 파일 형식입니다. (JPG, PNG, WebP, GIF만 가능)');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      alert('파일 크기는 5MB를 초과할 수 없습니다.');
+    if (file.size > 15 * 1024 * 1024) {
+      alert('파일 크기는 15MB를 초과할 수 없습니다.');
       return;
     }
 
@@ -149,7 +149,7 @@ export default function AdminPopups() {
     if (!file) return;
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     if (!allowedTypes.includes(file.type)) { alert('허용되지 않는 파일 형식입니다.'); return; }
-    if (file.size > 5 * 1024 * 1024) { alert('파일 크기는 5MB를 초과할 수 없습니다.'); return; }
+    if (file.size > 15 * 1024 * 1024) { alert('파일 크기는 15MB를 초과할 수 없습니다.'); return; }
 
     setMobileImagePreview(URL.createObjectURL(file));
     setMobileUploading(true);
@@ -490,7 +490,7 @@ export default function AdminPopups() {
                       ) : (
                         <>
                           <p style={{ color: '#6b7280', marginBottom: '0.25rem' }}>클릭하거나 이미지를 드래그하여 업로드</p>
-                          <p style={{ color: '#9ca3af', fontSize: '0.8rem' }}>JPG, PNG, WebP, GIF (최대 5MB)</p>
+                          <p style={{ color: '#9ca3af', fontSize: '0.8rem' }}>JPG, PNG, WebP, GIF (최대 15MB) · 600KB 이하로 자동 최적화됩니다</p>
                         </>
                       )}
                     </div>
