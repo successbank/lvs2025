@@ -30,6 +30,8 @@ export default function Navigation({ companyInfo, navigationData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [liveMenus, setLiveMenus] = useState(null);
+  const [productSubcategories, setProductSubcategories] = useState({});
+  const [expandedMenus, setExpandedMenus] = useState([]);
   const pathname = usePathname();
   const { data: session } = useSession();
 
@@ -44,6 +46,40 @@ export default function Navigation({ companyInfo, navigationData }) {
       })
       .catch(() => {});
   }, []);
+
+  // 모바일 메뉴용 제품 하위 카테고리 fetch (slug → children 매핑)
+  useEffect(() => {
+    fetch('/api/categories?parentId=null&includeChildren=true')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.categories) return;
+        const map = {};
+        data.categories.forEach(cat => {
+          if (cat.children && cat.children.length > 0) {
+            map[cat.slug] = cat.children;
+          }
+        });
+        setProductSubcategories(map);
+      })
+      .catch(() => {});
+  }, []);
+
+  // /products/{slug} 형태의 url에서 slug 추출
+  const getCategorySlug = (url) => {
+    const match = /^\/products\/([^/?#]+)/.exec(url || '');
+    return match ? match[1] : null;
+  };
+
+  const getSubmenus = (url) => {
+    const slug = getCategorySlug(url);
+    return slug ? (productSubcategories[slug] || []) : [];
+  };
+
+  const toggleSubmenu = (id) => {
+    setExpandedMenus(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
 
   // 우선순위: 클라이언트 fetch > 서버 prop > 폴백
   const menus = liveMenus || (navigationData && navigationData.length > 0 ? navigationData : fallbackMenus);
@@ -73,6 +109,7 @@ export default function Navigation({ companyInfo, navigationData }) {
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
+    setExpandedMenus([]);
     document.body.style.overflow = '';
   };
 
@@ -159,9 +196,51 @@ export default function Navigation({ companyInfo, navigationData }) {
               <div className="mobile-menu-group-title">제품소개</div>
               <ul>
                 <li><a href="/products" onClick={closeMobileMenu}>전체 제품</a></li>
-                {productMenus.map(item => (
-                  <li key={item.id}><a href={item.url} onClick={closeMobileMenu}>{item.label}</a></li>
-                ))}
+                {productMenus.map(item => {
+                  const submenus = getSubmenus(item.url);
+                  const isExpanded = expandedMenus.includes(item.id);
+                  const categorySlug = getCategorySlug(item.url);
+                  return (
+                    <li key={item.id} className={submenus.length > 0 ? 'mobile-menu-has-sub' : ''}>
+                      <div className="mobile-menu-row">
+                        <a href={item.url} onClick={closeMobileMenu}>{item.label}</a>
+                        {submenus.length > 0 && (
+                          <button
+                            type="button"
+                            className={`mobile-submenu-toggle ${isExpanded ? 'is-open' : ''}`}
+                            aria-expanded={isExpanded}
+                            aria-label={`${item.label} 하위 메뉴 ${isExpanded ? '닫기' : '열기'}`}
+                            onClick={() => toggleSubmenu(item.id)}
+                          >
+                            {isExpanded ? (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                <path d="M18 6L6 18M6 6l12 12"/>
+                              </svg>
+                            ) : (
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                <path d="M12 5v14M5 12h14"/>
+                              </svg>
+                            )}
+                          </button>
+                        )}
+                      </div>
+                      {submenus.length > 0 && isExpanded && (
+                        <ul className="mobile-submenu">
+                          {submenus.map(sub => (
+                            <li key={sub.id}>
+                              <a
+                                href={`/products/${categorySlug}/${sub.slug}`}
+                                onClick={closeMobileMenu}
+                              >
+                                {sub.name}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}

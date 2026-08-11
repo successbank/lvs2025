@@ -1480,6 +1480,68 @@ body {
   padding-left: 40px;
 }
 
+/* 하위 메뉴가 있는 항목: 메뉴명 + 펼침(+/X) 버튼 */
+.mobile-menu-row {
+  display: flex;
+  align-items: center;
+}
+
+.mobile-menu-row a {
+  flex: 1;
+  min-width: 0;
+}
+
+.mobile-submenu-toggle {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+}
+
+.mobile-submenu-toggle:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.06);
+}
+
+.mobile-submenu-toggle.is-open {
+  border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+  color: #2563eb;
+}
+
+.mobile-menu-group ul.mobile-submenu {
+  list-style: none;
+  margin: 2px 24px 10px 36px;
+  padding: 4px 0;
+  border-left: 2px solid #cbd5e1;
+  background: #f8fafc;
+  border-radius: 0 8px 8px 0;
+}
+
+.mobile-menu-group .mobile-submenu a {
+  padding: 11px 16px 11px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  word-break: keep-all;
+}
+
+.mobile-menu-group .mobile-submenu a:hover {
+  padding-left: 20px;
+  background-color: #eef2ff;
+}
+
 .mobile-menu-bottom {
   padding: 20px 24px;
   border-top: 1px solid #f1f5f9;
