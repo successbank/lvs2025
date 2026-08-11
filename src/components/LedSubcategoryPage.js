@@ -4,8 +4,12 @@ import { useState, useEffect } from 'react';
 import '../app/styles/globals.css';
 import WishlistButton from '@/components/WishlistButton';
 import ProductSubNav from '@/components/ui/ProductSubNav';
+import { getDict } from '@/lib/i18n';
 
-export default function LedSubcategoryPage({ subcategorySlug }) {
+export default function LedSubcategoryPage({ subcategorySlug, locale = 'ko' }) {
+  const t = getDict(locale).products;
+  const apiBase = locale === 'en' ? '/api/en' : '/api';
+  const base = locale === 'en' ? '/en' : '';
   const [subcategory, setSubcategory] = useState(null);
   const [products, setProducts] = useState([]);
   const [siblingCategories, setSiblingCategories] = useState([]);
@@ -14,19 +18,19 @@ export default function LedSubcategoryPage({ subcategorySlug }) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const categoryResponse = await fetch(`/api/categories?slug=${subcategorySlug}`);
+        const categoryResponse = await fetch(`${apiBase}/categories?slug=${subcategorySlug}`);
         const categoryData = await categoryResponse.json();
 
         if (categoryData.category) {
           setSubcategory(categoryData.category);
 
           if (categoryData.category.parentId) {
-            const siblingsResponse = await fetch(`/api/categories?parentId=${categoryData.category.parentId}`);
+            const siblingsResponse = await fetch(`${apiBase}/categories?parentId=${categoryData.category.parentId}`);
             const siblingsData = await siblingsResponse.json();
             setSiblingCategories(siblingsData.categories || []);
           }
 
-          const productsResponse = await fetch(`/api/products?categoryId=${categoryData.category.id}`);
+          const productsResponse = await fetch(`${apiBase}/products?categoryId=${categoryData.category.id}`);
           const productsData = await productsResponse.json();
           setProducts(productsData.products || []);
         }
@@ -44,11 +48,11 @@ export default function LedSubcategoryPage({ subcategorySlug }) {
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <div className="breadcrumb-container">
-          <a href="/">Home</a>
+          <a href={base || '/'}>Home</a>
           <span>&gt;</span>
-          <a href="/products">제품소개</a>
+          <a href={`${base}/products`}>{t.root}</a>
           <span>&gt;</span>
-          <a href="/products/led-lightsource">LED LIGHTSOURCE</a>
+          <a href={`${base}/products/led-lightsource`}>LED LIGHTSOURCE</a>
           <span>&gt;</span>
           <span>{subcategory?.name}</span>
         </div>
@@ -58,16 +62,17 @@ export default function LedSubcategoryPage({ subcategorySlug }) {
       <section className="page-header">
         <div className="page-header-content">
           <h1>{subcategory?.name || 'LED LIGHTSOURCE'}</h1>
-          <p>{subcategory?.description || '엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.'}</p>
+          <p>{subcategory?.description || t.headerFallbackDesc}</p>
         </div>
       </section>
 
       {/* Sub Navigation */}
       <ProductSubNav
-        allHref="/products/led-lightsource"
+        allHref={`${base}/products/led-lightsource`}
+        allLabel={t.subNavAll}
         items={siblingCategories.map((cat) => ({
           key: cat.id,
-          href: `/products/led-lightsource/${cat.slug}`,
+          href: `${base}/products/led-lightsource/${cat.slug}`,
           label: cat.name,
           active: cat.slug === subcategorySlug,
         }))}
@@ -76,9 +81,9 @@ export default function LedSubcategoryPage({ subcategorySlug }) {
       {/* Products Grid */}
       <div className="products-container">
         {loading ? (
-          <div className="loading">로딩 중...</div>
+          <div className="loading">{t.loading}</div>
         ) : products.length === 0 ? (
-          <div className="no-products">제품이 없습니다.</div>
+          <div className="no-products">{locale === 'en' ? 'No products found.' : '제품이 없습니다.'}</div>
         ) : (
           <div className="products-grid">
             {products.map((product) => (
@@ -97,8 +102,8 @@ export default function LedSubcategoryPage({ subcategorySlug }) {
                   <h3>{product.name}</h3>
                   <p className="product-model">{product.modelName}</p>
                   <p className="product-description">{product.summary || product.description || '-'}</p>
-                  <a href={`/products/${product.slug}`} className="product-detail-link">
-                    상세보기 →
+                  <a href={`${base}/products/${product.slug}`} className="product-detail-link">
+                    {t.detailLink}
                   </a>
                 </div>
               </div>

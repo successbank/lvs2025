@@ -14,7 +14,59 @@ import { signIn } from 'next-auth/react';
 //
 // signIn redirect:false로 페이지 이동 없이 인증 처리.
 // 회원가입 성공 시 즉시 signIn으로 자동 로그인 후 onSuccess 트리거.
-export default function LoginModal({ isOpen, onClose, onSuccess, message, defaultMode = 'login' }) {
+const LM_TEXT = {
+  ko: {
+    mismatch: '이메일 또는 비밀번호가 일치하지 않습니다.',
+    loginFail: '로그인에 실패했습니다. 다시 시도해주세요.',
+    serverError: '서버 오류가 발생했습니다.',
+    signupFail: '회원가입에 실패했습니다.',
+    autoLoginFail: '가입은 완료되었으나 자동 로그인에 실패했습니다. 다시 로그인해주세요.',
+    close: '닫기',
+    login: '로그인',
+    signup: '회원가입',
+    email: '이메일',
+    password: '비밀번호',
+    pwPlaceholder: '비밀번호',
+    loggingIn: '로그인 중...',
+    name: '이름',
+    namePlaceholder: '홍길동',
+    signingUp: '가입 처리 중...',
+    noAccount: '아직 회원이 아니신가요?',
+    haveAccount: '이미 계정이 있으신가요?',
+    pwMin: '6자 이상',
+    phone: '연락처',
+    phonePlaceholder: '010-1234-5678 (선택)',
+    company: '회사명',
+    companyPlaceholder: '(주)○○ (선택)',
+  },
+  en: {
+    mismatch: 'The email or password does not match.',
+    loginFail: 'Sign-in failed. Please try again.',
+    serverError: 'A server error occurred.',
+    signupFail: 'Sign-up failed.',
+    autoLoginFail: 'Your account was created, but automatic sign-in failed. Please sign in again.',
+    close: 'Close',
+    login: 'Sign In',
+    signup: 'Sign Up',
+    email: 'Email',
+    password: 'Password',
+    pwPlaceholder: 'Password',
+    loggingIn: 'Signing in...',
+    name: 'Name',
+    namePlaceholder: 'John Doe',
+    signingUp: 'Signing up...',
+    noAccount: 'Don\'t have an account?',
+    haveAccount: 'Already have an account?',
+    pwMin: 'At least 6 characters',
+    phone: 'Phone',
+    phonePlaceholder: '+82-10-1234-5678 (optional)',
+    company: 'Company',
+    companyPlaceholder: 'Company name (optional)',
+  },
+};
+
+export default function LoginModal({ isOpen, onClose, onSuccess, message, defaultMode = 'login', locale = 'ko' }) {
+  const lt = LM_TEXT[locale] || LM_TEXT.ko;
   const [mode, setMode] = useState(defaultMode);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -67,18 +119,18 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
     try {
       const result = await signIn('credentials', { email, password, redirect: false });
       if (result?.error) {
-        setError('이메일 또는 비밀번호가 일치하지 않습니다.');
+        setError(lt.mismatch);
       } else if (result?.ok) {
         if (onSuccess) {
           try { onSuccess(); } catch (err) { console.error('onSuccess error:', err); }
         }
         onClose();
       } else {
-        setError('로그인에 실패했습니다. 다시 시도해주세요.');
+        setError(lt.loginFail);
       }
     } catch (err) {
       console.error('LoginModal signIn error:', err);
-      setError('서버 오류가 발생했습니다.');
+      setError(lt.serverError);
     }
     setLoading(false);
   };
@@ -96,7 +148,7 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(data?.error || '회원가입에 실패했습니다.');
+        setError(data?.error || lt.signupFail);
         setLoading(false);
         return;
       }
@@ -104,7 +156,7 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
       // 가입 성공 → 즉시 자동 로그인
       const signInRes = await signIn('credentials', { email, password, redirect: false });
       if (signInRes?.error || !signInRes?.ok) {
-        setError('가입은 완료되었으나 자동 로그인에 실패했습니다. 다시 로그인해주세요.');
+        setError(lt.autoLoginFail);
         setMode('login');
         setLoading(false);
         return;
@@ -116,7 +168,7 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
       onClose();
     } catch (err) {
       console.error('LoginModal signup error:', err);
-      setError('서버 오류가 발생했습니다.');
+      setError(lt.serverError);
     }
     setLoading(false);
   };
@@ -143,14 +195,14 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
           type="button"
           className="login-modal-close"
           onClick={onClose}
-          aria-label="닫기"
+          aria-label={lt.close}
           disabled={loading}
         >
           ×
         </button>
 
         <h2 id="login-modal-title" className="login-modal-title">
-          {mode === 'login' ? '로그인' : '회원가입'}
+          {mode === 'login' ? lt.login : lt.signup}
         </h2>
 
         {message && (
@@ -166,7 +218,7 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
         {mode === 'login' ? (
           <form onSubmit={handleLoginSubmit}>
             <div className="login-modal-field">
-              <label htmlFor="login-modal-email">이메일</label>
+              <label htmlFor="login-modal-email">{lt.email}</label>
               <input
                 id="login-modal-email"
                 type="email"
@@ -180,7 +232,7 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
               />
             </div>
             <div className="login-modal-field">
-              <label htmlFor="login-modal-password">비밀번호</label>
+              <label htmlFor="login-modal-password">{lt.password}</label>
               <input
                 id="login-modal-password"
                 type="password"
@@ -188,18 +240,18 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="비밀번호"
+                placeholder={lt.pwPlaceholder}
                 disabled={loading}
               />
             </div>
             <button type="submit" className="login-modal-submit" disabled={loading}>
-              {loading ? '로그인 중...' : '로그인'}
+              {loading ? lt.loggingIn : lt.login}
             </button>
           </form>
         ) : (
           <form onSubmit={handleSignupSubmit}>
             <div className="login-modal-field">
-              <label htmlFor="signup-modal-name">이름 <span aria-hidden="true">*</span></label>
+              <label htmlFor="signup-modal-name">{lt.name} <span aria-hidden="true">*</span></label>
               <input
                 id="signup-modal-name"
                 type="text"
@@ -207,12 +259,12 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
                 autoFocus
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="홍길동"
+                placeholder={lt.namePlaceholder}
                 disabled={loading}
               />
             </div>
             <div className="login-modal-field">
-              <label htmlFor="signup-modal-email">이메일 <span aria-hidden="true">*</span></label>
+              <label htmlFor="signup-modal-email">{lt.email} <span aria-hidden="true">*</span></label>
               <input
                 id="signup-modal-email"
                 type="email"
@@ -225,7 +277,7 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
               />
             </div>
             <div className="login-modal-field">
-              <label htmlFor="signup-modal-password">비밀번호 <span aria-hidden="true">*</span></label>
+              <label htmlFor="signup-modal-password">{lt.password} <span aria-hidden="true">*</span></label>
               <input
                 id="signup-modal-password"
                 type="password"
@@ -234,30 +286,30 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="6자 이상"
+                placeholder={lt.pwMin}
                 disabled={loading}
               />
             </div>
             <div className="login-modal-field">
-              <label htmlFor="signup-modal-phone">연락처</label>
+              <label htmlFor="signup-modal-phone">{lt.phone}</label>
               <input
                 id="signup-modal-phone"
                 type="tel"
                 autoComplete="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="010-1234-5678 (선택)"
+                placeholder={lt.phonePlaceholder}
                 disabled={loading}
               />
             </div>
             <div className="login-modal-field">
-              <label htmlFor="signup-modal-company">회사명</label>
+              <label htmlFor="signup-modal-company">{lt.company}</label>
               <input
                 id="signup-modal-company"
                 type="text"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
-                placeholder="(주)○○ (선택)"
+                placeholder={lt.companyPlaceholder}
                 disabled={loading}
               />
             </div>
@@ -276,7 +328,7 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
             </div>
 
             <button type="submit" className="login-modal-submit" disabled={loading}>
-              {loading ? '가입 처리 중...' : '회원가입'}
+              {loading ? lt.signingUp : lt.signup}
             </button>
           </form>
         )}
@@ -284,26 +336,26 @@ export default function LoginModal({ isOpen, onClose, onSuccess, message, defaul
         <div className="login-modal-footer">
           {mode === 'login' ? (
             <>
-              아직 회원이 아니신가요?{' '}
+              {lt.noAccount}{' '}
               <button
                 type="button"
                 className="login-modal-register-link"
                 onClick={() => switchMode('signup')}
                 disabled={loading}
               >
-                회원가입
+                {lt.signup}
               </button>
             </>
           ) : (
             <>
-              이미 계정이 있으신가요?{' '}
+              {lt.haveAccount}{' '}
               <button
                 type="button"
                 className="login-modal-register-link"
                 onClick={() => switchMode('login')}
                 disabled={loading}
               >
-                로그인
+                {lt.login}
               </button>
             </>
           )}

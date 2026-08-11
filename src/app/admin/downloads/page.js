@@ -6,6 +6,9 @@ import AdminLayout from '@/components/AdminLayout';
 const DOWNLOADS_BOARD_SLUG = 'downloads';
 
 export default function AdminDownloads() {
+  const [lang, setLang] = useState('ko'); // 'ko' | 'en' — EN은 영문 사이트(lvs_db_en) 자료실
+  const apiBase = lang === 'en' ? '/api/en' : '/api';
+  const adminApiBase = lang === 'en' ? '/api/admin/en' : '/api/admin';
   const [items, setItems] = useState([]);
   const [pagination, setPagination] = useState({});
   const [loading, setLoading] = useState(true);
@@ -27,7 +30,7 @@ export default function AdminDownloads() {
         params.set('search', search);
         params.set('searchField', searchField);
       }
-      const res = await fetch(`/api/admin/downloads?${params}`);
+      const res = await fetch(`${adminApiBase}/downloads?${params}`);
       const data = await res.json();
       setItems(data.items || []);
       setPagination(data.pagination || {});
@@ -35,7 +38,7 @@ export default function AdminDownloads() {
       console.error('list fetch failed:', err);
     }
     setLoading(false);
-  }, [page, search, searchField]);
+  }, [page, search, searchField, lang]);
 
   useEffect(() => { fetchList(); }, [fetchList]);
 
@@ -48,7 +51,7 @@ export default function AdminDownloads() {
   const handleDelete = async (id) => {
     if (!confirm('이 게시물과 모든 첨부파일을 삭제합니다. 계속할까요?')) return;
     try {
-      const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${apiBase}/posts/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('삭제에 실패했습니다.');
       fetchList();
     } catch (err) {
@@ -58,7 +61,7 @@ export default function AdminDownloads() {
 
   const openEdit = async (id) => {
     try {
-      const res = await fetch(`/api/posts/${id}?incrementView=false`);
+      const res = await fetch(`${apiBase}/posts/${id}?incrementView=false`);
       const data = await res.json();
       if (data.post) {
         setEditingPost({ ...data.post, attachments: data.attachments || [] });
@@ -74,6 +77,19 @@ export default function AdminDownloads() {
 
   return (
     <AdminLayout title="다운로드 관리">
+      <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.75rem' }}>
+        {['ko', 'en'].map(l => (
+          <button key={l} onClick={() => setLang(l)}
+            style={{
+              padding: '0.35rem 0.9rem', border: '1px solid #d1d5db', borderRadius: '6px',
+              cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem',
+              background: lang === l ? '#059669' : 'white',
+              color: lang === l ? 'white' : '#374151',
+            }}>
+            {l === 'ko' ? '한국어' : '영문(EN)'}
+          </button>
+        ))}
+      </div>
       <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
         <div style={{ color: '#6b7280' }}>
           총 <strong style={{ color: '#111827' }}>{pagination.total || 0}</strong>건
@@ -205,7 +221,7 @@ function WriteModal({ onClose, onSuccess }) {
       fd.append('isNotice', String(form.isNotice));
       for (const f of files) fd.append('files', f, f.name);
 
-      const res = await fetch('/api/posts', { method: 'POST', body: fd });
+      const res = await fetch(`${apiBase}/posts`, { method: 'POST', body: fd });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || '등록 실패');
@@ -273,7 +289,7 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
   const [pathFixingId, setPathFixingId] = useState(null); // 경로 정정 모달 대상 첨부 id
 
   const refresh = async () => {
-    const res = await fetch(`/api/posts/${post.id}?incrementView=false`);
+    const res = await fetch(`${apiBase}/posts/${post.id}?incrementView=false`);
     const data = await res.json();
     if (data.post) onRefresh({ ...data.post, attachments: data.attachments || [] });
   };
@@ -284,7 +300,7 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
     setSubmitting(true);
     try {
       // 1. PATCH 본문
-      const patchRes = await fetch(`/api/posts/${post.id}`, {
+      const patchRes = await fetch(`${apiBase}/posts/${post.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: form.title, content: form.content, isNotice: form.isNotice }),
@@ -296,7 +312,7 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
       if (newFiles.length > 0) {
         const fd = new FormData();
         for (const f of newFiles) fd.append('files', f, f.name);
-        const upRes = await fetch(`/api/admin/posts/${post.id}/attachments`, {
+        const upRes = await fetch(`${adminApiBase}/posts/${post.id}/attachments`, {
           method: 'POST', body: fd,
         });
         if (!upRes.ok) {
@@ -325,7 +341,7 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
       : '\n디스크 파일도 함께 제거됩니다.';
     if (!confirm(baseMsg + brokenWarn)) return;
     try {
-      const res = await fetch(`/api/admin/attachments/${att.id}`, { method: 'DELETE' });
+      const res = await fetch(`${adminApiBase}/attachments/${att.id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('첨부 삭제 실패');
       await refresh();
     } catch (err) {
@@ -340,7 +356,7 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
     try {
       const fd = new FormData();
       for (const f of newFiles) fd.append('files', f, f.name);
-      const res = await fetch(`/api/admin/posts/${post.id}/attachments`, {
+      const res = await fetch(`${adminApiBase}/posts/${post.id}/attachments`, {
         method: 'POST', body: fd,
       });
       if (!res.ok) {
@@ -487,7 +503,7 @@ function PathFixModal({ attachmentId, attachment, subDir, onClose, onSuccess }) 
     if (!confirm(`이 첨부의 file_path를 "${filePath}"로 정정합니다.\n원래 파일명("${attachment?.original_filename}")은 그대로 유지됩니다. 계속할까요?`)) return;
     setSubmitting(true);
     try {
-      const res = await fetch(`/api/admin/attachments/${attachmentId}`, {
+      const res = await fetch(`${adminApiBase}/attachments/${attachmentId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ file_path: filePath }),

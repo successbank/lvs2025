@@ -83,14 +83,18 @@ function truncate(str, max = 500) {
   return s.slice(0, max) + '…';
 }
 
-function buildSubject({ boardSlug, title }) {
+function buildSubject({ boardSlug, title, locale }) {
   const label = boardSlug === 'consultation' ? '상담' : boardSlug === 'catalog' ? '카탈로그' : '문의';
   const safeTitle = String(title ?? '').slice(0, 80);
-  return `[LVS 문의] [${label}] ${safeTitle}`;
+  const channel = locale === 'en' ? ' [영문]' : '';
+  return `[LVS 문의]${channel} [${label}] ${safeTitle}`;
 }
 
-function buildHtml({ post, boardSlug, attachmentCount, baseUrl }) {
+function buildHtml({ post, boardSlug, attachmentCount, baseUrl, locale }) {
   const label = boardSlug === 'consultation' ? '상담' : '카탈로그';
+  const channelRow = locale === 'en'
+    ? `<tr><td style="padding:8px 0;color:#666;">접수 채널</td><td style="padding:8px 0;font-weight:600;color:#1f3a8a;">영문 사이트 (/en)</td></tr>`
+    : '';
   const adminUrl = `${baseUrl}/admin/inquiries`;
   const previewContent = truncate(post.content, 500);
 
@@ -106,6 +110,7 @@ function buildHtml({ post, boardSlug, attachmentCount, baseUrl }) {
       <table style="width:100%;border-collapse:collapse;font-size:14px;">
         <tbody>
           <tr><td style="padding:8px 0;color:#666;width:90px;">종류</td><td style="padding:8px 0;">${escapeHtml(label)}</td></tr>
+          ${channelRow}
           <tr><td style="padding:8px 0;color:#666;">제목</td><td style="padding:8px 0;font-weight:600;">${escapeHtml(post.title)}</td></tr>
           <tr><td style="padding:8px 0;color:#666;">작성자</td><td style="padding:8px 0;">${escapeHtml(post.author || '-')}${post.company ? ` (${escapeHtml(post.company)})` : ''}</td></tr>
           ${post.contact_name ? `<tr><td style="padding:8px 0;color:#666;">담당자</td><td style="padding:8px 0;">${escapeHtml(post.contact_name)}</td></tr>` : ''}
@@ -131,12 +136,12 @@ function buildHtml({ post, boardSlug, attachmentCount, baseUrl }) {
 </body></html>`;
 }
 
-function buildText({ post, boardSlug, attachmentCount, baseUrl }) {
+function buildText({ post, boardSlug, attachmentCount, baseUrl, locale }) {
   const label = boardSlug === 'consultation' ? '상담' : '카탈로그';
   const lines = [
-    `[LVS 문의] [${label}] 새 문의가 등록되었습니다`,
+    `[LVS 문의]${locale === 'en' ? ' [영문]' : ''} [${label}] 새 문의가 등록되었습니다`,
     '',
-    `종류:       ${label}`,
+    `종류:       ${label}${locale === 'en' ? ' (영문 사이트 접수)' : ''}`,
     `제목:       ${post.title}`,
     `작성자:     ${post.author || '-'}${post.company ? ` (${post.company})` : ''}`,
   ];
@@ -171,6 +176,7 @@ export async function sendInquiryNotification({
   recipients,
   attachmentCount = 0,
   baseUrl,
+  locale = 'ko',
 }) {
   try {
     const validRecipients = (recipients || []).filter(
@@ -194,9 +200,9 @@ export async function sendInquiryNotification({
     const info = await transporter.sendMail({
       from,
       to: validRecipients,
-      subject: buildSubject({ boardSlug, title: post.title }),
-      html: buildHtml({ post, boardSlug, attachmentCount, baseUrl: resolvedBase }),
-      text: buildText({ post, boardSlug, attachmentCount, baseUrl: resolvedBase }),
+      subject: buildSubject({ boardSlug, title: post.title, locale }),
+      html: buildHtml({ post, boardSlug, attachmentCount, baseUrl: resolvedBase, locale }),
+      text: buildText({ post, boardSlug, attachmentCount, baseUrl: resolvedBase, locale }),
     });
 
     console.info(

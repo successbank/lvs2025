@@ -4,10 +4,14 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import LoginModal from './LoginModal';
 import '../app/styles/globals.css';
+import { getDict } from '@/lib/i18n';
 
-export default function BoardListPage({ boardSlug, section = 'support' }) {
+export default function BoardListPage({ boardSlug, section = 'support', locale = 'ko' }) {
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === 'ADMIN';
+  const t = getDict(locale).board;
+  const apiBase = locale === 'en' ? '/api/en' : '/api';
+  const base = locale === 'en' ? '/en' : '';
 
   const [board, setBoard] = useState(null);
   const [notices, setNotices] = useState([]);
@@ -34,7 +38,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
 
   const triggerAttachmentDownload = (attId) => {
     // 브라우저 기본 다운로드 동작 보존 (Content-Disposition: attachment)
-    window.location.href = `/api/attachments/${attId}/download`;
+    window.location.href = `${apiBase}/attachments/${attId}/download`;
   };
 
   const handleAttachmentClick = (e, file) => {
@@ -54,7 +58,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
         setLoading(true);
 
         // Get board info
-        const boardResponse = await fetch(`/api/boards?slug=${boardSlug}`);
+        const boardResponse = await fetch(`${apiBase}/boards?slug=${boardSlug}`);
         const boardData = await boardResponse.json();
 
         if (!boardData.board) {
@@ -77,7 +81,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
           searchParams.append('searchField', searchField);
         }
 
-        const postsResponse = await fetch(`/api/posts?${searchParams}`);
+        const postsResponse = await fetch(`${apiBase}/posts?${searchParams}`);
         const postsData = await postsResponse.json();
 
         setNotices(postsData.notices || []);
@@ -101,6 +105,9 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
+    if (locale === 'en') {
+      return date.toLocaleDateString('en-CA', { year: '2-digit', month: '2-digit', day: '2-digit' });
+    }
     return date.toLocaleDateString('ko-KR', {
       year: '2-digit',
       month: '2-digit',
@@ -135,7 +142,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
     // 다운로드 게시판은 모달로 표시
     if (boardSlug === 'downloads') {
       try {
-        const response = await fetch(`/api/posts/${post.id}?incrementView=true`);
+        const response = await fetch(`${apiBase}/posts/${post.id}?incrementView=true`);
         const data = await response.json();
 
         if (data.post) {
@@ -156,12 +163,12 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
 
   const handlePasswordSubmit = async () => {
     if (!passwordInput) {
-      setPasswordError('비밀번호를 입력해주세요.');
+      setPasswordError(t.pwRequired);
       return;
     }
 
     try {
-      const res = await fetch(`/api/posts/${passwordTarget.id}/verify-password`, {
+      const res = await fetch(`${apiBase}/posts/${passwordTarget.id}/verify-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: passwordInput }),
@@ -173,10 +180,10 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
         setPasswordModalOpen(false);
         window.location.href = `${basePath}/${passwordTarget.id}`;
       } else {
-        setPasswordError(data.error || '비밀번호가 일치하지 않습니다.');
+        setPasswordError(data.error || t.pwMismatch);
       }
     } catch {
-      setPasswordError('비밀번호 확인에 실패했습니다.');
+      setPasswordError(t.pwFail);
     }
   };
 
@@ -217,7 +224,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
           onClick={() => setCurrentPage(current - 1)}
           className="pagination-button"
         >
-          ‹ 이전
+          {t.prevPage}
         </button>
       );
     }
@@ -252,7 +259,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
           onClick={() => setCurrentPage(current + 1)}
           className="pagination-button"
         >
-          다음 ›
+          {t.nextPage}
         </button>
       );
     }
@@ -266,7 +273,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
       return (
         <>
           <span className="secret-icon">🔒</span>
-          <span className="secret-title">비밀글입니다.</span>
+          <span className="secret-title">{t.secretPostTitle}</span>
         </>
       );
     }
@@ -283,47 +290,29 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
     );
   };
 
-  const basePath = section === 'about' ? `/about/${boardSlug}` : `/support/${boardSlug}`;
+  const basePath = section === 'about' ? `${base}/about/${boardSlug}` : `${base}/support/${boardSlug}`;
 
-  const supportNav = [
-    { href: '/support/tech-guide', slug: 'tech-guide', label: '테크니컬 가이드' },
-    { href: '/support/downloads', slug: 'downloads', label: '자료 다운로드' },
-    { href: '/support/consultation', slug: 'consultation', label: '온라인 상담실' },
-    { href: '/support/notices', slug: 'notices', label: '공지사항' },
-    { href: '/support/contact', slug: 'contact', label: '찾아오시는 길' },
-    { href: '/support/catalog', slug: 'catalog', label: '카탈로그 신청' },
-  ];
-
-  const aboutNav = [
-    { href: '/about/us', slug: 'us', label: '회사소개' },
-    { href: '/about/organization', slug: 'organization', label: '개요 및 조직도' },
-    { href: '/about/why-led', slug: 'why-led', label: 'Why LED' },
-    { href: '/about/certifications', slug: 'certifications', label: '인증현황' },
-    { href: '/about/dealers', slug: 'dealers', label: '대리점 안내' },
-    { href: '/about/careers', slug: 'careers', label: '인재채용' },
-  ];
-
-  const navItems = section === 'about' ? aboutNav : supportNav;
-  const sectionLabel = section === 'about' ? '회사소개' : '고객지원';
+  const navItems = section === 'about' ? t.aboutNav : t.supportNav;
+  const sectionLabel = section === 'about' ? t.sectionAbout : t.sectionSupport;
 
   return (
     <>
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <div className="breadcrumb-container">
-          <a href="/">Home</a>
+          <a href={base || '/'}>Home</a>
           <span>&gt;</span>
-          <a href={`/${section}`}>{sectionLabel}</a>
+          <a href={`${base}/${section}`}>{sectionLabel}</a>
           <span>&gt;</span>
-          <span>{board?.name || '게시판'}</span>
+          <span>{board?.name || t.fallbackName}</span>
         </div>
       </div>
 
       {/* Page Header */}
       <section className="page-header">
         <div className="page-header-content">
-          <h1>{board?.name || '게시판'}</h1>
-          <p>{board?.description || '엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.'}</p>
+          <h1>{board?.name || t.fallbackName}</h1>
+          <p>{board?.description || t.headerFallbackDesc}</p>
         </div>
       </section>
 
@@ -331,7 +320,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
       <div className="sub-nav">
         <div className="sub-nav-container">
           {navItems.map((item) => (
-            <a key={item.slug} href={item.href} className={boardSlug === item.slug ? 'active' : ''}>
+            <a key={item.slug} href={`${base}${item.href}`} className={boardSlug === item.slug ? 'active' : ''}>
               {item.label}
             </a>
           ))}
@@ -341,18 +330,18 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
       {/* Board Content */}
       <div className="board-container">
         {loading ? (
-          <div className="loading">로딩 중...</div>
+          <div className="loading">{t.loading}</div>
         ) : (
           <>
             {/* Board Table */}
             <table className="board-table">
               <thead>
                 <tr>
-                  <th className="board-col-number">번호</th>
-                  <th className="board-col-title">제목</th>
-                  <th className="board-col-author">작성자</th>
-                  <th className="board-col-date">작성일</th>
-                  <th className="board-col-views">조회수</th>
+                  <th className="board-col-number">{t.thNumber}</th>
+                  <th className="board-col-title">{t.thTitle}</th>
+                  <th className="board-col-author">{t.thAuthor}</th>
+                  <th className="board-col-date">{t.thDate}</th>
+                  <th className="board-col-views">{t.thViews}</th>
                 </tr>
               </thead>
               <tbody>
@@ -360,7 +349,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
                 {notices.map((notice) => (
                   <tr key={notice.id} className="board-notice-row">
                     <td className="board-col-number">
-                      <span className="notice-badge">공지</span>
+                      <span className="notice-badge">{t.noticeBadge}</span>
                     </td>
                     <td className="board-col-title">
                       <a
@@ -384,7 +373,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
                 {posts.length === 0 && notices.length === 0 ? (
                   <tr>
                     <td colSpan="5" className="board-empty">
-                      등록된 게시물이 없습니다.
+                      {t.empty}
                     </td>
                   </tr>
                 ) : (
@@ -424,7 +413,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
                     background: '#2c5f8a', color: 'white', borderRadius: '4px',
                     textDecoration: 'none', fontSize: '0.9rem',
                   }}>
-                  {boardSlug === 'catalog' ? '카탈로그 신청' : '상담 작성'}
+                  {boardSlug === 'catalog' ? t.writeCatalog : t.writeConsult}
                 </a>
               </div>
             )}
@@ -435,20 +424,20 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
                   onChange={(e) => setSearchField(e.target.value)}
                   className="board-search-select"
                 >
-                  <option value="all">전체</option>
-                  <option value="title">제목</option>
-                  <option value="content">내용</option>
-                  <option value="author">작성자</option>
+                  <option value="all">{t.searchAll}</option>
+                  <option value="title">{t.searchTitle}</option>
+                  <option value="content">{t.searchContent}</option>
+                  <option value="author">{t.searchAuthor}</option>
                 </select>
                 <input
                   type="text"
                   value={searchKeyword}
                   onChange={(e) => setSearchKeyword(e.target.value)}
-                  placeholder="검색어를 입력하세요"
+                  placeholder={t.searchPlaceholder}
                   className="board-search-input"
                 />
                 <button type="submit" className="board-search-button">
-                  검색
+                  {t.searchBtn}
                 </button>
               </form>
             </div>
@@ -469,20 +458,20 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
               <h2 className="modal-title">{selectedPost.title}</h2>
               <div className="modal-meta">
                 <span className="modal-meta-item">
-                  <strong>작성자:</strong> {selectedPost.author}
+                  <strong>{t.metaAuthor}</strong> {selectedPost.author}
                 </span>
                 <span className="modal-meta-item">
-                  <strong>작성일:</strong> {formatDate(selectedPost.created_at)}
+                  <strong>{t.metaDate}</strong> {formatDate(selectedPost.created_at)}
                 </span>
                 <span className="modal-meta-item">
-                  <strong>조회수:</strong> {formatNumber(selectedPost.view_count)}
+                  <strong>{t.metaViews}</strong> {formatNumber(selectedPost.view_count)}
                 </span>
               </div>
             </div>
 
             {postAttachments.length > 0 && (
               <div className="modal-attachments">
-                <strong>첨부파일:</strong>
+                <strong>{t.attachmentsLabel}</strong>
                 <ul className="modal-attachment-list">
                   {postAttachments.map((file) => {
                     const unavailable = file.is_available === false;
@@ -501,18 +490,14 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
                               font: 'inherit',
                               textAlign: 'left',
                             }}
-                            onClick={() =>
-                              alert(
-                                '해당 파일은 현재 준비 중입니다.\n빠른 시일 내에 다운로드 가능하도록 조치하겠습니다.'
-                              )
-                            }
+                            onClick={() => alert(t.fileUnavailableAlert)}
                           >
                             📎 {file.original_filename}
                             <span className="modal-file-size">
                               ({formatFileSize(file.file_size)})
                             </span>
                             <span style={{ marginLeft: 8, color: '#c00', fontSize: '0.85em' }}>
-                              · 준비 중
+                              {t.preparing}
                             </span>
                           </button>
                         </li>
@@ -521,7 +506,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
                     return (
                       <li key={file.id}>
                         <a
-                          href={`/api/attachments/${file.id}/download`}
+                          href={`${apiBase}/attachments/${file.id}/download`}
                           className="modal-attachment-link"
                           onClick={(e) => handleAttachmentClick(e, file)}
                         >
@@ -531,7 +516,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
                           </span>
                           {boardSlug === 'downloads' && !session && (
                             <span style={{ marginLeft: 8, color: '#2563eb', fontSize: '0.8em' }}>
-                              · 🔒 회원 전용
+                              {t.membersOnlyTag}
                             </span>
                           )}
                         </a>
@@ -555,8 +540,8 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
         <div className="modal-overlay" onClick={closePasswordModal}>
           <div className="password-modal" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={closePasswordModal}>×</button>
-            <h3>🔒 비밀글입니다</h3>
-            <p>비밀번호를 입력해주세요.</p>
+            <h3>{t.pwModalTitle}</h3>
+            <p>{t.pwDesc}</p>
             <input
               type="password"
               className="password-input"
@@ -574,8 +559,8 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
             />
             <div className="password-error">{passwordError}</div>
             <div className="password-buttons">
-              <button className="btn-password-cancel" onClick={closePasswordModal}>취소</button>
-              <button className="btn-password-confirm" onClick={handlePasswordSubmit}>확인</button>
+              <button className="btn-password-cancel" onClick={closePasswordModal}>{t.cancel}</button>
+              <button className="btn-password-confirm" onClick={handlePasswordSubmit}>{t.confirm}</button>
             </div>
           </div>
         </div>
@@ -583,6 +568,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
 
       {/* 회원 전용 다운로드 — 인라인 로그인 모달 */}
       <LoginModal
+        locale={locale}
         isOpen={loginModalOpen}
         onClose={() => setLoginModalOpen(false)}
         onSuccess={() => {
@@ -591,7 +577,7 @@ export default function BoardListPage({ boardSlug, section = 'support' }) {
             setPendingAttachment(null);
           }
         }}
-        message="이 자료는 회원 전용입니다. 로그인 후 다운로드할 수 있습니다."
+        message={t.loginRequiredMsg}
       />
     </>
   );

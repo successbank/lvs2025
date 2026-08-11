@@ -3,10 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import '../app/styles/globals.css';
+import { getDict } from '@/lib/i18n';
 
-export default function BoardViewPage({ boardSlug, postId, section = 'support' }) {
+export default function BoardViewPage({ boardSlug, postId, section = 'support', locale = 'ko' }) {
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === 'ADMIN';
+  const t = getDict(locale).board;
+  const apiBase = locale === 'en' ? '/api/en' : '/api';
+  const base = locale === 'en' ? '/en' : '';
 
   const [post, setPost] = useState(null);
   const [attachments, setAttachments] = useState([]);
@@ -22,7 +26,7 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
       try {
         // sessionStorage에서 저장된 비밀번호 확인
         const savedPw = sessionStorage.getItem(`post_pw_${postId}`);
-        let url = `/api/posts/${postId}?incrementView=true`;
+        let url = `${apiBase}/posts/${postId}?incrementView=true`;
         if (savedPw) {
           url += `&password=${encodeURIComponent(savedPw)}`;
         }
@@ -54,13 +58,13 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
 
   const handleGateSubmit = async () => {
     if (!gatePassword) {
-      setGateError('비밀번호를 입력해주세요.');
+      setGateError(t.pwRequired);
       return;
     }
 
     try {
       // 비밀번호 확인
-      const verifyRes = await fetch(`/api/posts/${postId}/verify-password`, {
+      const verifyRes = await fetch(`${apiBase}/posts/${postId}/verify-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: gatePassword }),
@@ -68,14 +72,14 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
       const verifyData = await verifyRes.json();
 
       if (!verifyData.verified) {
-        setGateError(verifyData.error || '비밀번호가 일치하지 않습니다.');
+        setGateError(verifyData.error || t.pwMismatch);
         return;
       }
 
       // 비밀번호 저장 후 다시 조회
       sessionStorage.setItem(`post_pw_${postId}`, gatePassword);
 
-      const response = await fetch(`/api/posts/${postId}?incrementView=false&password=${encodeURIComponent(gatePassword)}`);
+      const response = await fetch(`${apiBase}/posts/${postId}?incrementView=false&password=${encodeURIComponent(gatePassword)}`);
       const data = await response.json();
 
       if (data.post && !data.post.requiresPassword) {
@@ -86,13 +90,13 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
         setRequiresPassword(false);
       }
     } catch {
-      setGateError('비밀번호 확인에 실패했습니다.');
+      setGateError(t.pwFail);
     }
   };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleString('ko-KR', {
+    return date.toLocaleString(locale === 'en' ? 'en-US' : 'ko-KR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -113,49 +117,31 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
     return Math.round(bytes / Math.pow(k, i) * 10) / 10 + ' ' + sizes[i];
   };
 
-  const basePath = section === 'about' ? `/about/${boardSlug}` : `/support/${boardSlug}`;
+  const basePath = section === 'about' ? `${base}/about/${boardSlug}` : `${base}/support/${boardSlug}`;
 
-  const supportNav = [
-    { href: '/support/tech-guide', slug: 'tech-guide', label: '테크니컬 가이드' },
-    { href: '/support/downloads', slug: 'downloads', label: '자료 다운로드' },
-    { href: '/support/consultation', slug: 'consultation', label: '온라인 상담실' },
-    { href: '/support/notices', slug: 'notices', label: '공지사항' },
-    { href: '/support/contact', slug: 'contact', label: '찾아오시는 길' },
-    { href: '/support/catalog', slug: 'catalog', label: '카탈로그 신청' },
-  ];
-
-  const aboutNav = [
-    { href: '/about/us', slug: 'us', label: '회사소개' },
-    { href: '/about/organization', slug: 'organization', label: '개요 및 조직도' },
-    { href: '/about/why-led', slug: 'why-led', label: 'Why LED' },
-    { href: '/about/certifications', slug: 'certifications', label: '인증현황' },
-    { href: '/about/dealers', slug: 'dealers', label: '대리점 안내' },
-    { href: '/about/careers', slug: 'careers', label: '인재채용' },
-  ];
-
-  const navItems = section === 'about' ? aboutNav : supportNav;
-  const sectionLabel = section === 'about' ? '회사소개' : '고객지원';
+  const navItems = section === 'about' ? t.aboutNav : t.supportNav;
+  const sectionLabel = section === 'about' ? t.sectionAbout : t.sectionSupport;
 
   return (
     <>
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <div className="breadcrumb-container">
-          <a href="/">Home</a>
+          <a href={base || '/'}>Home</a>
           <span>&gt;</span>
-          <a href={`/${section}`}>{sectionLabel}</a>
+          <a href={`${base}/${section}`}>{sectionLabel}</a>
           <span>&gt;</span>
-          <a href={basePath}>{post?.board_name || '게시판'}</a>
+          <a href={basePath}>{post?.board_name || t.fallbackName}</a>
           <span>&gt;</span>
-          <span>{requiresPassword ? '비밀글' : (post?.title || '게시물')}</span>
+          <span>{requiresPassword ? t.secretCrumb : (post?.title || t.fallbackPost)}</span>
         </div>
       </div>
 
       {/* Page Header */}
       <section className="page-header">
         <div className="page-header-content">
-          <h1>{post?.board_name || '게시판'}</h1>
-          <p>엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.</p>
+          <h1>{post?.board_name || t.fallbackName}</h1>
+          <p>{t.headerFallbackDesc}</p>
         </div>
       </section>
 
@@ -163,7 +149,7 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
       <div className="sub-nav">
         <div className="sub-nav-container">
           {navItems.map((item) => (
-            <a key={item.slug} href={item.href} className={boardSlug === item.slug ? 'active' : ''}>
+            <a key={item.slug} href={`${base}${item.href}`} className={boardSlug === item.slug ? 'active' : ''}>
               {item.label}
             </a>
           ))}
@@ -173,18 +159,18 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
       {/* Board View Content */}
       <div className="board-container">
         {loading ? (
-          <div className="loading">로딩 중...</div>
+          <div className="loading">{t.loading}</div>
         ) : !post ? (
           <div className="board-error">
-            <p>게시물을 찾을 수 없습니다.</p>
-            <a href={basePath} className="btn-primary">목록으로</a>
+            <p>{t.notFound}</p>
+            <a href={basePath} className="btn-primary">{t.toList}</a>
           </div>
         ) : requiresPassword ? (
           /* 비밀번호 게이트 */
           <div className="board-password-gate">
             <div className="gate-icon">🔒</div>
-            <h3>비밀글입니다</h3>
-            <p>이 게시물은 비밀글로 등록되었습니다.<br/>비밀번호를 입력해주세요.</p>
+            <h3>{t.pwGateTitle}</h3>
+            <p>{t.pwGateDesc1}<br/>{t.pwGateDesc2}</p>
             <input
               type="password"
               className="password-input"
@@ -202,8 +188,8 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
             />
             <div className="password-error">{gateError}</div>
             <div className="gate-buttons">
-              <button className="btn-gate-confirm" onClick={handleGateSubmit}>확인</button>
-              <a href={basePath} className="btn-gate-list">목록</a>
+              <button className="btn-gate-confirm" onClick={handleGateSubmit}>{t.confirm}</button>
+              <a href={basePath} className="btn-gate-list">{t.list}</a>
             </div>
           </div>
         ) : (
@@ -216,31 +202,31 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
               </h2>
               <div className="board-view-meta">
                 <span className="board-meta-item">
-                  <strong>작성자:</strong> {post.author}
+                  <strong>{t.metaAuthor}</strong> {post.author}
                 </span>
                 <span className="board-meta-item">
-                  <strong>작성일:</strong> {formatDate(post.created_at)}
+                  <strong>{t.metaDate}</strong> {formatDate(post.created_at)}
                 </span>
                 <span className="board-meta-item">
-                  <strong>조회수:</strong> {formatNumber(post.view_count)}
+                  <strong>{t.metaViews}</strong> {formatNumber(post.view_count)}
                 </span>
               </div>
               {boardSlug === 'consultation' && (post.company || post.contact_name || post.contact_position || post.contact_email || post.contact_phone) && (
                 <div className="board-view-meta consultation-meta">
                   {post.company && (
-                    <span className="board-meta-item"><strong>업체명:</strong> {post.company}</span>
+                    <span className="board-meta-item"><strong>{t.metaCompany}</strong> {post.company}</span>
                   )}
                   {post.contact_name && (
-                    <span className="board-meta-item"><strong>담당자:</strong> {post.contact_name}</span>
+                    <span className="board-meta-item"><strong>{t.metaContact}</strong> {post.contact_name}</span>
                   )}
                   {post.contact_position && (
-                    <span className="board-meta-item"><strong>직함:</strong> {post.contact_position}</span>
+                    <span className="board-meta-item"><strong>{t.metaPosition}</strong> {post.contact_position}</span>
                   )}
                   {post.contact_email && (
-                    <span className="board-meta-item"><strong>이메일:</strong> {post.contact_email}</span>
+                    <span className="board-meta-item"><strong>{t.metaEmail}</strong> {post.contact_email}</span>
                   )}
                   {post.contact_phone && (
-                    <span className="board-meta-item"><strong>연락처:</strong> {post.contact_phone}</span>
+                    <span className="board-meta-item"><strong>{t.metaPhone}</strong> {post.contact_phone}</span>
                   )}
                 </div>
               )}
@@ -249,7 +235,7 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
             {/* Attachments */}
             {attachments.length > 0 && (
               <div className="board-view-attachments">
-                <strong>첨부파일:</strong>
+                <strong>{t.attachmentsLabel}</strong>
                 <ul className="attachment-list">
                   {attachments.map((file) => {
                     const unavailable = file.is_available === false;
@@ -268,18 +254,14 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
                               font: 'inherit',
                               textAlign: 'left',
                             }}
-                            onClick={() =>
-                              alert(
-                                '해당 파일은 현재 준비 중입니다.\n빠른 시일 내에 다운로드 가능하도록 조치하겠습니다.'
-                              )
-                            }
+                            onClick={() => alert(t.fileUnavailableAlert)}
                           >
                             📎 {file.original_filename}
                             <span className="file-size">
                               ({formatFileSize(file.file_size)})
                             </span>
                             <span style={{ marginLeft: 8, color: '#c00', fontSize: '0.85em' }}>
-                              · 준비 중
+                              {t.preparing}
                             </span>
                           </button>
                         </li>
@@ -288,7 +270,7 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
                     return (
                       <li key={file.id}>
                         <a
-                          href={`/api/attachments/${file.id}/download`}
+                          href={`${apiBase}/attachments/${file.id}/download`}
                           className="attachment-link"
                         >
                           📎 {file.original_filename}
@@ -313,7 +295,7 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
             <div className="board-view-navigation">
               <div className="board-nav-buttons">
                 <a href={basePath} className="btn-list">
-                  목록
+                  {t.list}
                 </a>
               </div>
             </div>
@@ -322,7 +304,7 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
             <div className="board-view-prevnext">
               {nextPost && (
                 <div className="board-prevnext-item">
-                  <span className="prevnext-label">다음글</span>
+                  <span className="prevnext-label">{t.nextPostLabel}</span>
                   <a href={`${basePath}/${nextPost.id}`} className="prevnext-title">
                     {nextPost.title}
                   </a>
@@ -330,7 +312,7 @@ export default function BoardViewPage({ boardSlug, postId, section = 'support' }
               )}
               {prevPost && (
                 <div className="board-prevnext-item">
-                  <span className="prevnext-label">이전글</span>
+                  <span className="prevnext-label">{t.prevPostLabel}</span>
                   <a href={`${basePath}/${prevPost.id}`} className="prevnext-title">
                     {prevPost.title}
                   </a>

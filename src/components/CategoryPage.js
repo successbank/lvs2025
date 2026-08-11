@@ -4,8 +4,12 @@ import { useState, useEffect } from 'react';
 import '../app/styles/globals.css';
 import WishlistButton from '@/components/WishlistButton';
 import ProductSubNav from '@/components/ui/ProductSubNav';
+import { getDict } from '@/lib/i18n';
 
-export default function CategoryPage({ categorySlug }) {
+export default function CategoryPage({ categorySlug, locale = 'ko' }) {
+  const t = getDict(locale).products;
+  const apiBase = locale === 'en' ? '/api/en' : '/api';
+  const base = locale === 'en' ? '/en' : '';
   const [category, setCategory] = useState(null);
   const [products, setProducts] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
@@ -14,11 +18,11 @@ export default function CategoryPage({ categorySlug }) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`/api/products?category=${categorySlug}`);
+        const response = await fetch(`${apiBase}/products?category=${categorySlug}`);
         const data = await response.json();
 
         // Get category info
-        const catResponse = await fetch(`/api/categories?slug=${categorySlug}`);
+        const catResponse = await fetch(`${apiBase}/categories?slug=${categorySlug}`);
         const catData = await catResponse.json();
 
         setCategory(catData.category);
@@ -33,22 +37,16 @@ export default function CategoryPage({ categorySlug }) {
     fetchData();
   }, [categorySlug]);
 
-  const categoryNames = {
-    'general-lighting': '일반조명',
-    'power-supply': '파워서플라이',
-    'led-lightsource': 'LED LIGHTSOURCE'
-  };
-
-  const displayName = category?.name || categoryNames[categorySlug] || '제품';
+  const displayName = category?.name || t.categoryNames[categorySlug] || t.fallbackTitle;
 
   return (
     <>
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <div className="breadcrumb-container">
-          <a href="/">Home</a>
+          <a href={base || '/'}>Home</a>
           <span>&gt;</span>
-          <a href="/products">제품소개</a>
+          <a href={`${base}/products`}>{t.root}</a>
           <span>&gt;</span>
           <span>{displayName}</span>
         </div>
@@ -58,17 +56,18 @@ export default function CategoryPage({ categorySlug }) {
       <section className="page-header">
         <div className="page-header-content">
           <h1>{displayName}</h1>
-          <p>{category?.description || '엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.'}</p>
+          <p>{category?.description || t.headerFallbackDesc}</p>
         </div>
       </section>
 
       {/* Sub Navigation */}
       <ProductSubNav
-        allHref={`/products/${categorySlug}`}
+        allHref={`${base}/products/${categorySlug}`}
         allActive
+        allLabel={t.subNavAll}
         items={subcategories.map((subcat) => ({
           key: subcat.id,
-          href: `/products/${categorySlug}/${subcat.slug}`,
+          href: `${base}/products/${categorySlug}/${subcat.slug}`,
           label: subcat.name,
         }))}
       />
@@ -76,20 +75,20 @@ export default function CategoryPage({ categorySlug }) {
       {/* Products Grid */}
       <div className="products-container">
         {loading ? (
-          <div className="loading">로딩 중...</div>
+          <div className="loading">{t.loading}</div>
         ) : products.length === 0 ? (
           <div className="no-products-message">
             <div className="no-products-icon">📦</div>
-            <h3>준비 중인 제품입니다</h3>
-            <p>곧 다양한 {displayName} 제품을 만나보실 수 있습니다.</p>
+            <h3>{t.comingSoonTitle}</h3>
+            <p>{t.comingSoonDesc(displayName)}</p>
             {subcategories.length > 0 && (
               <div className="subcategories-preview">
-                <h4>제품 카테고리</h4>
+                <h4>{t.productCategories}</h4>
                 <div className="subcategories-grid">
                   {subcategories.map((subcat) => (
                     <a
                       key={subcat.id}
-                      href={`/products/${categorySlug}/${subcat.slug}`}
+                      href={`${base}/products/${categorySlug}/${subcat.slug}`}
                       className="subcategory-card"
                     >
                       <div className="subcategory-icon">
@@ -123,8 +122,8 @@ export default function CategoryPage({ categorySlug }) {
                   <h3>{product.name}</h3>
                   <p className="product-model">{product.modelName}</p>
                   <p className="product-description">{product.summary || product.description || '-'}</p>
-                  <a href={`/products/${product.slug}`} className="product-detail-link">
-                    상세보기 →
+                  <a href={`${base}/products/${product.slug}`} className="product-detail-link">
+                    {t.detailLink}
                   </a>
                 </div>
               </div>

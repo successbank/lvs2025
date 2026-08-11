@@ -3,28 +3,7 @@
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-
-// 폴백 메뉴 데이터 (DB 데이터가 없을 때 사용)
-const fallbackMenus = [
-  { id: 'f1', label: '일반조명', url: '/products/general-lighting', type: 'link', children: [] },
-  { id: 'f2', label: '파워서플라이', url: '/products/power-supply', type: 'link', children: [] },
-  { id: 'f3', label: 'LED LIGHTSOURCE', url: '/products/led-lightsource', type: 'link', children: [] },
-  { id: 'f4', label: '회사소개', url: '/about', type: 'dropdown', children: [
-    { id: 'f4-1', label: '회사소개', url: '/about/us' },
-    { id: 'f4-2', label: '개요 및 조직도', url: '/about/organization' },
-    { id: 'f4-3', label: 'Why LED', url: '/about/why-led' },
-    { id: 'f4-4', label: '인증현황', url: '/about/certifications' },
-    { id: 'f4-5', label: '대리점 안내', url: '/about/dealers' },
-  ]},
-  { id: 'f5', label: '고객지원', url: '/support', type: 'dropdown', children: [
-    { id: 'f5-1', label: '공지사항', url: '/support/notices' },
-    { id: 'f5-2', label: '기술자료', url: '/support/tech-guide' },
-    { id: 'f5-3', label: '다운로드', url: '/support/downloads' },
-    { id: 'f5-4', label: '온라인 상담', url: '/support/consultation' },
-    { id: 'f5-5', label: '찾아오시는 길', url: '/support/contact' },
-    { id: 'f5-6', label: '카탈로그 신청', url: '/support/catalog' },
-  ]},
-];
+import { getDict, localeFromPathname, stripLocale, withLocale, togglePath } from '@/lib/i18n';
 
 export default function Navigation({ companyInfo, navigationData }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,9 +14,16 @@ export default function Navigation({ companyInfo, navigationData }) {
   const pathname = usePathname();
   const { data: session } = useSession();
 
+  const locale = localeFromPathname(pathname);
+  const t = getDict(locale).nav;
+  // 로케일별 API 프리픽스 — EN은 /api/en/* (번역 데이터)
+  const apiBase = locale === 'en' ? '/api/en' : '/api';
+  // 내부 링크에 로케일 프리픽스 적용 (KR은 원본 그대로)
+  const L = (url) => withLocale(url, locale);
+
   // 클라이언트에서 최신 메뉴 데이터 fetch (캐시 우회)
   useEffect(() => {
-    fetch('/api/menu-items')
+    fetch(`${apiBase}/menu-items`)
       .then(res => res.json())
       .then(data => {
         if (data.menuItems && data.menuItems.length > 0) {
@@ -45,11 +31,11 @@ export default function Navigation({ companyInfo, navigationData }) {
         }
       })
       .catch(() => {});
-  }, []);
+  }, [apiBase]);
 
   // 모바일 메뉴용 제품 하위 카테고리 fetch (slug → children 매핑)
   useEffect(() => {
-    fetch('/api/categories?parentId=null&includeChildren=true')
+    fetch(`${apiBase}/categories?parentId=null&includeChildren=true`)
       .then(res => res.json())
       .then(data => {
         if (!data.categories) return;
@@ -62,7 +48,7 @@ export default function Navigation({ companyInfo, navigationData }) {
         setProductSubcategories(map);
       })
       .catch(() => {});
-  }, []);
+  }, [apiBase]);
 
   // /products/{slug} 형태의 url에서 slug 추출
   const getCategorySlug = (url) => {
@@ -82,7 +68,10 @@ export default function Navigation({ companyInfo, navigationData }) {
   };
 
   // 우선순위: 클라이언트 fetch > 서버 prop > 폴백
-  const menus = liveMenus || (navigationData && navigationData.length > 0 ? navigationData : fallbackMenus);
+  // EN은 서버 prop(한국어 라벨)을 건너뛰고 영문 폴백 메뉴 사용
+  const menus = locale === 'en'
+    ? (liveMenus || t.fallbackMenus)
+    : (liveMenus || (navigationData && navigationData.length > 0 ? navigationData : t.fallbackMenus));
 
   // 모바일 메뉴용 그룹 분류: 제품 메뉴와 나머지 분리
   const productMenus = menus.filter(m => m.url.startsWith('/products'));
@@ -113,34 +102,47 @@ export default function Navigation({ companyInfo, navigationData }) {
     document.body.style.overflow = '';
   };
 
-  const isActive = (url) => pathname.startsWith(url);
+  // 활성 표시는 로케일 프리픽스를 제거한 경로로 비교 (KR/EN 동일 동작)
+  const isActive = (url) => stripLocale(pathname).startsWith(url);
 
   return (
     <>
       {/* Header Top Bar */}
       <div className={`header-top ${isScrolled ? 'header-top-hidden' : ''}`}>
         <div className="header-top-content">
-          <span className="header-tagline">산업용 LED 조명 전문기업</span>
+          <span className="header-tagline">{t.tagline}</span>
           <div className="header-top-links">
-            <a href="/about/dealers">대리점 안내</a>
+            <a
+              href={togglePath(pathname, 'ko')}
+              aria-label="한국어"
+              style={locale === 'ko' ? { fontWeight: 700, textDecoration: 'underline' } : undefined}
+            >ko</a>
             <span className="header-divider">|</span>
-            <a href="/support/tech-guide">기술지원</a>
+            <a
+              href={togglePath(pathname, 'en')}
+              aria-label="English"
+              style={locale === 'en' ? { fontWeight: 700, textDecoration: 'underline' } : undefined}
+            >en</a>
             <span className="header-divider">|</span>
-            <a href="/support/downloads">다운로드 센터</a>
+            <a href={L('/about/dealers')}>{t.dealers}</a>
             <span className="header-divider">|</span>
-            <a href="/about/careers">인재채용</a>
+            <a href={L('/support/tech-guide')}>{t.techSupport}</a>
+            <span className="header-divider">|</span>
+            <a href={L('/support/downloads')}>{t.downloadCenter}</a>
+            <span className="header-divider">|</span>
+            <a href={L('/about/careers')}>{t.careers}</a>
             <span className="header-divider">|</span>
             {session ? (
               <>
-                <a href="/mypage">{session.user.name}님</a>
+                <a href={L('/mypage')}>{session.user.name}{t.memberSuffix}</a>
                 <span className="header-divider">|</span>
-                <a href="#" onClick={(e) => { e.preventDefault(); signOut({ callbackUrl: '/' }); }}>로그아웃</a>
+                <a href="#" onClick={(e) => { e.preventDefault(); signOut({ callbackUrl: locale === 'en' ? '/en' : '/' }); }}>{t.logout}</a>
               </>
             ) : (
               <>
-                <a href="/login">로그인</a>
+                <a href={L('/login')}>{t.login}</a>
                 <span className="header-divider">|</span>
-                <a href="/register">회원가입</a>
+                <a href={L('/register')}>{t.register}</a>
               </>
             )}
           </div>
@@ -150,17 +152,17 @@ export default function Navigation({ companyInfo, navigationData }) {
       {/* Main Navigation */}
       <nav className={`main-nav ${isScrolled ? 'nav-scrolled' : ''}`}>
         <div className="nav-container">
-          <a href="/" className="logo">
-            <img src="/images/logo.png" alt="LVS - Lighting for Vision System" className="logo-img" />
+          <a href={locale === 'en' ? '/en' : '/'} className="logo">
+            <img src="/images/logo.png" alt={t.logoAlt} className="logo-img" />
           </a>
           <ul className="nav-menu">
             {menus.map(item => (
               <li key={item.id}>
-                <a href={item.url} className={isActive(item.url) ? 'active' : ''}>{item.label}</a>
+                <a href={L(item.url)} className={isActive(item.url) ? 'active' : ''}>{item.label}</a>
                 {item.type === 'dropdown' && item.children && item.children.length > 0 && (
                   <ul className="dropdown-menu">
                     {item.children.map(child => (
-                      <li key={child.id}><a href={child.url}>{child.label}</a></li>
+                      <li key={child.id}><a href={L(child.url)}>{child.label}</a></li>
                     ))}
                   </ul>
                 )}
@@ -168,7 +170,7 @@ export default function Navigation({ companyInfo, navigationData }) {
             ))}
           </ul>
           <div className="nav-actions">
-            <a href="/support/consultation" className="nav-cta-btn">상담문의</a>
+            <a href={L('/support/consultation')} className="nav-cta-btn">{t.consultCta}</a>
             <div className={`mobile-menu-toggle ${mobileMenuOpen ? 'hamburger-active' : ''}`} onClick={toggleMobileMenu}>
               <span></span>
               <span></span>
@@ -193,9 +195,9 @@ export default function Navigation({ companyInfo, navigationData }) {
           {/* 제품 메뉴 그룹 */}
           {productMenus.length > 0 && (
             <div className="mobile-menu-group">
-              <div className="mobile-menu-group-title">제품소개</div>
+              <div className="mobile-menu-group-title">{t.productsGroup}</div>
               <ul>
-                <li><a href="/products" onClick={closeMobileMenu}>전체 제품</a></li>
+                <li><a href={L('/products')} onClick={closeMobileMenu}>{t.allProducts}</a></li>
                 {productMenus.map(item => {
                   const submenus = getSubmenus(item.url);
                   const isExpanded = expandedMenus.includes(item.id);
@@ -203,13 +205,13 @@ export default function Navigation({ companyInfo, navigationData }) {
                   return (
                     <li key={item.id} className={submenus.length > 0 ? 'mobile-menu-has-sub' : ''}>
                       <div className="mobile-menu-row">
-                        <a href={item.url} onClick={closeMobileMenu}>{item.label}</a>
+                        <a href={L(item.url)} onClick={closeMobileMenu}>{item.label}</a>
                         {submenus.length > 0 && (
                           <button
                             type="button"
                             className={`mobile-submenu-toggle ${isExpanded ? 'is-open' : ''}`}
                             aria-expanded={isExpanded}
-                            aria-label={`${item.label} 하위 메뉴 ${isExpanded ? '닫기' : '열기'}`}
+                            aria-label={t.submenuAria(item.label, isExpanded)}
                             onClick={() => toggleSubmenu(item.id)}
                           >
                             {isExpanded ? (
@@ -229,7 +231,7 @@ export default function Navigation({ companyInfo, navigationData }) {
                           {submenus.map(sub => (
                             <li key={sub.id}>
                               <a
-                                href={`/products/${categorySlug}/${sub.slug}`}
+                                href={L(`/products/${categorySlug}/${sub.slug}`)}
                                 onClick={closeMobileMenu}
                               >
                                 {sub.name}
@@ -251,16 +253,16 @@ export default function Navigation({ companyInfo, navigationData }) {
               <ul>
                 {item.type === 'dropdown' && item.children && item.children.length > 0
                   ? item.children.map(child => (
-                      <li key={child.id}><a href={child.url} onClick={closeMobileMenu}>{child.label}</a></li>
+                      <li key={child.id}><a href={L(child.url)} onClick={closeMobileMenu}>{child.label}</a></li>
                     ))
-                  : <li><a href={item.url} onClick={closeMobileMenu}>{item.label}</a></li>
+                  : <li><a href={L(item.url)} onClick={closeMobileMenu}>{item.label}</a></li>
                 }
               </ul>
             </div>
           ))}
         </div>
         <div className="mobile-menu-bottom">
-          <a href="/support/consultation" className="mobile-cta-btn" onClick={closeMobileMenu}>상담문의</a>
+          <a href={L('/support/consultation')} className="mobile-cta-btn" onClick={closeMobileMenu}>{t.consultCta}</a>
           <a href={`tel:${companyInfo?.phone || '032-461-1800'}`} className="mobile-phone">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             {companyInfo?.phone || '032-461-1800'}

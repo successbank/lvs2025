@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import '../app/styles/globals.css';
+import { getDict } from '@/lib/i18n';
 
 const MAX_FILES = 10;
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -24,9 +25,13 @@ function getExt(name) {
   return dot < 0 ? '' : name.slice(dot + 1).toLowerCase();
 }
 
-export default function ConsultationWritePage() {
+export default function ConsultationWritePage({ locale = 'ko' }) {
   const router = useRouter();
   const { status: authStatus } = useSession();
+  const t = getDict(locale).consult;
+  const tb = getDict(locale).board;
+  const apiBase = locale === 'en' ? '/api/en' : '/api';
+  const base = locale === 'en' ? '/en' : '';
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -92,7 +97,7 @@ export default function ConsultationWritePage() {
     if (arr.length === 0) return;
 
     if (attachments.length + arr.length > MAX_FILES) {
-      setAttachmentError(`첨부파일은 최대 ${MAX_FILES}개까지 업로드할 수 있습니다. (현재 ${attachments.length}개)`);
+      setAttachmentError(t.maxFilesError(MAX_FILES, attachments.length));
       return;
     }
 
@@ -100,15 +105,15 @@ export default function ConsultationWritePage() {
     for (const f of arr) {
       const ext = getExt(f.name);
       if (!ALLOWED_EXTENSIONS.includes(ext)) {
-        setAttachmentError(`허용되지 않는 확장자입니다: ${f.name}`);
+        setAttachmentError(t.extError(f.name));
         return;
       }
       if (f.size === 0) {
-        setAttachmentError(`빈 파일은 업로드할 수 없습니다: ${f.name}`);
+        setAttachmentError(t.emptyFileError(f.name));
         return;
       }
       if (f.size > MAX_FILE_SIZE) {
-        setAttachmentError(`파일당 최대 10MB까지 가능합니다: ${f.name} (${formatFileSize(f.size)})`);
+        setAttachmentError(t.sizeError(f.name, formatFileSize(f.size)));
         return;
       }
       valid.push(f);
@@ -182,12 +187,12 @@ export default function ConsultationWritePage() {
       !trimmed.company || !trimmed.contactName || !trimmed.contactPosition ||
       !trimmed.contactEmail || !trimmed.contactPhone
     ) {
-      alert('모든 필수 항목을 입력해주세요.');
+      alert(t.validationAll);
       return;
     }
 
     if (!/^\d{4}$/.test(trimmed.password)) {
-      alert('비밀번호는 4자리 숫자로 입력해주세요.');
+      alert(t.validationPw);
       return;
     }
 
@@ -214,14 +219,14 @@ export default function ConsultationWritePage() {
         fd.append('files', file, file.name);
       }
 
-      const res = await fetch('/api/posts', {
+      const res = await fetch(`${apiBase}/posts`, {
         method: 'POST',
         body: fd,
       });
 
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || '등록에 실패했습니다.');
+        throw new Error(err.error || t.submitFail);
       }
 
       // 로그인 상태면 입력한 직함을 회원정보에 저장(신규 필드).
@@ -246,8 +251,8 @@ export default function ConsultationWritePage() {
         }
       }
 
-      alert('상담이 등록되었습니다.');
-      router.push('/support/consultation');
+      alert(t.submitted);
+      router.push(`${base}/support/consultation`);
     } catch (error) {
       alert(error.message);
     } finally {
@@ -259,44 +264,43 @@ export default function ConsultationWritePage() {
     <>
       <div className="breadcrumb">
         <div className="breadcrumb-container">
-          <a href="/">Home</a>
+          <a href={base || '/'}>Home</a>
           <span>&gt;</span>
-          <a href="/support">고객지원</a>
+          <a href={`${base}/support`}>{t.crumbSupport}</a>
           <span>&gt;</span>
-          <a href="/support/consultation">온라인 상담실</a>
+          <a href={`${base}/support/consultation`}>{t.crumbBoard}</a>
           <span>&gt;</span>
-          <span>상담 작성</span>
+          <span>{t.crumbWrite}</span>
         </div>
       </div>
 
       <section className="page-header">
         <div className="page-header-content">
-          <h1>온라인 상담실</h1>
-          <p>제품 문의 및 기술 상담을 등록해 주세요.</p>
+          <h1>{t.headerTitle}</h1>
+          <p>{t.headerDesc}</p>
         </div>
       </section>
 
       <div className="sub-nav">
         <div className="sub-nav-container">
-          <a href="/support/tech-guide">테크니컬 가이드</a>
-          <a href="/support/downloads">자료 다운로드</a>
-          <a href="/support/consultation" className="active">온라인 상담실</a>
-          <a href="/support/notices">공지사항</a>
-          <a href="/support/contact">찾아오시는 길</a>
-          <a href="/support/catalog">카탈로그 신청</a>
+          {tb.supportNav.map((item) => (
+            <a key={item.slug} href={`${base}${item.href}`} className={item.slug === 'consultation' ? 'active' : ''}>
+              {item.label}
+            </a>
+          ))}
         </div>
       </div>
 
       <div className="form-container">
         <div className="form-intro">
-          <p>상담 내용을 작성해 주세요. 빠른 시일 내에 답변 드리겠습니다.</p>
+          <p>{t.intro}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="catalog-form">
           <table className="form-table">
             <tbody>
               <tr>
-                <th>이름 <span className="required">*</span></th>
+                <th>{t.thName} <span className="required">*</span></th>
                 <td>
                   <input
                     type="text"
@@ -305,10 +309,10 @@ export default function ConsultationWritePage() {
                     onChange={handleInputChange}
                     required
                     className="form-input"
-                    placeholder="이름을 입력해주세요"
+                    placeholder={t.phName}
                   />
                 </td>
-                <th>비밀번호 <span className="required">*</span></th>
+                <th>{t.thPassword} <span className="required">*</span></th>
                 <td>
                   <input
                     type="password"
@@ -320,12 +324,12 @@ export default function ConsultationWritePage() {
                     pattern="\d{4}"
                     maxLength={4}
                     className="form-input"
-                    placeholder="숫자 4자리 (수정/삭제 시 필요)"
+                    placeholder={t.phPassword}
                   />
                 </td>
               </tr>
               <tr>
-                <th>업체명 <span className="required">*</span></th>
+                <th>{t.thCompany} <span className="required">*</span></th>
                 <td>
                   <input
                     type="text"
@@ -334,10 +338,10 @@ export default function ConsultationWritePage() {
                     onChange={handleInputChange}
                     required
                     className="form-input"
-                    placeholder="업체명을 입력해주세요"
+                    placeholder={t.phCompany}
                   />
                 </td>
-                <th>담당자 <span className="required">*</span></th>
+                <th>{t.thContact} <span className="required">*</span></th>
                 <td>
                   <input
                     type="text"
@@ -346,12 +350,12 @@ export default function ConsultationWritePage() {
                     onChange={handleInputChange}
                     required
                     className="form-input"
-                    placeholder="담당자명을 입력해주세요"
+                    placeholder={t.phContact}
                   />
                 </td>
               </tr>
               <tr>
-                <th>직함 <span className="required">*</span></th>
+                <th>{t.thPosition} <span className="required">*</span></th>
                 <td>
                   <input
                     type="text"
@@ -360,10 +364,10 @@ export default function ConsultationWritePage() {
                     onChange={handleInputChange}
                     required
                     className="form-input"
-                    placeholder="예: 과장, 팀장, 대표"
+                    placeholder={t.phPosition}
                   />
                 </td>
-                <th>이메일 <span className="required">*</span></th>
+                <th>{t.thEmail} <span className="required">*</span></th>
                 <td>
                   <input
                     type="email"
@@ -372,12 +376,12 @@ export default function ConsultationWritePage() {
                     onChange={handleInputChange}
                     required
                     className="form-input"
-                    placeholder="이메일을 입력해주세요"
+                    placeholder={t.phEmail}
                   />
                 </td>
               </tr>
               <tr>
-                <th>연락처 <span className="required">*</span></th>
+                <th>{t.thPhone} <span className="required">*</span></th>
                 <td colSpan="3">
                   <input
                     type="tel"
@@ -386,12 +390,12 @@ export default function ConsultationWritePage() {
                     onChange={handleInputChange}
                     required
                     className="form-input-full"
-                    placeholder="연락처를 입력해주세요"
+                    placeholder={t.phPhone}
                   />
                 </td>
               </tr>
               <tr>
-                <th>제목 <span className="required">*</span></th>
+                <th>{t.thTitle} <span className="required">*</span></th>
                 <td colSpan="3">
                   <input
                     type="text"
@@ -400,12 +404,12 @@ export default function ConsultationWritePage() {
                     onChange={handleInputChange}
                     required
                     className="form-input-full"
-                    placeholder="상담 제목을 입력해주세요"
+                    placeholder={t.phTitle}
                   />
                 </td>
               </tr>
               <tr>
-                <th>내용 <span className="required">*</span></th>
+                <th>{t.thContent} <span className="required">*</span></th>
                 <td colSpan="3">
                   <textarea
                     name="content"
@@ -414,12 +418,12 @@ export default function ConsultationWritePage() {
                     required
                     rows="10"
                     className="form-textarea"
-                    placeholder="상담 내용을 입력해주세요"
+                    placeholder={t.phContent}
                   ></textarea>
                 </td>
               </tr>
               <tr>
-                <th>첨부파일</th>
+                <th>{t.thAttachments}</th>
                 <td colSpan="3">
                   <div
                     className={`consult-dropzone${dragActive ? ' is-dragover' : ''}`}
@@ -431,13 +435,13 @@ export default function ConsultationWritePage() {
                     onKeyDown={handleDropzoneKeyDown}
                     role="button"
                     tabIndex={0}
-                    aria-label="파일 첨부 영역. 클릭하거나 파일을 끌어다 놓으세요."
+                    aria-label={t.dropzoneAria}
                   >
                     <p className="consult-dropzone-title">
-                      파일을 끌어다 놓거나 <span className="consult-dropzone-link">클릭하여 선택</span>하세요
+                      {t.dropTitle1}<span className="consult-dropzone-link">{t.dropLink}</span>{t.dropTitle2}
                     </p>
                     <p className="consult-dropzone-hint">
-                      최대 {MAX_FILES}개 · 개당 10MB 이하 · pdf, doc, xls, ppt, hwp, jpg, png, gif, webp, zip
+                      {t.dropHint(MAX_FILES)}
                     </p>
                     <input
                       ref={fileInputRef}
@@ -468,7 +472,7 @@ export default function ConsultationWritePage() {
                             type="button"
                             className="consult-attachment-remove"
                             onClick={() => removeAttachment(idx)}
-                            aria-label={`${file.name} 삭제`}
+                            aria-label={t.removeAria(file.name)}
                           >
                             ×
                           </button>
@@ -483,10 +487,10 @@ export default function ConsultationWritePage() {
 
           <div className="form-buttons">
             <button type="submit" className="btn-submit" disabled={submitting}>
-              {submitting ? '등록 중...' : '등록'}
+              {submitting ? t.submitting : t.submit}
             </button>
-            <button type="button" onClick={() => router.push('/support/consultation')} className="btn-cancel">
-              취소
+            <button type="button" onClick={() => router.push(`${base}/support/consultation`)} className="btn-cancel">
+              {t.cancel}
             </button>
           </div>
         </form>

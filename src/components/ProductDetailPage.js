@@ -4,8 +4,12 @@ import { useState } from 'react';
 import '../app/styles/globals.css';
 import WishlistButton from '@/components/WishlistButton';
 import ProductSubNav from '@/components/ui/ProductSubNav';
+import { getDict } from '@/lib/i18n';
 
-export default function ProductDetailPage({ product }) {
+export default function ProductDetailPage({ product, locale = 'ko' }) {
+  const t = getDict(locale).products;
+  const apiBase = locale === 'en' ? '/api/en' : '/api';
+  const base = locale === 'en' ? '/en' : '';
   const [selectedImage, setSelectedImage] = useState(0);
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [inquiryForm, setInquiryForm] = useState({ name: '', password: '', content: '' });
@@ -49,7 +53,7 @@ export default function ProductDetailPage({ product }) {
       return <a href={cellValue} target="_blank" rel="noopener noreferrer" className="series-download-link">PDF</a>;
     }
     if (typeof cellValue === 'string' && (cellValue.includes('sub06') || cellValue.match(/\.dwg$/i))) {
-      return <a href="/support/downloads" className="series-download-link">DWG</a>;
+      return <a href={`${base}/support/downloads`} className="series-download-link">DWG</a>;
     }
     // 줄바꿈 처리
     if (typeof cellValue === 'string' && cellValue.includes('\n')) {
@@ -64,23 +68,23 @@ export default function ProductDetailPage({ product }) {
     e.preventDefault();
 
     if (!inquiryForm.name || !inquiryForm.password || !inquiryForm.content) {
-      alert('모든 필수 항목을 입력해주세요.');
+      alert(t.validationAll);
       return;
     }
 
     if (!/^\d{4}$/.test(inquiryForm.password)) {
-      alert('비밀번호는 4자리 숫자로 입력해주세요.');
+      alert(t.validationPw);
       return;
     }
 
     setInquirySubmitting(true);
     try {
-      const res = await fetch('/api/posts', {
+      const res = await fetch(`${apiBase}/posts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           boardId: 'board-consultation',
-          title: `[제품문의] ${product.name}`,
+          title: t.inquiryTitlePrefix(product.name),
           content: inquiryForm.content,
           author: inquiryForm.name,
           password: inquiryForm.password,
@@ -90,7 +94,7 @@ export default function ProductDetailPage({ product }) {
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || '문의 등록에 실패했습니다.');
+        throw new Error(err.error || t.inquiryFail);
       }
 
       setInquirySuccess(true);
@@ -106,17 +110,17 @@ export default function ProductDetailPage({ product }) {
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <div className="breadcrumb-container">
-          <a href="/">Home</a>
+          <a href={base || '/'}>Home</a>
           <span>&gt;</span>
-          <a href="/products">제품소개</a>
+          <a href={`${base}/products`}>{t.root}</a>
           {product.category?.parent && (
             <>
               <span>&gt;</span>
-              <a href={`/products/${product.category.parent.slug}`}>{product.category.parent.name}</a>
+              <a href={`${base}/products/${product.category.parent.slug}`}>{product.category.parent.name}</a>
             </>
           )}
           <span>&gt;</span>
-          <a href={`/products/${product.category?.slug || ''}`}>{product.category?.name}</a>
+          <a href={`${base}/products/${product.category?.slug || ''}`}>{product.category?.name}</a>
           <span>&gt;</span>
           <span>{product.name}</span>
         </div>
@@ -125,11 +129,12 @@ export default function ProductDetailPage({ product }) {
       {/* Parent Category Sub Navigation */}
       {product.category?.parent?.children?.length > 0 && (
         <ProductSubNav
-          allHref={`/products/${product.category.parent.slug}`}
+          allHref={`${base}/products/${product.category.parent.slug}`}
           allActive
+          allLabel={t.subNavAll}
           items={product.category.parent.children.map((subcat) => ({
             key: subcat.id,
-            href: `/products/${product.category.parent.slug}/${subcat.slug}`,
+            href: `${base}/products/${product.category.parent.slug}/${subcat.slug}`,
             label: subcat.name,
           }))}
         />
@@ -139,7 +144,7 @@ export default function ProductDetailPage({ product }) {
       <section className="page-header">
         <div className="page-header-content">
           <h1>{product.name}</h1>
-          <p>{product.summary || '엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.'}</p>
+          <p>{product.summary || t.headerFallbackDesc}</p>
         </div>
       </section>
 
@@ -182,7 +187,7 @@ export default function ProductDetailPage({ product }) {
           <div className="product-detail-info">
             <h1 className="product-name">{product.name}</h1>
             <div className="product-model">
-              <span className="label">모델명:</span>
+              <span className="label">{t.modelLabel}</span>
               <span className="value">{product.modelName}</span>
             </div>
 
@@ -192,11 +197,11 @@ export default function ProductDetailPage({ product }) {
 
             <div className="product-meta">
               <div className="meta-item">
-                <span className="label">제조사:</span>
+                <span className="label">{t.manufacturerLabel}</span>
                 <span className="value">{product.manufacturer}</span>
               </div>
               <div className="meta-item">
-                <span className="label">원산지:</span>
+                <span className="label">{t.originLabel}</span>
                 <span className="value">{product.origin}</span>
               </div>
               {product.productOptions?.attributes?.length > 0 ? (
@@ -221,13 +226,13 @@ export default function ProductDetailPage({ product }) {
                 <>
                   {product.colorOptions && product.colorOptions.length > 0 && (
                     <div className="meta-item">
-                      <span className="label">색상 옵션:</span>
+                      <span className="label">{t.colorOptionsLabel}</span>
                       <span className="value">{product.colorOptions.join(', ')}</span>
                     </div>
                   )}
                   {product.voltageOptions && product.voltageOptions.length > 0 && (
                     <div className="meta-item">
-                      <span className="label">전압 옵션:</span>
+                      <span className="label">{t.voltageOptionsLabel}</span>
                       <span className="value">{product.voltageOptions.join(', ')}</span>
                     </div>
                   )}
@@ -236,8 +241,8 @@ export default function ProductDetailPage({ product }) {
             </div>
 
             <div className="product-actions">
-              <button onClick={openInquiry} className="btn btn-primary">문의하기</button>
-              <a href="/support/downloads" className="btn btn-secondary">자료 다운로드</a>
+              <button onClick={openInquiry} className="btn btn-primary">{t.inquiryBtn}</button>
+              <a href={`${base}/support/downloads`} className="btn btn-secondary">{t.downloadBtn}</a>
               <WishlistButton productId={product.id} variant="detail" />
             </div>
 
@@ -260,7 +265,7 @@ export default function ProductDetailPage({ product }) {
         {/* Product Description */}
         {product.description && product.description !== '-' && (
           <div className="product-description-section">
-            <h2>제품 설명</h2>
+            <h2>{t.descriptionTitle}</h2>
             <div className="description-content" dangerouslySetInnerHTML={{ __html: product.description }}>
             </div>
           </div>
@@ -269,7 +274,7 @@ export default function ProductDetailPage({ product }) {
         {/* Specifications */}
         {product.specs && product.specs.length > 0 && (
           <div className="product-specs-section">
-            <h2>제품 사양</h2>
+            <h2>{t.specsTitle}</h2>
             <table className="specs-table">
               <tbody>
                 {product.specs.map((spec) => (
@@ -286,12 +291,12 @@ export default function ProductDetailPage({ product }) {
         {/* Related Products */}
         {product.relatedProducts && product.relatedProducts.length > 0 && (
           <div className="related-products-section">
-            <h2>관련 제품</h2>
+            <h2>{t.relatedTitle}</h2>
             <div className="related-products-grid">
               {product.relatedProducts.map((related) => (
                 <div key={related.id} className="product-card">
                   <WishlistButton productId={related.id} variant="card" />
-                  <a href={`/products/${related.slug}`}>
+                  <a href={`${base}/products/${related.slug}`}>
                     <div className="product-image">
                       <img
                         src={related.images?.[0]?.url || '/images/placeholder-product.jpg'}
@@ -322,31 +327,31 @@ export default function ProductDetailPage({ product }) {
             {inquirySuccess ? (
               <div className="inquiry-success">
                 <div className="inquiry-success-icon">✓</div>
-                <h3>문의가 등록되었습니다</h3>
-                <p>빠른 시일 내에 답변 드리겠습니다.<br/>입력하신 비밀번호로 상담실에서 확인하실 수 있습니다.</p>
-                <a href="/support/consultation" className="inquiry-success-link">
-                  상담실 바로가기
+                <h3>{t.successTitle}</h3>
+                <p>{t.successDesc1}<br/>{t.successDesc2}</p>
+                <a href={`${base}/support/consultation`} className="inquiry-success-link">
+                  {t.successLink}
                 </a>
               </div>
             ) : (
               <>
-                <h2>제품 문의</h2>
-                <p className="inquiry-subtitle">{product.name}에 대해 문의하기</p>
+                <h2>{t.inquiryModalTitle}</h2>
+                <p className="inquiry-subtitle">{t.inquirySubtitle(product.name)}</p>
 
                 <form onSubmit={handleInquirySubmit} className="inquiry-form">
                   <div className="inquiry-form-row">
                     <div className="inquiry-form-group">
-                      <label>이름 <span className="required">*</span></label>
+                      <label>{t.nameLabel} <span className="required">*</span></label>
                       <input
                         type="text"
                         value={inquiryForm.name}
                         onChange={(e) => setInquiryForm(prev => ({ ...prev, name: e.target.value }))}
-                        placeholder="이름을 입력해주세요"
+                        placeholder={t.namePlaceholder}
                         required
                       />
                     </div>
                     <div className="inquiry-form-group">
-                      <label>비밀번호 <span className="required">*</span></label>
+                      <label>{t.passwordLabel} <span className="required">*</span></label>
                       <input
                         type="password"
                         value={inquiryForm.password}
@@ -354,7 +359,7 @@ export default function ProductDetailPage({ product }) {
                           const val = e.target.value.replace(/\D/g, '').slice(0, 4);
                           setInquiryForm(prev => ({ ...prev, password: val }));
                         }}
-                        placeholder="숫자 4자리"
+                        placeholder={t.passwordPlaceholder}
                         inputMode="numeric"
                         maxLength={4}
                         required
@@ -363,35 +368,35 @@ export default function ProductDetailPage({ product }) {
                   </div>
 
                   <div className="inquiry-form-group">
-                    <label>제목</label>
+                    <label>{t.titleLabel}</label>
                     <input
                       type="text"
-                      value={`[제품문의] ${product.name}`}
+                      value={t.inquiryTitlePrefix(product.name)}
                       disabled
                     />
                   </div>
 
                   <div className="inquiry-form-group">
-                    <label>문의 내용 <span className="required">*</span></label>
+                    <label>{t.contentLabel} <span className="required">*</span></label>
                     <textarea
                       value={inquiryForm.content}
                       onChange={(e) => setInquiryForm(prev => ({ ...prev, content: e.target.value }))}
-                      placeholder="문의 내용을 입력해주세요"
+                      placeholder={t.contentPlaceholder}
                       rows={5}
                       required
                     />
                   </div>
 
                   <div className="inquiry-notice">
-                    비밀글로 등록되며, 입력하신 비밀번호로 확인하실 수 있습니다.
+                    {t.secretNotice}
                   </div>
 
                   <div className="inquiry-buttons">
                     <button type="button" className="btn-inquiry-cancel" onClick={closeInquiry}>
-                      취소
+                      {t.cancel}
                     </button>
                     <button type="submit" className="btn-inquiry-submit" disabled={inquirySubmitting}>
-                      {inquirySubmitting ? '등록 중...' : '문의 등록'}
+                      {inquirySubmitting ? t.submitting : t.submit}
                     </button>
                   </div>
                 </form>

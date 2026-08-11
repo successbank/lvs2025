@@ -12,7 +12,7 @@ import { useState, useEffect, useRef } from 'react';
  * @param {boolean} allActive   "전체보기" 항목 활성 여부
  * @param {Array} items         [{ key, href, label, active }]
  */
-export default function ProductSubNav({ allHref, allActive = false, items = [] }) {
+export default function ProductSubNav({ allHref, allActive = false, items = [], allLabel = '전체보기' }) {
   const [open, setOpen] = useState(false);
   const navRef = useRef(null);
 
@@ -49,7 +49,7 @@ export default function ProductSubNav({ allHref, allActive = false, items = [] }
           aria-controls="product-sub-nav-list"
           onClick={() => setOpen((prev) => !prev)}
         >
-          <span>전체보기</span>
+          <span>{allLabel}</span>
           <span className="sub-nav-toggle-arrow" aria-hidden="true">▾</span>
         </button>
 
@@ -58,7 +58,7 @@ export default function ProductSubNav({ allHref, allActive = false, items = [] }
           className={`sub-nav-list ${open ? 'is-open' : ''}`}
         >
           <a href={allHref} className={allActive ? 'active' : ''}>
-            전체보기
+            {allLabel}
           </a>
           {items.map((item) => (
             <a

@@ -1,24 +1,27 @@
 'use client';
 
 import '../app/styles/globals.css';
+import { getDict } from '@/lib/i18n';
 
-export default function ProductsMainPage({ categories = [] }) {
+export default function ProductsMainPage({ categories = [], locale = 'ko' }) {
+  const t = getDict(locale).products;
+  const base = locale === 'en' ? '/en' : '';
   return (
     <>
       {/* Breadcrumb */}
       <div className="breadcrumb">
         <div className="breadcrumb-container">
-          <a href="/">Home</a>
+          <a href={base || '/'}>Home</a>
           <span>&gt;</span>
-          <span>제품소개</span>
+          <span>{t.root}</span>
         </div>
       </div>
 
       {/* Page Header */}
       <section className="page-header">
         <div className="page-header-content">
-          <h1>제품소개</h1>
-          <p>엘브이에스는 모두에게 감동을 전할 수 있는 빛의 기술을 연구합니다.</p>
+          <h1>{t.root}</h1>
+          <p>{t.headerFallbackDesc}</p>
         </div>
       </section>
 
@@ -34,7 +37,7 @@ export default function ProductsMainPage({ categories = [] }) {
               <div className="category-showcase-header">
                 <h2 className="category-showcase-title">{category.name}</h2>
                 <p className="category-showcase-subtitle">
-                  {category.description || `${category.name} 제품 라인업`}
+                  {category.description || t.lineupSuffix(category.name)}
                 </p>
               </div>
 
@@ -44,7 +47,7 @@ export default function ProductsMainPage({ categories = [] }) {
                   category.children.map((sub) => (
                     <a
                       key={sub.id}
-                      href={`/products/${category.slug}/${sub.slug}`}
+                      href={`${base}/products/${category.slug}/${sub.slug}`}
                       className="subcategory-card-v2"
                     >
                       <div className="subcategory-card-v2-image">
@@ -68,14 +71,14 @@ export default function ProductsMainPage({ categories = [] }) {
                     </a>
                   ))
                 ) : (
-                  <p className="no-subcategories">서브카테고리가 준비 중입니다.</p>
+                  <p className="no-subcategories">{t.noSubcategories}</p>
                 )}
               </div>
 
               {/* 중앙 정렬 CTA */}
               <div className="category-showcase-cta-wrap">
-                <a href={`/products/${category.slug}`} className="category-showcase-cta">
-                  전체 보기 <span className="cta-arrow">→</span>
+                <a href={`${base}/products/${category.slug}`} className="category-showcase-cta">
+                  {t.viewAll} <span className="cta-arrow">→</span>
                 </a>
               </div>
             </div>

@@ -11,15 +11,17 @@ export default function AdminNotices() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedBoard, setSelectedBoard] = useState('notices');
+  const [lang, setLang] = useState('ko'); // 'ko' | 'en' — EN은 영문 사이트(lvs_db_en) 게시판
+  const apiBase = lang === 'en' ? '/api/en' : '/api';
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({ title: '', content: '', isNotice: false });
 
-  useEffect(() => { fetchBoards(); }, []);
-  useEffect(() => { fetchPosts(); }, [currentPage, selectedBoard]);
+  useEffect(() => { fetchBoards(); }, [lang]);
+  useEffect(() => { fetchPosts(); }, [currentPage, selectedBoard, lang]);
 
   const fetchBoards = async () => {
     try {
-      const res = await fetch('/api/boards');
+      const res = await fetch(`${apiBase}/boards`);
       const data = await res.json();
       setBoards(data.boards || []);
     } catch (error) {
@@ -30,7 +32,7 @@ export default function AdminNotices() {
   const fetchPosts = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/posts?boardSlug=${selectedBoard}&page=${currentPage}&limit=20`);
+      const res = await fetch(`${apiBase}/posts?boardSlug=${selectedBoard}&page=${currentPage}&limit=20`);
       const data = await res.json();
       setPosts(data.posts || []);
       setNotices(data.notices || []);
@@ -44,7 +46,7 @@ export default function AdminNotices() {
   const handleDelete = async (id) => {
     if (!confirm('정말 삭제하시겠습니까?')) return;
     try {
-      const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${apiBase}/posts/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('삭제에 실패했습니다.');
       fetchPosts();
     } catch (error) {
@@ -58,7 +60,7 @@ export default function AdminNotices() {
       const board = boards.find(b => b.slug === selectedBoard);
       if (!board) throw new Error('게시판을 찾을 수 없습니다.');
 
-      const res = await fetch('/api/posts', {
+      const res = await fetch(`${apiBase}/posts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -89,6 +91,18 @@ export default function AdminNotices() {
   return (
     <AdminLayout title="게시판 관리">
       <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+        {['ko', 'en'].map(l => (
+          <button key={l} onClick={() => { setLang(l); setCurrentPage(1); }}
+            style={{
+              padding: '0.4rem 1rem', marginRight: '0.5rem', border: '1px solid #d1d5db',
+              borderRadius: '6px', cursor: 'pointer', fontWeight: 700,
+              background: lang === l ? '#059669' : 'white',
+              color: lang === l ? 'white' : '#374151',
+            }}>
+            {l === 'ko' ? '한국어' : '영문(EN)'}
+          </button>
+        ))}
+        <span style={{ marginRight: '0.75rem' }} />
         {Object.entries(boardNames).map(([slug, name]) => (
           <button key={slug} onClick={() => { setSelectedBoard(slug); setCurrentPage(1); }}
             style={{

@@ -19,6 +19,8 @@ const menuItems = [
   { href: '/admin/popups', label: '레이어 팝업', icon: '🪟' },
   { href: '/admin/users', label: '회원 관리', icon: '👥' },
   { href: '/admin/analytics', label: '접속 통계', icon: '📈' },
+  { href: '/admin/en-products', label: '영문 제품 번역', icon: '🌐' },
+  { href: '/admin/en-site', label: '영문 사이트 텍스트', icon: '🌍' },
   { href: '/admin/settings', label: '사이트 설정', icon: '⚙' },
 ];
 

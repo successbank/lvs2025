@@ -12,6 +12,8 @@ const STATUS_STYLE = {
 const TYPE_LABEL = { consultation: '상담', catalog: '카탈로그' };
 
 export default function AdminInquiries() {
+  const [lang, setLang] = useState('ko'); // 'ko' | 'en' — EN은 영문 사이트(lvs_db_en) 문의
+  const inquiriesApi = lang === 'en' ? '/api/admin/en/support-inquiries' : '/api/admin/support-inquiries';
   const [items, setItems] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
   const [loading, setLoading] = useState(true);
@@ -27,7 +29,7 @@ export default function AdminInquiries() {
   const [noteText, setNoteText] = useState('');
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => { fetchList(); }, [page, type, status, search]);
+  useEffect(() => { fetchList(); }, [page, type, status, search, lang]);
 
   const fetchList = async () => {
     setLoading(true);
@@ -35,7 +37,7 @@ export default function AdminInquiries() {
       const params = new URLSearchParams({ page, limit: 20, type });
       if (status) params.set('status', status);
       if (search) params.set('search', search);
-      const res = await fetch(`/api/admin/support-inquiries?${params}`);
+      const res = await fetch(`${inquiriesApi}?${params}`);
       const data = await res.json();
       setItems(data.items || []);
       setPagination(data.pagination || { page: 1, totalPages: 1, total: 0 });
@@ -49,7 +51,7 @@ export default function AdminInquiries() {
 
   const openDetail = async (id) => {
     try {
-      const res = await fetch(`/api/admin/support-inquiries/${id}`);
+      const res = await fetch(`${inquiriesApi}/${id}`);
       if (!res.ok) throw new Error('조회 실패');
       const data = await res.json();
       setSelected(data);
@@ -62,7 +64,7 @@ export default function AdminInquiries() {
     if (!selected) return;
     setSaving(true);
     try {
-      const res = await fetch(`/api/admin/support-inquiries/${selected.id}`, {
+      const res = await fetch(`${inquiriesApi}/${selected.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ reply: replyText, note: noteText }),
@@ -76,7 +78,7 @@ export default function AdminInquiries() {
 
   const changeStatus = async (id, newStatus) => {
     try {
-      const res = await fetch(`/api/admin/support-inquiries/${id}`, {
+      const res = await fetch(`${inquiriesApi}/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
@@ -90,7 +92,7 @@ export default function AdminInquiries() {
   const remove = async (id) => {
     if (!confirm('문의를 삭제하시겠습니까? 복구할 수 없습니다.')) return;
     try {
-      const res = await fetch(`/api/admin/support-inquiries/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${inquiriesApi}/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('삭제 실패');
       if (selected?.id === id) setSelected(null);
       fetchList();
@@ -118,6 +120,19 @@ export default function AdminInquiries() {
 
   return (
     <AdminLayout title="문의 관리">
+      <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.75rem' }}>
+        {['ko', 'en'].map(l => (
+          <button key={l} onClick={() => setLang(l)}
+            style={{
+              padding: '0.35rem 0.9rem', border: '1px solid #d1d5db', borderRadius: '6px',
+              cursor: 'pointer', fontWeight: 700, fontSize: '0.85rem',
+              background: lang === l ? '#059669' : 'white',
+              color: lang === l ? 'white' : '#374151',
+            }}>
+            {l === 'ko' ? '한국어' : '영문(EN)'}
+          </button>
+        ))}
+      </div>
       {/* 상단 탭: 타입 */}
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
         {[

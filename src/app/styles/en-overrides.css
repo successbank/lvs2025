@@ -1,0 +1,26 @@
+/* EN 사이트 전용 오버라이드 — 반드시 html[lang="en"] 프리픽스 유지 (KR 무영향) */
+
+/* 영문은 단어 단위 줄바꿈이 자연스럽다 (한글 word-break 대비) */
+html[lang="en"] body {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+/* 영문 라벨이 한글보다 길어 GNB 간격 소폭 축소 */
+html[lang="en"] .nav-menu {
+  gap: 1.4rem;
+}
+
+html[lang="en"] .nav-menu > li > a {
+  letter-spacing: 0;
+}
+
+/* 상단바 링크가 길어져 좁은 화면에서 줄바꿈 허용 */
+html[lang="en"] .header-top-links {
+  flex-wrap: wrap;
+}
+
+/* 푸터 컬럼 제목 자간 */
+html[lang="en"] .footer-col h4 {
+  letter-spacing: 0.04em;
+}
