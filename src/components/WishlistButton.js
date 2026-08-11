@@ -14,7 +14,31 @@ import LoginModal from '@/components/LoginModal';
 //   - 마운트 시 /api/wishlist/check로 등록 여부 조회
 //   - 클릭: 비로그인 → LoginModal 표시 / 로그인 → POST·DELETE 토글
 //   - 로그인 모달 onSuccess → 자동으로 POST 호출하여 클릭한 제품 등록
-export default function WishlistButton({ productId, variant = 'detail' }) {
+const WB_TEXT = {
+  ko: {
+    registerFail: '관심제품 등록에 실패했습니다.',
+    unregisterFail: '관심제품 해제에 실패했습니다.',
+    serverError: '서버 오류가 발생했습니다.',
+    remove: '관심제품에서 제거',
+    add: '관심제품에 추가',
+    labelActive: '관심제품 등록됨',
+    label: '관심제품',
+    loginRequired: '관심제품에 추가하려면 로그인이 필요합니다.',
+  },
+  en: {
+    registerFail: 'Failed to add to wishlist.',
+    unregisterFail: 'Failed to remove from wishlist.',
+    serverError: 'A server error occurred.',
+    remove: 'Remove from wishlist',
+    add: 'Add to wishlist',
+    labelActive: 'In Wishlist',
+    label: 'Wishlist',
+    loginRequired: 'Please sign in to add items to your wishlist.',
+  },
+};
+
+export default function WishlistButton({ productId, variant = 'detail', locale = 'ko' }) {
+  const wt = WB_TEXT[locale] || WB_TEXT.ko;
   const { data: session, status } = useSession();
   const [registered, setRegistered] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -58,11 +82,11 @@ export default function WishlistButton({ productId, variant = 'detail' }) {
         setModalOpen(true);
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data?.error || '관심제품 등록에 실패했습니다.');
+        alert(data?.error || wt.registerFail);
       }
     } catch (err) {
       console.error('wishlist register error:', err);
-      alert('서버 오류가 발생했습니다.');
+      alert(wt.serverError);
     } finally {
       setLoading(false);
     }
@@ -78,11 +102,11 @@ export default function WishlistButton({ productId, variant = 'detail' }) {
         setRegistered(false);
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data?.error || '관심제품 해제에 실패했습니다.');
+        alert(data?.error || wt.unregisterFail);
       }
     } catch (err) {
       console.error('wishlist unregister error:', err);
-      alert('서버 오류가 발생했습니다.');
+      alert(wt.serverError);
     } finally {
       setLoading(false);
     }
@@ -108,7 +132,7 @@ export default function WishlistButton({ productId, variant = 'detail' }) {
   const baseClass = variant === 'card' ? 'wishlist-card-icon' : 'wishlist-btn';
   const className = `${baseClass}${registered ? ' is-active' : ''}${loading ? ' is-loading' : ''}`;
 
-  const ariaLabel = registered ? '관심제품에서 제거' : '관심제품에 추가';
+  const ariaLabel = registered ? wt.remove : wt.add;
   const title = ariaLabel;
 
   return (
@@ -132,17 +156,18 @@ export default function WishlistButton({ productId, variant = 'detail' }) {
           <>
             <span className="wishlist-heart" aria-hidden="true">{registered ? '♥' : '♡'}</span>
             <span className="wishlist-label">
-              {registered ? '관심제품 등록됨' : '관심제품'}
+              {registered ? wt.labelActive : wt.label}
             </span>
           </>
         )}
       </button>
 
       <LoginModal
+        locale={locale}
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         onSuccess={handleAuthSuccess}
-        message="관심제품에 추가하려면 로그인이 필요합니다."
+        message={wt.loginRequired}
       />
     </>
   );

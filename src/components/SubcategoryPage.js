@@ -103,7 +103,7 @@ export default function SubcategoryPage({ categorySlug, subcategorySlug, locale 
           <div className="products-grid">
             {products.map((product) => (
               <div key={product.id} className="product-card">
-                <WishlistButton productId={product.id} variant="card" />
+                <WishlistButton locale={locale} productId={product.id} variant="card" />
                 <div className="product-image">
                   <img
                     src={product.mainImage || '/images/placeholder-product.jpg'}

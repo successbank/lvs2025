@@ -243,7 +243,7 @@ export default function ProductDetailPage({ product, locale = 'ko' }) {
             <div className="product-actions">
               <button onClick={openInquiry} className="btn btn-primary">{t.inquiryBtn}</button>
               <a href={`${base}/support/downloads`} className="btn btn-secondary">{t.downloadBtn}</a>
-              <WishlistButton productId={product.id} variant="detail" />
+              <WishlistButton locale={locale} productId={product.id} variant="detail" />
             </div>
 
             {seriesList.length > 0 && (
@@ -295,7 +295,7 @@ export default function ProductDetailPage({ product, locale = 'ko' }) {
             <div className="related-products-grid">
               {product.relatedProducts.map((related) => (
                 <div key={related.id} className="product-card">
-                  <WishlistButton productId={related.id} variant="card" />
+                  <WishlistButton locale={locale} productId={related.id} variant="card" />
                   <a href={`${base}/products/${related.slug}`}>
                     <div className="product-image">
                       <img
