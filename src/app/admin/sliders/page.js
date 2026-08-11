@@ -3,6 +3,18 @@
 import { useState, useEffect, useRef } from 'react';
 import AdminLayout from '@/components/AdminLayout';
 
+const formatBytes = (bytes) =>
+  bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)}MB` : `${Math.round(bytes / 1024)}KB`;
+
+/** 업로드 결과 요약 문구 — 리사이징 여부/전후 용량 */
+const optimizeSummary = (info) => {
+  if (!info) return '';
+  const size = formatBytes(info.bytes);
+  if (!info.optimized) return `업로드 완료 · ${size} (원본 유지)`;
+  const dims = info.width && info.height ? `${info.width}×${info.height} · ` : '';
+  return `자동 최적화 완료 · ${dims}${formatBytes(info.originalBytes)} → ${size}`;
+};
+
 export default function AdminSliders() {
   const [sliders, setSliders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,12 +29,14 @@ export default function AdminSliders() {
   const [uploading, setUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState('');
   const [dragActive, setDragActive] = useState(false);
+  const [uploadInfo, setUploadInfo] = useState(null);
   const fileInputRef = useRef(null);
 
   // 모바일 이미지 업로드 상태
   const [mobileUploading, setMobileUploading] = useState(false);
   const [mobileImagePreview, setMobileImagePreview] = useState('');
   const [mobileDragActive, setMobileDragActive] = useState(false);
+  const [mobileUploadInfo, setMobileUploadInfo] = useState(null);
   const mobileFileInputRef = useRef(null);
   const [applyAllScreens, setApplyAllScreens] = useState(true);
 
@@ -59,6 +73,7 @@ export default function AdminSliders() {
     setImagePreview(localPreview);
 
     setUploading(true);
+    setUploadInfo(null);
     try {
       const fd = new FormData();
       fd.append('image', file);
@@ -68,9 +83,10 @@ export default function AdminSliders() {
         const err = await res.json();
         throw new Error(err.error || '업로드 실패');
       }
-      const { url } = await res.json();
-      setFormData(p => ({ ...p, imageUrl: url }));
-      setImagePreview(url);
+      const data = await res.json();
+      setFormData(p => ({ ...p, imageUrl: data.url }));
+      setImagePreview(data.url);
+      setUploadInfo(data);
     } catch (error) {
       alert(error.message);
       setImagePreview('');
@@ -105,6 +121,7 @@ export default function AdminSliders() {
 
     setMobileImagePreview(URL.createObjectURL(file));
     setMobileUploading(true);
+    setMobileUploadInfo(null);
     try {
       const fd = new FormData();
       fd.append('image', file);
@@ -112,9 +129,10 @@ export default function AdminSliders() {
       fd.append('device', 'mobile');
       const res = await fetch('/api/sliders/upload', { method: 'POST', body: fd });
       if (!res.ok) throw new Error((await res.json()).error || '업로드 실패');
-      const { url } = await res.json();
-      setFormData(p => ({ ...p, mobileImageUrl: url }));
-      setMobileImagePreview(url);
+      const data = await res.json();
+      setFormData(p => ({ ...p, mobileImageUrl: data.url }));
+      setMobileImagePreview(data.url);
+      setMobileUploadInfo(data);
     } catch (error) {
       alert(error.message);
       setMobileImagePreview('');
@@ -228,6 +246,8 @@ export default function AdminSliders() {
     setImagePreview(slider.imageUrl || '');
     setMobileImagePreview(slider.mobileImageUrl || '');
     setImageUploadMode(slider.imageUrl?.startsWith('/uploads/') ? 'upload' : 'url');
+    setUploadInfo(null);
+    setMobileUploadInfo(null);
     setApplyAllScreens(!slider.mobileImageUrl);
     setShowForm(true);
   };
@@ -250,6 +270,8 @@ export default function AdminSliders() {
     setImageUploadMode('upload');
     setDragActive(false);
     setMobileDragActive(false);
+    setUploadInfo(null);
+    setMobileUploadInfo(null);
     setApplyAllScreens(true);
     if (fileInputRef.current) fileInputRef.current.value = '';
     if (mobileFileInputRef.current) mobileFileInputRef.current.value = '';
@@ -362,7 +384,8 @@ export default function AdminSliders() {
               </div>
 
               {imageUploadMode === 'upload' ? (
-                /* 드래그 앤 드롭 업로드 영역 */
+                <>
+                {/* 드래그 앤 드롭 업로드 영역 */}
                 <div
                   onDragEnter={handleDrag}
                   onDragOver={handleDrag}
@@ -396,11 +419,17 @@ export default function AdminSliders() {
                         클릭하거나 이미지를 드래그하여 업로드
                       </p>
                       <p style={{ color: '#9ca3af', fontSize: '0.8rem' }}>
-                        JPG, PNG, WebP, GIF (최대 5MB)
+                        JPG, PNG, WebP, GIF (최대 5MB) · 600KB 이하로 자동 최적화됩니다
                       </p>
                     </>
                   )}
                 </div>
+                {uploadInfo && (
+                  <p style={{ color: '#059669', fontSize: '0.8rem', margin: '0.4rem 0 0' }}>
+                    {optimizeSummary(uploadInfo)}
+                  </p>
+                )}
+                </>
               ) : (
                 /* URL 직접 입력 */
                 <input
@@ -518,11 +547,21 @@ export default function AdminSliders() {
                         {mobileUploading ? (
                           <p style={{ color: '#f59e0b', fontWeight: '500' }}>업로드 중...</p>
                         ) : (
-                          <p style={{ color: '#6b7280', fontSize: '0.85rem', margin: 0 }}>
-                            클릭하거나 모바일용 이미지를 드래그하여 업로드
-                          </p>
+                          <>
+                            <p style={{ color: '#6b7280', fontSize: '0.85rem', margin: 0 }}>
+                              클릭하거나 모바일용 이미지를 드래그하여 업로드
+                            </p>
+                            <p style={{ color: '#9ca3af', fontSize: '0.75rem', margin: '0.2rem 0 0' }}>
+                              600KB 이하로 자동 최적화됩니다
+                            </p>
+                          </>
                         )}
                       </div>
+                      {mobileUploadInfo && (
+                        <p style={{ color: '#059669', fontSize: '0.75rem', margin: '0.4rem 0 0' }}>
+                          {optimizeSummary(mobileUploadInfo)}
+                        </p>
+                      )}
                       {mobileImagePreview && (
                         <div style={{ marginTop: '0.5rem' }}>
                           <label style={labelStyle}>모바일 미리보기</label>

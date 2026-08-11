@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
-import sharp from 'sharp';
+import { compressToTarget, needsOptimization, TARGET_BYTES } from '@/lib/imageResize';
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
@@ -14,6 +14,9 @@ const FULL_IMAGE_PC_WIDTH = 1920;
 const FULL_IMAGE_PC_HEIGHT = 306;
 const FULL_IMAGE_MOBILE_WIDTH = 768;
 const FULL_IMAGE_MOBILE_HEIGHT = 306;
+
+// 텍스트+이미지 배너의 가로폭 상한 (비율 유지, 확대 없음)
+const TEXT_IMAGE_MAX_WIDTH = 1920;
 
 export async function POST(request) {
   try {
@@ -46,26 +49,48 @@ export async function POST(request) {
 
     let outputBuffer;
     let filename;
+    let optimized = null;
 
     if (type === 'FULL_IMAGE') {
       const w = device === 'mobile' ? FULL_IMAGE_MOBILE_WIDTH : FULL_IMAGE_PC_WIDTH;
       const h = device === 'mobile' ? FULL_IMAGE_MOBILE_HEIGHT : FULL_IMAGE_PC_HEIGHT;
       const prefix = device === 'mobile' ? 'slider-mobile' : 'slider-full';
-      outputBuffer = await sharp(buffer)
-        .resize(w, h, { fit: 'cover', position: 'center' })
-        .webp({ quality: 85 })
-        .toBuffer();
+
+      optimized = await compressToTarget(buffer, {
+        width: w,
+        height: h,
+        fit: 'cover',
+        position: 'center',
+      });
+      outputBuffer = optimized.buffer;
       filename = `${prefix}-${Date.now()}-${random}.webp`;
     } else {
-      // 기존 텍스트+이미지: 원본 그대로 저장
-      const ext = file.name.split('.').pop().toLowerCase();
-      outputBuffer = buffer;
-      filename = `slider-${Date.now()}-${random}.${ext}`;
+      // 텍스트+이미지: 목표 용량/가로폭을 넘을 때만 WebP로 재인코딩
+      const shouldOptimize = await needsOptimization(buffer, { maxWidth: TEXT_IMAGE_MAX_WIDTH });
+
+      if (shouldOptimize) {
+        optimized = await compressToTarget(buffer, { maxWidth: TEXT_IMAGE_MAX_WIDTH });
+        outputBuffer = optimized.buffer;
+        filename = `slider-${Date.now()}-${random}.webp`;
+      } else {
+        // 이미 충분히 작으면 원본 그대로 저장 (로고/도형 이미지의 재인코딩 손실 방지)
+        const ext = file.name.split('.').pop().toLowerCase();
+        outputBuffer = buffer;
+        filename = `slider-${Date.now()}-${random}.${ext}`;
+      }
     }
 
     await writeFile(path.join(UPLOAD_DIR, filename), outputBuffer);
 
-    return NextResponse.json({ url: `/uploads/sliders/${filename}` });
+    return NextResponse.json({
+      url: `/uploads/sliders/${filename}`,
+      originalBytes: buffer.length,
+      bytes: outputBuffer.length,
+      width: optimized?.width ?? null,
+      height: optimized?.height ?? null,
+      optimized: Boolean(optimized),
+      targetBytes: TARGET_BYTES,
+    });
   } catch (error) {
     console.error('Slider Upload Error:', error);
     return NextResponse.json({ error: '이미지 업로드에 실패했습니다.' }, { status: 500 });
