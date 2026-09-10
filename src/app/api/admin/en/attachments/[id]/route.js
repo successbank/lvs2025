@@ -30,7 +30,15 @@ export async function PATCH(request, { params }) {
     }
 
     // 디스크 파일 존재 + 크기 확인
-    const absolute = path.join('/app', newPath);
+    // '/uploads/../../etc/hosts' 처럼 startsWith만 통과하는 경로 이탈을 차단한다.
+    const uploadsRoot = path.resolve('/app', 'uploads');
+    const absolute = path.resolve('/app', `.${path.posix.normalize(newPath)}`);
+    if (absolute !== uploadsRoot && !absolute.startsWith(uploadsRoot + path.sep)) {
+      return NextResponse.json(
+        { error: 'file_path가 업로드 디렉토리를 벗어납니다.' },
+        { status: 400 }
+      );
+    }
     if (!fs.existsSync(absolute)) {
       return NextResponse.json(
         { error: `디스크에 파일이 없습니다: ${newPath}` },
@@ -92,7 +100,12 @@ export async function DELETE(request, { params }) {
     }
     const att = sel.rows[0];
 
-    // 디스크 파일 삭제 (이미 사라진 경우 무시)
+    // DB 삭제를 먼저 — 파일시스템은 롤백할 수 없으므로 unlink를 선행하면
+    // DB 삭제 실패 시 파일만 사라진 '복구 불가 고아 레코드'가 새로 생긴다.
+    // (posts 삭제 라우트도 DB → 디스크 순서를 따른다)
+    await pool.query('DELETE FROM post_attachments WHERE id = $1', [id]);
+
+    // 디스크 파일 정리 (이미 사라진 경우 무시)
     if (att.file_path) {
       try {
         const absolutePath = path.join('/app', att.file_path);
@@ -101,9 +114,6 @@ export async function DELETE(request, { params }) {
         console.warn('attachment file unlink failed (ignored):', err.message);
       }
     }
-
-    // DB 삭제
-    await pool.query('DELETE FROM post_attachments WHERE id = $1', [id]);
 
     return NextResponse.json({
       message: '첨부파일이 삭제되었습니다.',

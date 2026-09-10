@@ -5,10 +5,17 @@ import AdminLayout from '@/components/AdminLayout';
 
 const DOWNLOADS_BOARD_SLUG = 'downloads';
 
+// API base 헬퍼 — 페이지/모달이 각각 lang으로부터 파생시킨다.
+// (모달들은 AdminDownloads의 형제 최상위 컴포넌트라 페이지 지역 변수를 클로저로 볼 수 없음)
+const apiBaseOf = (lang) => (lang === 'en' ? '/api/en' : '/api');
+const adminApiBaseOf = (lang) => (lang === 'en' ? '/api/admin/en' : '/api/admin');
+// 첨부 디스크 경로: EN 첨부는 uploads/en-downloads 에 저장된다 (saveAttachmentsToDisk(`en-${slug}`))
+const uploadSubDirOf = (lang) => (lang === 'en' ? 'en-downloads' : 'downloads');
+
 export default function AdminDownloads() {
   const [lang, setLang] = useState('ko'); // 'ko' | 'en' — EN은 영문 사이트(lvs_db_en) 자료실
-  const apiBase = lang === 'en' ? '/api/en' : '/api';
-  const adminApiBase = lang === 'en' ? '/api/admin/en' : '/api/admin';
+  const apiBase = apiBaseOf(lang);
+  const adminApiBase = adminApiBaseOf(lang);
   const [items, setItems] = useState([]);
   const [pagination, setPagination] = useState({});
   const [loading, setLoading] = useState(true);
@@ -180,6 +187,7 @@ export default function AdminDownloads() {
 
       {showWriteModal && (
         <WriteModal
+          lang={lang}
           onClose={() => setShowWriteModal(false)}
           onSuccess={() => { setShowWriteModal(false); fetchList(); }}
         />
@@ -187,6 +195,7 @@ export default function AdminDownloads() {
 
       {editingPost && (
         <EditModal
+          lang={lang}
           post={editingPost}
           onClose={() => setEditingPost(null)}
           onSuccess={() => { setEditingPost(null); fetchList(); }}
@@ -200,7 +209,8 @@ export default function AdminDownloads() {
 // =============================================
 // 등록 모달 (제목/내용/공지/첨부)
 // =============================================
-function WriteModal({ onClose, onSuccess }) {
+function WriteModal({ lang, onClose, onSuccess }) {
+  const apiBase = apiBaseOf(lang);
   const [form, setForm] = useState({ title: '', content: '', isNotice: false });
   const [files, setFiles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
@@ -277,7 +287,9 @@ function WriteModal({ onClose, onSuccess }) {
 // 수정 모달 — 「저장」 통합: PATCH(제목/내용/공지) + 미업로드 신규 첨부 자동 업로드
 // + Broken 첨부 정정 옵션 + 강화된 삭제 경고
 // =============================================
-function EditModal({ post, onClose, onSuccess, onRefresh }) {
+function EditModal({ lang, post, onClose, onSuccess, onRefresh }) {
+  const apiBase = apiBaseOf(lang);
+  const adminApiBase = adminApiBaseOf(lang);
   const [form, setForm] = useState({
     title: post.title || '',
     content: post.content || '',
@@ -444,9 +456,10 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
 
         {pathFixingId && (
           <PathFixModal
+            lang={lang}
             attachmentId={pathFixingId}
             attachment={post.attachments.find(a => a.id === pathFixingId)}
-            subDir="downloads"
+            subDir={uploadSubDirOf(lang)}
             onClose={() => setPathFixingId(null)}
             onSuccess={async () => { setPathFixingId(null); await refresh(); }}
           />
@@ -476,9 +489,11 @@ function EditModal({ post, onClose, onSuccess, onRefresh }) {
 // Broken 첨부 경로 정정 모달
 // 디스크 후보 파일 목록에서 선택 → file_path UPDATE
 // =============================================
-function PathFixModal({ attachmentId, attachment, subDir, onClose, onSuccess }) {
+function PathFixModal({ lang, attachmentId, attachment, subDir, onClose, onSuccess }) {
+  const adminApiBase = adminApiBaseOf(lang);
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
   const [q, setQ] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -489,10 +504,15 @@ function PathFixModal({ attachmentId, attachment, subDir, onClose, onSuccess }) 
         const params = new URLSearchParams({ subDir });
         if (q) params.set('q', q);
         const res = await fetch(`/api/admin/uploads-list?${params}`);
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
+        // 401/400/500을 '파일 없음'으로 오인하면 운영자가 복구 가능한 첨부를 삭제할 수 있다
+        if (!res.ok) throw new Error(data.error || `파일 목록 조회 실패 (${res.status})`);
         setFiles(data.files || []);
+        setLoadError(null);
       } catch (err) {
         console.error('uploads-list fetch failed:', err);
+        setFiles([]);
+        setLoadError(err.message);
       }
       setLoading(false);
     };
@@ -536,6 +556,13 @@ function PathFixModal({ attachmentId, attachment, subDir, onClose, onSuccess }) 
       <div style={{ maxHeight: '420px', overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: '6px' }}>
         {loading ? (
           <p style={{ padding: '1rem', textAlign: 'center', color: '#6b7280' }}>로딩 중...</p>
+        ) : loadError ? (
+          <p style={{ padding: '1rem', textAlign: 'center', color: '#b91c1c' }}>
+            ⚠ {loadError}<br />
+            <span style={{ color: '#6b7280', fontSize: '0.8rem' }}>
+              파일이 없는 것이 아니라 조회에 실패한 것입니다. 첨부를 삭제하지 마세요.
+            </span>
+          </p>
         ) : files.length === 0 ? (
           <p style={{ padding: '1rem', textAlign: 'center', color: '#6b7280' }}>일치하는 파일이 없습니다.</p>
         ) : (
