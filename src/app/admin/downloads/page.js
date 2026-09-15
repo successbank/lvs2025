@@ -1,9 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import AdminLayout from '@/components/AdminLayout';
+import useDragReorder from '@/hooks/useDragReorder';
 
 const DOWNLOADS_BOARD_SLUG = 'downloads';
+// 전체 목록을 한 화면에 노출 (드래그앤드롭 순서 지정용) — 서버 상한과 동일
+const LIST_LIMIT = 1000;
 
 // API base 헬퍼 — 페이지/모달이 각각 lang으로부터 파생시킨다.
 // (모달들은 AdminDownloads의 형제 최상위 컴포넌트라 페이지 지역 변수를 클로저로 볼 수 없음)
@@ -17,22 +20,26 @@ export default function AdminDownloads() {
   const apiBase = apiBaseOf(lang);
   const adminApiBase = adminApiBaseOf(lang);
   const [items, setItems] = useState([]);
-  const [pagination, setPagination] = useState({});
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [searchField, setSearchField] = useState('all');
 
+  // 순서 변경(드래그앤드롭) — 저장 전까지는 화면에만 반영
+  const [orderChanged, setOrderChanged] = useState(false);
+  const [savingOrder, setSavingOrder] = useState(false);
+  // 검색 중에는 부분 목록만 보이므로 순서 변경을 막는다 (전체 순서가 깨짐)
+  const canReorder = !search;
+
   const [showWriteModal, setShowWriteModal] = useState(false);
   const [editingPost, setEditingPost] = useState(null); // 게시물 상세 + 첨부 보유
 
+  // 전체 목록을 한 페이지에 노출 (드래그앤드롭 순서 지정을 위해 페이지 분할하지 않음)
   const fetchList = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({
-        page: String(page), limit: '20',
-      });
+      const params = new URLSearchParams({ page: '1', limit: String(LIST_LIMIT) });
       if (search) {
         params.set('search', search);
         params.set('searchField', searchField);
@@ -40,19 +47,57 @@ export default function AdminDownloads() {
       const res = await fetch(`${adminApiBase}/downloads?${params}`);
       const data = await res.json();
       setItems(data.items || []);
-      setPagination(data.pagination || {});
+      setTotal(data.pagination?.total || 0);
+      setOrderChanged(false);
     } catch (err) {
       console.error('list fetch failed:', err);
     }
     setLoading(false);
-  }, [page, search, searchField, lang]);
+  }, [search, searchField, lang]);
 
   useEffect(() => { fetchList(); }, [fetchList]);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    setPage(1);
     setSearch(searchInput.trim());
+  };
+
+  // 드래그로 행 위치 교체
+  // 공지(상단 고정)와 일반 게시물은 공개 목록에서 별도 그룹으로 렌더링되므로
+  // 그룹을 넘나드는 이동은 저장해도 되돌아온다 → 같은 그룹 안에서만 허용한다.
+  const handleReorder = useCallback((dragIndex, dropIndex) => {
+    if (!canReorder) return;
+    const moved = items[dragIndex];
+    const target = items[dropIndex];
+    if (!moved || !target) return;
+    if (!!moved.is_notice !== !!target.is_notice) return;
+    const next = [...items];
+    next.splice(dragIndex, 1);
+    next.splice(dropIndex, 0, moved);
+    setItems(next);
+    setOrderChanged(true);
+  }, [canReorder, items]);
+
+  const { getDragProps, getDragStyle } = useDragReorder(handleReorder);
+
+  const saveOrder = async () => {
+    setSavingOrder(true);
+    try {
+      const res = await fetch(`${adminApiBase}/downloads`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds: items.map(it => it.id) }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || '순서 저장에 실패했습니다.');
+      }
+      setOrderChanged(false);
+      await fetchList();
+    } catch (err) {
+      alert(err.message);
+    }
+    setSavingOrder(false);
   };
 
   const handleDelete = async (id) => {
@@ -78,6 +123,9 @@ export default function AdminDownloads() {
     }
   };
 
+  // 공개 목록(/support/downloads)과 동일한 번호 부여 — 공지 제외, 최상단이 가장 큰 번호
+  const nonNoticeIds = useMemo(() => items.filter(it => !it.is_notice).map(it => it.id), [items]);
+
   const formatDate = (s) => new Date(s).toLocaleString('ko-KR', {
     year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit',
   });
@@ -99,7 +147,7 @@ export default function AdminDownloads() {
       </div>
       <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
         <div style={{ color: '#6b7280' }}>
-          총 <strong style={{ color: '#111827' }}>{pagination.total || 0}</strong>건
+          총 <strong style={{ color: '#111827' }}>{total}</strong>건
           {items.some(it => it.has_unavailable) && (
             <span style={{ marginLeft: '0.75rem', background: '#fee2e2', color: '#b91c1c', padding: '0.15rem 0.5rem', borderRadius: '6px', fontSize: '0.8rem' }}>
               ⚠ 누락 첨부 보유 게시물 있음
@@ -120,14 +168,35 @@ export default function AdminDownloads() {
           placeholder="검색어" style={{ ...inputStyle, width: '320px' }} />
         <button type="submit" style={secondaryBtnStyle}>검색</button>
         {search && (
-          <button type="button" onClick={() => { setSearchInput(''); setSearch(''); setPage(1); }} style={{ ...secondaryBtnStyle, color: '#dc2626' }}>초기화</button>
+          <button type="button" onClick={() => { setSearchInput(''); setSearch(''); }} style={{ ...secondaryBtnStyle, color: '#dc2626' }}>초기화</button>
         )}
       </form>
+
+      {orderChanged && (
+        <div style={{ background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: '8px', padding: '0.75rem 1rem', marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+          <span style={{ color: '#92400e', fontSize: '0.9rem' }}>
+            순서가 변경되었습니다. 저장해야 자료실(/support/downloads)에 반영됩니다.
+          </span>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button onClick={fetchList} disabled={savingOrder} style={{ ...secondaryBtnStyle, padding: '0.4rem 1rem' }}>취소</button>
+            <button onClick={saveOrder} disabled={savingOrder} style={{ ...primaryBtnStyle, padding: '0.4rem 1rem', opacity: savingOrder ? 0.6 : 1 }}>
+              {savingOrder ? '저장 중...' : '순서 저장'}
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div style={{ color: '#6b7280', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+        {canReorder
+          ? '⠿ 손잡이를 잡고 행을 위아래로 끌어 순서를 바꾼 뒤 [순서 저장]을 누르세요. 저장된 순서가 자료실 목록에 그대로 노출됩니다.'
+          : '검색 중에는 순서를 변경할 수 없습니다. 검색을 초기화한 뒤 이용하세요.'}
+      </div>
 
       <div style={{ background: 'white', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: '#f9fafb', borderBottom: '2px solid #e5e7eb' }}>
+              <th style={{ ...thStyle, width: '44px', textAlign: 'center', padding: '0.75rem 0.25rem' }}>순서</th>
               <th style={{ ...thStyle, width: '70px' }}>번호</th>
               <th style={thStyle}>제목</th>
               <th style={{ ...thStyle, width: '110px' }}>작성자</th>
@@ -140,15 +209,29 @@ export default function AdminDownloads() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan="8" style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>로딩 중...</td></tr>
+              <tr><td colSpan="9" style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>로딩 중...</td></tr>
             ) : items.length === 0 ? (
-              <tr><td colSpan="8" style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>게시물이 없습니다.</td></tr>
-            ) : items.map((it, idx) => (
-              <tr key={it.id} style={{ borderBottom: '1px solid #e5e7eb', background: it.has_unavailable ? '#fef2f2' : (it.is_notice ? '#fffbeb' : 'white') }}>
+              <tr><td colSpan="9" style={{ padding: '2rem', textAlign: 'center', color: '#6b7280' }}>게시물이 없습니다.</td></tr>
+            ) : items.map((it, idx) => {
+              const ds = canReorder ? getDragStyle(idx) : {};
+              const baseBg = it.has_unavailable ? '#fef2f2' : (it.is_notice ? '#fffbeb' : 'white');
+              return (
+              <tr key={it.id}
+                {...(canReorder ? getDragProps(idx) : {})}
+                style={{
+                  ...ds,
+                  background: ds.background || baseBg,
+                  borderBottom: ds.borderBottom || '1px solid #e5e7eb',
+                  cursor: canReorder ? 'grab' : 'default',
+                }}>
+                <td style={{ ...tdStyle, textAlign: 'center', color: canReorder ? '#9ca3af' : '#e5e7eb', padding: '0.75rem 0.25rem', userSelect: 'none' }}
+                  title={canReorder ? '끌어서 순서 변경' : '검색 중에는 순서를 변경할 수 없습니다.'}>
+                  ⠿
+                </td>
                 <td style={tdStyle}>
                   {it.is_notice ? (
                     <span style={{ background: '#ef4444', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.75rem' }}>공지</span>
-                  ) : ((pagination.total || 0) - ((page - 1) * 20) - idx)}
+                  ) : (nonNoticeIds.length - nonNoticeIds.indexOf(it.id))}
                 </td>
                 <td style={tdStyle}>
                   <span style={{ fontWeight: '500' }}>{it.title}</span>
@@ -168,22 +251,11 @@ export default function AdminDownloads() {
                   <button onClick={() => handleDelete(it.id)} style={actionBtn('#ef4444')}>삭제</button>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>
-
-      {pagination.totalPages > 1 && (
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1.5rem' }}>
-          {Array.from({ length: pagination.totalPages }, (_, i) => (
-            <button key={i} onClick={() => setPage(i + 1)}
-              style={{ padding: '0.5rem 0.75rem', borderRadius: '4px', border: '1px solid #d1d5db',
-                background: page === i + 1 ? '#3b82f6' : 'white', color: page === i + 1 ? 'white' : '#374151', cursor: 'pointer' }}>
-              {i + 1}
-            </button>
-          ))}
-        </div>
-      )}
 
       {showWriteModal && (
         <WriteModal

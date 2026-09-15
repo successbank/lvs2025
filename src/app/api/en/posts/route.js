@@ -95,7 +95,7 @@ export async function GET(request) {
         (SELECT COUNT(*) FROM post_attachments WHERE post_id = p.id) as attachment_count
       FROM posts p
       WHERE ${whereClause} AND is_notice = true
-      ORDER BY created_at DESC`,
+      ORDER BY sort_order ASC NULLS FIRST, created_at DESC`,
       params
     );
 
@@ -107,7 +107,7 @@ export async function GET(request) {
         (SELECT COUNT(*) FROM post_attachments WHERE post_id = p.id) as attachment_count
       FROM posts p
       WHERE ${whereClause} AND is_notice = false
-      ORDER BY created_at DESC
+      ORDER BY sort_order ASC NULLS FIRST, created_at DESC
       LIMIT $${paramIndex} OFFSET $${paramIndex + 1}`,
       [...params, limit, offset]
     );

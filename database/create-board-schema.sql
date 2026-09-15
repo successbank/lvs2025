@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS posts (
   is_secret BOOLEAN DEFAULT false,  -- 비밀글
   view_count INTEGER DEFAULT 0,
   like_count INTEGER DEFAULT 0,
+  sort_order INTEGER,  -- 수동 정렬 순서 (NULL = 미지정 → created_at DESC)
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
