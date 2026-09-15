@@ -55,7 +55,7 @@ export async function GET(request) {
            GROUP BY post_id
         ) att ON att.post_id = p.id
        WHERE ${whereSql}
-       ORDER BY p.is_notice DESC, p.sort_order ASC NULLS FIRST, p.created_at DESC
+       ORDER BY p.is_notice DESC, p.sort_order ASC NULLS FIRST, p.created_at DESC, p.id DESC
        LIMIT ${limit} OFFSET ${offset}
     `;
     const countSql = `
