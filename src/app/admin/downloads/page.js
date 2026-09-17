@@ -330,9 +330,9 @@ function WriteModal({ lang, onClose, onSuccess }) {
             onChange={e => setForm(p => ({ ...p, content: e.target.value }))} />
         </div>
         <div style={{ marginBottom: '1rem' }}>
-          <label style={labelStyle}>첨부파일 (최대 10개, 개당 10MB)</label>
+          <label style={labelStyle}>첨부파일 (DWG 도면 포함, 최대 10개, 개당 10MB)</label>
           <input type="file" multiple onChange={e => setFiles(Array.from(e.target.files || []))}
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.hwp,.jpg,.jpeg,.png,.gif,.webp,.zip" />
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.hwp,.jpg,.jpeg,.png,.gif,.webp,.zip,.dwg" />
           {files.length > 0 && (
             <ul style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#374151' }}>
               {files.map((f, i) => <li key={i}>📎 {f.name} ({(f.size / 1024 / 1024).toFixed(2)} MB)</li>)}
@@ -538,9 +538,9 @@ function EditModal({ lang, post, onClose, onSuccess, onRefresh }) {
         )}
 
         <div style={{ marginTop: '1rem', padding: '0.75rem', background: '#f9fafb', borderRadius: '6px' }}>
-          <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>첨부파일 추가</label>
+          <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>첨부파일 추가 (DWG 도면 포함, 최대 10개, 개당 10MB)</label>
           <input type="file" multiple onChange={e => setNewFiles(Array.from(e.target.files || []))}
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.hwp,.jpg,.jpeg,.png,.gif,.webp,.zip" />
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.hwp,.jpg,.jpeg,.png,.gif,.webp,.zip,.dwg" />
           {newFiles.length > 0 && (
             <ul style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#374151' }}>
               {newFiles.map((f, i) => <li key={i}>📎 {f.name} ({formatSize(f.size)})</li>)}

@@ -13,6 +13,7 @@ export const ATTACHMENT_LIMITS = {
     'hwp',
     'jpg', 'jpeg', 'png', 'gif', 'webp',
     'zip',
+    'dwg',
   ],
   ALLOWED_MIME_TYPES: [
     'application/pdf',
@@ -31,6 +32,16 @@ export const ATTACHMENT_LIMITS = {
     'image/webp',
     'application/zip',
     'application/x-zip-compressed',
+    // DWG MIME varies by browser and installed CAD software.
+    'image/vnd.dwg',
+    'image/x-dwg',
+    'application/acad',
+    'application/x-acad',
+    'application/dwg',
+    'application/x-dwg',
+    'application/autocad',
+    'application/x-autocad',
+    'drawing/dwg',
     'application/octet-stream',
   ],
 };
