@@ -5,6 +5,9 @@ import AdminLayout from '@/components/AdminLayout';
 import useDragReorder from '@/hooks/useDragReorder';
 
 const DOWNLOADS_BOARD_SLUG = 'downloads';
+// 게시물당 첨부 상한 — 서버(ATTACHMENT_LIMITS.MAX_FILES)와 동일해야 한다.
+// 디스크 파일이 누락된 첨부도 목록에서 한 칸을 차지하므로 그대로 센다.
+const MAX_ATTACHMENTS = 10;
 // 전체 목록을 한 화면에 노출 (드래그앤드롭 순서 지정용) — 서버 상한과 동일
 const LIST_LIMIT = 1000;
 
@@ -287,6 +290,15 @@ function WriteModal({ lang, onClose, onSuccess }) {
   const [files, setFiles] = useState([]);
   const [submitting, setSubmitting] = useState(false);
 
+  // 상한을 넘겨 고른 경우 앞에서부터 MAX_ATTACHMENTS 개만 남긴다.
+  const handleFilePick = (e) => {
+    const picked = Array.from(e.target.files || []);
+    if (picked.length > MAX_ATTACHMENTS) {
+      alert(`첨부파일은 최대 ${MAX_ATTACHMENTS}개까지 등록할 수 있습니다. 앞의 ${MAX_ATTACHMENTS}개만 선택했습니다.`);
+    }
+    setFiles(picked.slice(0, MAX_ATTACHMENTS));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.title || !form.content) {
@@ -330,14 +342,17 @@ function WriteModal({ lang, onClose, onSuccess }) {
             onChange={e => setForm(p => ({ ...p, content: e.target.value }))} />
         </div>
         <div style={{ marginBottom: '1rem' }}>
-          <label style={labelStyle}>첨부파일 (DWG 도면 포함, 최대 10개, 개당 10MB)</label>
-          <input type="file" multiple onChange={e => setFiles(Array.from(e.target.files || []))}
+          <label style={labelStyle}>첨부파일 (DWG 도면 포함, 최대 {MAX_ATTACHMENTS}개, 개당 10MB)</label>
+          <input type="file" multiple onChange={handleFilePick}
             accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.hwp,.jpg,.jpeg,.png,.gif,.webp,.zip,.dwg" />
           {files.length > 0 && (
             <ul style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#374151' }}>
               {files.map((f, i) => <li key={i}>📎 {f.name} ({(f.size / 1024 / 1024).toFixed(2)} MB)</li>)}
             </ul>
           )}
+          <p style={{ margin: '0.35rem 0 0', fontSize: '0.8rem', color: '#6b7280' }}>
+            선택 {files.length} / {MAX_ATTACHMENTS}개
+          </p>
         </div>
         <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
           <input type="checkbox" checked={form.isNotice}
@@ -371,6 +386,24 @@ function EditModal({ lang, post, onClose, onSuccess, onRefresh }) {
   const [newFiles, setNewFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [pathFixingId, setPathFixingId] = useState(null); // 경로 정정 모달 대상 첨부 id
+
+  // 남은 첨부 슬롯 — 파일 누락(is_available=false) 첨부도 DB에 남아 있는 한 한 칸을 차지한다.
+  const attachedCount = post.attachments.length;
+  const remainingSlots = Math.max(0, MAX_ATTACHMENTS - attachedCount);
+
+  const handleNewFilePick = (e) => {
+    const picked = Array.from(e.target.files || []);
+    if (remainingSlots === 0) {
+      alert(`이미 첨부 ${attachedCount}개(파일 누락 상태 포함)로 상한 ${MAX_ATTACHMENTS}개에 도달했습니다. 기존 첨부를 삭제한 뒤 추가해주세요.`);
+      e.target.value = '';
+      setNewFiles([]);
+      return;
+    }
+    if (picked.length > remainingSlots) {
+      alert(`추가할 수 있는 첨부는 ${remainingSlots}개입니다. 앞의 ${remainingSlots}개만 선택했습니다.`);
+    }
+    setNewFiles(picked.slice(0, remainingSlots));
+  };
 
   const refresh = async () => {
     const res = await fetch(`${apiBase}/posts/${post.id}?incrementView=false`);
@@ -487,7 +520,14 @@ function EditModal({ lang, post, onClose, onSuccess, onRefresh }) {
       </form>
 
       <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
-        <h4 style={{ margin: '0 0 0.75rem', fontSize: '1rem' }}>기존 첨부파일 ({post.attachments.length})</h4>
+        <h4 style={{ margin: '0 0 0.75rem', fontSize: '1rem' }}>
+          기존 첨부파일 ({attachedCount} / {MAX_ATTACHMENTS})
+          {attachedCount > MAX_ATTACHMENTS && (
+            <span style={{ marginLeft: '0.5rem', color: '#dc2626', fontSize: '0.8rem', fontWeight: 500 }}>
+              ⚠ 상한 초과 — {attachedCount - MAX_ATTACHMENTS}개를 삭제해주세요
+            </span>
+          )}
+        </h4>
         {post.attachments.length === 0 ? (
           <p style={{ color: '#9ca3af', fontSize: '0.9rem' }}>첨부 없음</p>
         ) : (
@@ -538,16 +578,24 @@ function EditModal({ lang, post, onClose, onSuccess, onRefresh }) {
         )}
 
         <div style={{ marginTop: '1rem', padding: '0.75rem', background: '#f9fafb', borderRadius: '6px' }}>
-          <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>첨부파일 추가 (DWG 도면 포함, 최대 10개, 개당 10MB)</label>
-          <input type="file" multiple onChange={e => setNewFiles(Array.from(e.target.files || []))}
+          <label style={{ ...labelStyle, marginBottom: '0.5rem' }}>
+            첨부파일 추가 (DWG 도면 포함, 게시물당 최대 {MAX_ATTACHMENTS}개, 개당 10MB)
+          </label>
+          <input type="file" multiple onChange={handleNewFilePick} disabled={remainingSlots === 0}
             accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.hwp,.jpg,.jpeg,.png,.gif,.webp,.zip,.dwg" />
+          <p style={{ margin: '0.35rem 0 0', fontSize: '0.8rem', color: remainingSlots === 0 ? '#dc2626' : '#6b7280' }}>
+            {remainingSlots === 0
+              ? `상한 ${MAX_ATTACHMENTS}개에 도달했습니다. 기존 첨부를 삭제해야 추가할 수 있습니다.`
+              : `${remainingSlots}개 더 추가할 수 있습니다. (선택 ${newFiles.length}개)`}
+          </p>
           {newFiles.length > 0 && (
             <ul style={{ marginTop: '0.5rem', fontSize: '0.85rem', color: '#374151' }}>
               {newFiles.map((f, i) => <li key={i}>📎 {f.name} ({formatSize(f.size)})</li>)}
             </ul>
           )}
-          <button type="button" onClick={handleAddAttachmentsImmediate} disabled={uploading || newFiles.length === 0}
-            style={{ ...secondaryBtnStyle, marginTop: '0.5rem', opacity: (uploading || newFiles.length === 0) ? 0.6 : 1 }}
+          <button type="button" onClick={handleAddAttachmentsImmediate}
+            disabled={uploading || newFiles.length === 0 || remainingSlots === 0}
+            style={{ ...secondaryBtnStyle, marginTop: '0.5rem', opacity: (uploading || newFiles.length === 0 || remainingSlots === 0) ? 0.6 : 1 }}
             title="즉시 첨부만 추가합니다 (저장 버튼이 한 번에 처리해주므로 보통은 저장만 누르면 됩니다)">
             {uploading ? '업로드 중...' : '즉시 업로드만'}
           </button>

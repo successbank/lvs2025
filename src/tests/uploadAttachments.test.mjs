@@ -7,7 +7,7 @@ import test from 'node:test';
 
 // The Next.js source uses ESM in a CommonJS package; the helper only imports Node builtins.
 const source = await readFile(new URL('../lib/uploadAttachments.js', import.meta.url), 'utf8');
-const { validateAttachments, saveAttachmentsToDisk, ATTACHMENT_LIMITS } = await import(
+const { validateAttachments, checkAttachmentCount, saveAttachmentsToDisk, ATTACHMENT_LIMITS } = await import(
   `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`
 );
 
@@ -36,6 +36,25 @@ test('keeps upload limits and rejects unsupported files', () => {
   for (const [name, type] of [['manual.pdf', 'application/pdf'], ['drawings.zip', 'application/zip']]) {
     assert.equal(validateAttachments([new File(['data'], name, { type })]).ok, true);
   }
+});
+
+test('counts attachments already on the post toward the limit', () => {
+  const drawing = new File(['AC1032'], 'drawing.dwg');
+  const max = ATTACHMENT_LIMITS.MAX_FILES;
+
+  assert.equal(validateAttachments([drawing], { existingCount: max - 1 }).ok, true);
+  assert.equal(validateAttachments([drawing], { existingCount: max }).ok, false);
+  assert.equal(validateAttachments(Array(3).fill(drawing), { existingCount: max - 2 }).ok, false);
+  assert.equal(validateAttachments([drawing]).ok, true, 'existingCount defaults to 0');
+
+  // 파일 누락 첨부도 DB 레코드가 남아 있으면 한 칸을 차지한다 — 호출부가 COUNT(*)로 세므로
+  // 여기서는 그 합계만 검증한다.
+  assert.equal(checkAttachmentCount(1, max).ok, false);
+  assert.equal(checkAttachmentCount(1, max - 1).ok, true);
+  assert.match(
+    validateAttachments([drawing], { existingCount: max }).error,
+    /최대 10개/,
+  );
 });
 
 test('stores DWG bytes and original filename and cleans up its files', async () => {

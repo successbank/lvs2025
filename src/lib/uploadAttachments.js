@@ -74,18 +74,35 @@ function sanitizeBaseName(originalName) {
   return safeExt ? `${safeStem}.${safeExt}` : safeStem;
 }
 
-export function validateAttachments(files) {
+// 게시물당 첨부 상한을 넘는지 확인한다.
+// existingCount 는 이미 게시물에 달려 있는 첨부 수 — 디스크 파일이 누락된 첨부도
+// DB 레코드가 남아 있는 한 그대로 한 칸을 차지한다(= 누락분 포함 카운트).
+export function checkAttachmentCount(addingCount, existingCount = 0) {
+  const total = existingCount + addingCount;
+  if (total <= ATTACHMENT_LIMITS.MAX_FILES) {
+    return { ok: true };
+  }
+  const detail = existingCount > 0
+    ? ` 현재 ${existingCount}개(파일 누락 상태 첨부 포함)가 등록돼 있어 ${Math.max(
+        0, ATTACHMENT_LIMITS.MAX_FILES - existingCount
+      )}개만 더 추가할 수 있습니다.`
+    : '';
+  return {
+    ok: false,
+    error: `첨부파일은 게시물당 최대 ${ATTACHMENT_LIMITS.MAX_FILES}개까지 등록할 수 있습니다.${detail}`,
+  };
+}
+
+export function validateAttachments(files, { existingCount = 0 } = {}) {
   if (!Array.isArray(files)) {
     return { ok: false, error: '첨부파일 형식이 올바르지 않습니다.' };
   }
   if (files.length === 0) {
     return { ok: true };
   }
-  if (files.length > ATTACHMENT_LIMITS.MAX_FILES) {
-    return {
-      ok: false,
-      error: `첨부파일은 최대 ${ATTACHMENT_LIMITS.MAX_FILES}개까지 업로드할 수 있습니다.`,
-    };
+  const countCheck = checkAttachmentCount(files.length, existingCount);
+  if (!countCheck.ok) {
+    return countCheck;
   }
 
   for (const file of files) {
