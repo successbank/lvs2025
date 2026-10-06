@@ -199,6 +199,7 @@ model Slider {
   imageUrl       String
   mobileImageUrl String?  // 통이미지 모바일용 (null이면 PC 이미지 사용)
   link           String?
+  showCatalogButton Boolean @default(true) // 텍스트+이미지 슬라이드의 "카탈로그 신청" 버튼 노출
   isActive    Boolean  @default(true)
   order       Int      @default(0)
   createdAt   DateTime @default(now())

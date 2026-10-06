@@ -21,6 +21,7 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
         imageUrl: s.imageUrl,
         mobileImageUrl: s.mobileImageUrl || null,
         link: s.link,
+        showCatalogButton: s.showCatalogButton !== false,
         category: null,
       }))
     : featuredProducts.map(p => ({
@@ -137,7 +138,9 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
                           {slide.link && (
                             <a href={slide.link} className="hero-btn-primary">자세히 보기</a>
                           )}
-                          <a href="/support/catalog" className="hero-btn-ghost">카탈로그 신청</a>
+                          {slide.showCatalogButton !== false && (
+                            <a href="/support/catalog" className="hero-btn-ghost">카탈로그 신청</a>
+                          )}
                         </div>
                       </div>
                       <div className="hero-image">

@@ -21,7 +21,7 @@ export default function AdminSliders() {
   const [showForm, setShowForm] = useState(false);
   const [editingSlider, setEditingSlider] = useState(null);
   const [formData, setFormData] = useState({
-    type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', mobileImageUrl: '', link: '', isActive: true, order: 0,
+    type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', mobileImageUrl: '', link: '', showCatalogButton: true, isActive: true, order: 0,
   });
 
   // 이미지 업로드 관련 상태
@@ -168,6 +168,21 @@ export default function AdminSliders() {
     }
   };
 
+  // ── 카탈로그 신청 버튼 표시 토글 ──
+  const handleToggleCatalog = async (slider) => {
+    try {
+      const res = await fetch(`/api/sliders/${slider.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ showCatalogButton: slider.showCatalogButton === false }),
+      });
+      if (!res.ok) throw new Error('카탈로그 버튼 설정 변경에 실패했습니다.');
+      fetchSliders();
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   // ── 순서 이동 ──
   const handleMove = async (index, direction) => {
     const targetIndex = index + direction;
@@ -240,6 +255,7 @@ export default function AdminSliders() {
       imageUrl: slider.imageUrl,
       mobileImageUrl: slider.mobileImageUrl || '',
       link: slider.link || '',
+      showCatalogButton: slider.showCatalogButton !== false,
       isActive: slider.isActive,
       order: slider.order,
     });
@@ -264,7 +280,7 @@ export default function AdminSliders() {
   };
 
   const resetForm = () => {
-    setFormData({ type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', mobileImageUrl: '', link: '', isActive: true, order: 0 });
+    setFormData({ type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', mobileImageUrl: '', link: '', showCatalogButton: true, isActive: true, order: 0 });
     setImagePreview('');
     setMobileImagePreview('');
     setImageUploadMode('upload');
@@ -492,6 +508,11 @@ export default function AdminSliders() {
                     />
                   </div>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input type="checkbox" checked={formData.showCatalogButton}
+                      onChange={e => setFormData(p => ({ ...p, showCatalogButton: e.target.checked }))} />
+                    <span style={{ fontSize: '0.9rem' }}>카탈로그 신청 버튼 표시</span>
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                     <input type="checkbox" checked={formData.isActive}
                       onChange={e => setFormData(p => ({ ...p, isActive: e.target.checked }))} />
                     <span style={{ fontSize: '0.9rem' }}>활성화</span>
@@ -709,6 +730,20 @@ export default function AdminSliders() {
               display: 'flex', alignItems: 'center', gap: '0.5rem',
               padding: '0 1rem', flexShrink: 0,
             }}>
+              {slider.type !== 'FULL_IMAGE' && (
+                <button
+                  onClick={() => handleToggleCatalog(slider)}
+                  title="홈 슬라이드의 '카탈로그 신청' 버튼 노출 여부"
+                  style={{
+                    padding: '0.3rem 0.6rem', borderRadius: '4px', border: 'none',
+                    cursor: 'pointer', fontSize: '0.8rem', fontWeight: '500',
+                    background: slider.showCatalogButton !== false ? '#dbeafe' : '#f3f4f6',
+                    color: slider.showCatalogButton !== false ? '#1d4ed8' : '#9ca3af',
+                  }}
+                >
+                  카탈로그 버튼 {slider.showCatalogButton !== false ? 'ON' : 'OFF'}
+                </button>
+              )}
               <button
                 onClick={() => handleToggleActive(slider)}
                 style={{

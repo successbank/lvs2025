@@ -22,6 +22,7 @@ export default function HomePageEn({ categories = [], featuredProducts = [], not
         imageUrl: s.imageUrl,
         mobileImageUrl: s.mobileImageUrl || null,
         link: s.link,
+        showCatalogButton: s.showCatalogButton !== false,
         category: null,
       }))
     : featuredProducts.map(p => ({
@@ -141,7 +142,9 @@ export default function HomePageEn({ categories = [], featuredProducts = [], not
                           {slide.link && (
                             <a href={enLink(slide.link)} className="hero-btn-primary">Learn More</a>
                           )}
-                          <a href="/en/support/catalog" className="hero-btn-ghost">Catalog Request</a>
+                          {slide.showCatalogButton !== false && (
+                            <a href="/en/support/catalog" className="hero-btn-ghost">Catalog Request</a>
+                          )}
                         </div>
                       </div>
                       <div className="hero-image">
