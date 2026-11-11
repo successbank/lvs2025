@@ -34,6 +34,7 @@ export async function POST(request) {
         mobileImageUrl: data.mobileImageUrl || null,
         link: data.link || null,
         showCatalogButton: data.showCatalogButton !== false,
+        showDetailButton: data.showDetailButton !== false,
         isActive: data.isActive !== false,
         order: data.order || 0,
       },

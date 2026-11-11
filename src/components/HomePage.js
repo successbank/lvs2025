@@ -22,6 +22,7 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
         mobileImageUrl: s.mobileImageUrl || null,
         link: s.link,
         showCatalogButton: s.showCatalogButton !== false,
+        showDetailButton: s.showDetailButton !== false,
         category: null,
       }))
     : featuredProducts.map(p => ({
@@ -135,7 +136,7 @@ export default function HomePage({ categories = [], featuredProducts = [], notic
                         <h1>{slide.title || 'Lighting for Vision System'}</h1>
                         <p className="hero-desc">{slide.description || '산업용 LED 조명의 새로운 기준을 제시합니다'}</p>
                         <div className="hero-buttons">
-                          {slide.link && (
+                          {slide.link && slide.showDetailButton !== false && (
                             <a href={slide.link} className="hero-btn-primary">자세히 보기</a>
                           )}
                           {slide.showCatalogButton !== false && (

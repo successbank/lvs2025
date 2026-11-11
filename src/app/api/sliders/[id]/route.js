@@ -24,6 +24,7 @@ export async function PUT(request, { params }) {
         mobileImageUrl: data.mobileImageUrl,
         link: data.link,
         showCatalogButton: data.showCatalogButton,
+        showDetailButton: data.showDetailButton,
         isActive: data.isActive,
         order: data.order,
       },
@@ -48,6 +49,7 @@ export async function PATCH(request, { params }) {
     const updateData = {};
     if (data.isActive !== undefined) updateData.isActive = data.isActive;
     if (data.showCatalogButton !== undefined) updateData.showCatalogButton = data.showCatalogButton;
+    if (data.showDetailButton !== undefined) updateData.showDetailButton = data.showDetailButton;
     if (data.order !== undefined) updateData.order = data.order;
 
     const slider = await prisma.slider.update({

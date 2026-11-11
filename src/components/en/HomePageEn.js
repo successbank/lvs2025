@@ -23,6 +23,7 @@ export default function HomePageEn({ categories = [], featuredProducts = [], not
         mobileImageUrl: s.mobileImageUrl || null,
         link: s.link,
         showCatalogButton: s.showCatalogButton !== false,
+        showDetailButton: s.showDetailButton !== false,
         category: null,
       }))
     : featuredProducts.map(p => ({
@@ -139,7 +140,7 @@ export default function HomePageEn({ categories = [], featuredProducts = [], not
                         <h1>{slide.title || 'Lighting for Vision System'}</h1>
                         <p className="hero-desc">{slide.description || 'Setting a new standard for industrial LED lighting'}</p>
                         <div className="hero-buttons">
-                          {slide.link && (
+                          {slide.link && slide.showDetailButton !== false && (
                             <a href={enLink(slide.link)} className="hero-btn-primary">Learn More</a>
                           )}
                           {slide.showCatalogButton !== false && (

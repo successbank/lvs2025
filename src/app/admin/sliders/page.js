@@ -21,7 +21,7 @@ export default function AdminSliders() {
   const [showForm, setShowForm] = useState(false);
   const [editingSlider, setEditingSlider] = useState(null);
   const [formData, setFormData] = useState({
-    type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', mobileImageUrl: '', link: '', showCatalogButton: true, isActive: true, order: 0,
+    type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', mobileImageUrl: '', link: '', showCatalogButton: true, showDetailButton: true, isActive: true, order: 0,
   });
 
   // 이미지 업로드 관련 상태
@@ -183,6 +183,21 @@ export default function AdminSliders() {
     }
   };
 
+  // ── 자세히 보기 버튼 표시 토글 ──
+  const handleToggleDetail = async (slider) => {
+    try {
+      const res = await fetch(`/api/sliders/${slider.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ showDetailButton: slider.showDetailButton === false }),
+      });
+      if (!res.ok) throw new Error('자세히 보기 버튼 설정 변경에 실패했습니다.');
+      fetchSliders();
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   // ── 순서 이동 ──
   const handleMove = async (index, direction) => {
     const targetIndex = index + direction;
@@ -256,6 +271,7 @@ export default function AdminSliders() {
       mobileImageUrl: slider.mobileImageUrl || '',
       link: slider.link || '',
       showCatalogButton: slider.showCatalogButton !== false,
+      showDetailButton: slider.showDetailButton !== false,
       isActive: slider.isActive,
       order: slider.order,
     });
@@ -280,7 +296,7 @@ export default function AdminSliders() {
   };
 
   const resetForm = () => {
-    setFormData({ type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', mobileImageUrl: '', link: '', showCatalogButton: true, isActive: true, order: 0 });
+    setFormData({ type: 'TEXT_IMAGE', title: '', description: '', imageUrl: '', mobileImageUrl: '', link: '', showCatalogButton: true, showDetailButton: true, isActive: true, order: 0 });
     setImagePreview('');
     setMobileImagePreview('');
     setImageUploadMode('upload');
@@ -508,6 +524,11 @@ export default function AdminSliders() {
                     />
                   </div>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input type="checkbox" checked={formData.showDetailButton}
+                      onChange={e => setFormData(p => ({ ...p, showDetailButton: e.target.checked }))} />
+                    <span style={{ fontSize: '0.9rem' }}>자세히 보기 버튼 표시 <span style={{ color: '#9ca3af', fontSize: '0.8rem' }}>(링크 URL이 있을 때만 노출)</span></span>
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                     <input type="checkbox" checked={formData.showCatalogButton}
                       onChange={e => setFormData(p => ({ ...p, showCatalogButton: e.target.checked }))} />
                     <span style={{ fontSize: '0.9rem' }}>카탈로그 신청 버튼 표시</span>
@@ -730,6 +751,20 @@ export default function AdminSliders() {
               display: 'flex', alignItems: 'center', gap: '0.5rem',
               padding: '0 1rem', flexShrink: 0,
             }}>
+              {slider.type !== 'FULL_IMAGE' && (
+                <button
+                  onClick={() => handleToggleDetail(slider)}
+                  title={slider.link ? "홈 슬라이드의 '자세히 보기' 버튼 노출 여부" : "링크 URL이 없어 현재 '자세히 보기' 버튼이 노출되지 않습니다"}
+                  style={{
+                    padding: '0.3rem 0.6rem', borderRadius: '4px', border: 'none',
+                    cursor: 'pointer', fontSize: '0.8rem', fontWeight: '500',
+                    background: slider.showDetailButton !== false ? '#dcfce7' : '#f3f4f6',
+                    color: slider.showDetailButton !== false ? '#15803d' : '#9ca3af',
+                  }}
+                >
+                  자세히 보기 {slider.showDetailButton !== false ? 'ON' : 'OFF'}
+                </button>
+              )}
               {slider.type !== 'FULL_IMAGE' && (
                 <button
                   onClick={() => handleToggleCatalog(slider)}
